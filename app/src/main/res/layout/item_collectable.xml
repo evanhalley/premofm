@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/PremoCard.WithMargin"
+    android:id="@+id/item_collection"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardElevation="@dimen/card_elevation"
+    card_view:cardCornerRadius="@dimen/card_corner_radius">
+
+    <RelativeLayout
+        android:background="?android:selectableItemBackground"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            tools:src="@drawable/default_channel_art"
+            android:id="@+id/channel_art"
+            android:layout_margin="@dimen/half_margin"
+            android:layout_height="@dimen/medium_channel_art_size"
+            android:layout_width="@dimen/medium_channel_art_size"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentLeft="true"
+            android:contentDescription="@string/channel_art"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@+id/channel_art"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/half_margin"
+            android:id="@+id/linearLayout">
+
+            <TextView
+                style="@style/Card.Text.Title"
+                android:id="@+id/title"
+                android:textSize="@dimen/large_text_size"
+                android:maxLines="1"
+                tools:text="Daring Fireball"
+                android:gravity="start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/Card.Text.Subtitle"
+                android:id="@+id/subtitle"
+                android:textSize="@dimen/small_text_size"
+                tools:text="Jerry MacGuire"
+                android:maxLines="1"
+                android:gravity="start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

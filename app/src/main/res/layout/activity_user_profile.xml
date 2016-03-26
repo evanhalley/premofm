@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:background="@color/card_list_background"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        layout="@layout/toolbar_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/user_profile"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:layout_marginLeft="@dimen/base_margin"
+                android:layout_marginRight="@dimen/base_margin"
+                android:elevation="@dimen/card_elevation"
+                card_view:cardElevation="@dimen/card_elevation"
+                card_view:cardCornerRadius="@dimen/card_corner_radius">
+
+                <LinearLayout
+                    style="@style/UserProfile.Content"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/UserProfile.Text.Title"
+                        android:text="@string/user_profile_account_info"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <include
+                        layout="@layout/separator"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/separator_height" />
+
+                    <LinearLayout
+                        android:id="@+id/email_content"
+                        android:orientation="vertical"
+                        android:background="?selectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            style="@style/UserProfile.Text.Label"
+                            android:text="@string/hint_email_address"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            style="@style/UserProfile.Text.Content"
+                            android:id="@+id/email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                    <include
+                        layout="@layout/separator"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/separator_height" />
+
+                    <LinearLayout
+                        android:id="@+id/nickname_content"
+                        android:orientation="vertical"
+                        android:background="?selectableItemBackground"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            style="@style/UserProfile.Text.Label"
+                            android:text="@string/hint_nickname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            style="@style/UserProfile.Text.Content"
+                            android:id="@+id/nickname"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"/>
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            style="@style/BorderlessButton"
+                            android:id="@+id/change_password"
+                            android:text="@string/button_change_password"
+                            android:layout_alignParentLeft="true"
+                            android:layout_marginTop="@dimen/half_margin"
+                            android:layout_marginBottom="@dimen/half_margin"
+                            android:layout_marginLeft="@dimen/base_margin"
+                            android:layout_marginRight="@dimen/base_margin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/borderless_button_size"/>
+
+                        <Button
+                            style="@style/BorderlessButton"
+                            android:id="@+id/logout"
+                            android:text="@string/button_logout"
+                            android:layout_toRightOf="@id/change_password"
+                            android:layout_marginTop="@dimen/half_margin"
+                            android:layout_marginBottom="@dimen/half_margin"
+                            android:layout_marginLeft="@dimen/base_margin"
+                            android:layout_marginRight="@dimen/base_margin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/borderless_button_size"/>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:visibility="gone"
+                android:id="@+id/user_stats"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/half_margin"
+                android:layout_marginBottom="@dimen/half_margin"
+                android:layout_marginLeft="@dimen/base_margin"
+                android:layout_marginRight="@dimen/base_margin"
+                android:elevation="@dimen/card_elevation"
+                card_view:cardElevation="@dimen/card_elevation"
+                card_view:cardCornerRadius="@dimen/card_corner_radius">
+
+                <LinearLayout
+                    style="@style/UserProfile.Content"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/UserProfile.Text.Title"
+                        android:text="@string/user_profile_podcast_stats"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <include
+                        layout="@layout/separator"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/separator_height" />
+
+                    <TextView
+                        style="@style/UserProfile.Text.Label"
+                        android:text="@string/hint_number_subscriptions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        style="@style/UserProfile.Text.Content"
+                        android:id="@+id/number_of_subscriptions"
+                        android:text="@string/user_profile_coming_soon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <include
+                        layout="@layout/separator"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/separator_height" />
+
+                    <TextView
+                        style="@style/UserProfile.Text.Label"
+                        android:text="@string/hint_episode_listens"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        style="@style/UserProfile.Text.Content"
+                        android:id="@+id/number_of_episode_listens"
+                        android:text="@string/user_profile_coming_soon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <include
+                        layout="@layout/separator"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/separator_height" />
+
+                    <TextView
+                        style="@style/UserProfile.Text.Label"
+                        android:text="@string/hint_listening_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        style="@style/UserProfile.Text.Content"
+                        android:id="@+id/time_of_podcast_listening"
+                        android:text="@string/user_profile_coming_soon"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

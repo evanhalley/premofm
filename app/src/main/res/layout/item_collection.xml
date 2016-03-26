@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/PremoCard"
+    android:id="@+id/item_collection"
+    android:layout_gravity="center"
+    android:layout_margin="@dimen/half_margin"
+    android:layout_width="155dp"
+    android:layout_height="220dp"
+    card_view:cardElevation="@dimen/card_elevation"
+    card_view:cardCornerRadius="@dimen/card_corner_radius">
+
+    <RelativeLayout
+        android:id="@+id/collection"
+        android:background="?android:selectableItemBackground"
+        android:paddingLeft="@dimen/base_margin"
+        android:paddingRight="@dimen/base_margin"
+        android:paddingTop="@dimen/base_margin"
+        android:paddingBottom="@dimen/base_margin"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <GridView
+            tools:listitem="@layout/item_channel_art"
+            android:id="@+id/channel_art_gallery"
+            android:scrollbars="none"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
+            android:layout_above="@+id/collection_metadata"
+            android:layout_width="145dp"
+            android:layout_height="145dp"
+            android:stretchMode="columnWidth"/>
+
+        <RelativeLayout
+            android:id="@+id/collection_metadata"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:paddingTop="@dimen/half_margin"
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/card_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/Card.Text.Title"
+                    android:id="@+id/collection_name"
+                    tools:text="Tech"
+                    android:textSize="@dimen/large_text_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    style="@style/Card.Text.Subtitle"
+                    android:id="@+id/collection_item_count"
+                    tools:text="3 channels"
+                    android:textSize="@dimen/small_text_size"
+                    android:singleLine="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+            <ImageButton
+                style="@style/Card.Icon"
+                android:id="@+id/card_more"
+                android:src="@drawable/ic_item_action_more"
+                android:scaleType="centerCrop"
+                android:layout_alignParentRight="true"
+                android:layout_width="20dp"
+                android:layout_height="@dimen/card_button_size"
+                android:contentDescription="@string/more"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

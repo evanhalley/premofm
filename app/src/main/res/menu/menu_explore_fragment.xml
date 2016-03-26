@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      tools:context=".PremoActivity">
+
+      <item android:id="@+id/action_category"
+            android:title="@string/action_category"
+            android:icon="@drawable/ic_action_category"
+            android:orderInCategory="2"
+            app:showAsAction="ifRoom"/>
+
+      <item android:id="@+id/action_search"
+            android:title="@string/action_search"
+            android:icon="@drawable/ic_action_search"
+            android:orderInCategory="3"
+            app:showAsAction="ifRoom"/>
+</menu>

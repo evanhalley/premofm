@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_title_playback" >
+
+        <ListPreference
+            android:key="@string/pref_key_skip_forward"
+            android:title="@string/pref_title_skip_forward"
+            android:summary="@string/pref_summary_skip_forward"
+            android:entries="@array/skip_entries"
+            android:entryValues="@array/skip_values"
+            android:defaultValue="30" />
+
+        <ListPreference
+            android:key="@string/pref_key_skip_backward"
+            android:title="@string/pref_title_skip_backward"
+            android:summary="@string/pref_summary_skip_backward"
+            android:entries="@array/skip_entries"
+            android:entryValues="@array/skip_values"
+            android:defaultValue="15" />
+
+        <SwitchPreference
+            android:key="@string/pref_key_continuous_playback"
+            android:title="@string/pref_title_continuous_playback"
+            android:summary="@string/pref_summary_continuous_playback_checked"
+            android:defaultValue="false" />
+
+        <SwitchPreference
+            android:key="@string/pref_key_pause_playback_during_notification"
+            android:title="@string/pref_title_pause_playback_during_notification"
+            android:summary="@string/pref_summary_pause_playback_during_notification_checked"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_notifications" >
+
+        <SwitchPreference
+            android:key="@string/pref_key_enable_notifications"
+            android:title="@string/pref_title_enable_notifications"
+            android:summary="@string/pref_summary_enable_notifications_checked"
+            android:defaultValue="true" />
+
+        <SwitchPreference
+            android:dependency="@string/pref_key_enable_notifications"
+            android:key="@string/pref_key_notification_sound"
+            android:title="@string/pref_title_notification_sound"
+            android:defaultValue="false" />
+
+        <SwitchPreference
+            android:dependency="@string/pref_key_enable_notifications"
+            android:key="@string/pref_key_notification_vibrate"
+            android:title="@string/pref_title_notification_vibrate"
+            android:defaultValue="false" />
+
+        <SwitchPreference
+            android:dependency="@string/pref_key_enable_notifications"
+            android:key="@string/pref_key_notification_light"
+            android:title="@string/pref_title_notification_light"
+            android:defaultValue="false" />
+
+        <Preference
+            android:dependency="@string/pref_key_enable_notifications"
+            android:key="@string/pref_key_notification_channels"
+            android:title="@string/pref_title_notification_channels"
+            android:summary="@string/pref_summary_notification_channels"
+            android:defaultValue="" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_downloads" >
+
+        <SwitchPreference
+            android:key="@string/pref_key_enable_auto_download"
+            android:title="@string/pref_title_enable_auto_download"
+            android:summary="@string/pref_summary_enable_auto_download_checked"
+            android:defaultValue="false" />
+
+        <Preference
+            android:dependency="@string/pref_key_enable_auto_download"
+            android:key="@string/pref_key_auto_download_channels"
+            android:title="@string/pref_title_auto_download_channels"
+            android:summary="@string/pref_summary_auto_download_channels"
+            android:defaultValue="" />
+
+        <SwitchPreference
+            android:dependency="@string/pref_key_enable_auto_download"
+            android:key="@string/pref_key_auto_download_charging_only"
+            android:title="@string/pref_title_auto_download_charging_only"
+            android:defaultValue="false" />
+
+        <SwitchPreference
+            android:dependency="@string/pref_key_enable_auto_download"
+            android:key="@string/pref_key_auto_download_only_on_wifi"
+            android:title="@string/pref_title_auto_download_only_on_wifi"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_storage" >
+
+        <ListPreference
+            android:key="@string/pref_key_episode_cache_limit"
+            android:title="@string/pref_title_episode_cache_limit"
+            android:summary="@string/pref_summary_episode_cache_limit"
+            android:entries="@array/cached_episode_limit_entries"
+            android:entryValues="@array/cached_episode_limit_values"
+            android:defaultValue="1" />
+
+        <SwitchPreference
+            android:key="@string/pref_key_delete_completed_episodes"
+            android:title="@string/pref_title_delete_completed_episodes"
+            android:summary="@string/pref_summary_delete_completed_episodes_checked"
+            android:defaultValue="true" />
+
+        <Preference
+            android:key="@string/pref_key_delete_all_episodes"
+            android:title="@string/pref_title_delete_all_episodes" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_import_export" >
+
+        <Preference
+            android:key="@string/pref_key_import_opml"
+            android:title="@string/pref_title_import_opml"
+            android:summary="@string/prf_summary_import_opml"/>
+
+        <Preference
+            android:key="@string/pref_key_export_opml"
+            android:title="@string/pref_title_export_opml"
+            android:summary="@string/prf_summary_export_opml"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

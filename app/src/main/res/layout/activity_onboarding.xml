@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Layout"
+    android:id="@+id/onboarding_activity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    tools:context="com.mainmethod.premofm.ui.activity.OnboardingActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/intro_demo"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/auth_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:id="@+id/auth_form"
+        android:orientation="vertical"
+        android:layout_above="@+id/auth_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/double_margin"
+        android:layout_marginRight="@dimen/double_margin">
+
+        <include
+            layout="@layout/layout_authentication"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/auth_buttons"
+        android:orientation="horizontal"
+        android:layout_above="@+id/privacy_and_tos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/try_now"
+            android:layout_margin="@dimen/base_margin"
+            android:background="?android:selectableItemBackground"
+            android:layout_height="@dimen/borderless_button_size"
+            android:textColor="@color/primary"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="@string/button_try"/>
+
+        <Button
+            android:id="@+id/sign_in"
+            android:layout_margin="@dimen/base_margin"
+            android:background="?android:selectableItemBackground"
+            android:layout_height="@dimen/borderless_button_size"
+            android:textColor="@color/primary"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:text="@string/button_sign_in"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/privacy_and_tos"
+        android:text="@string/liability_statement"
+        android:textSize="@dimen/extra_small_text_size"
+        android:textStyle="italic"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/half_margin"
+        android:layout_marginLeft="@dimen/base_margin"
+        android:layout_marginRight="@dimen/base_margin"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
+

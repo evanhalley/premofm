@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="help_url" translatable="false"></string>
+    <string name="twitter_url" translatable="false"></string>
+    <string name="licenses_url" translatable="false"></string>
+    <string name="privacy_url" translatable="false"></string>
+    <string name="tos_url" translatable="false"></string>
+    <string name="translations_url" translatable="false"></string>
+    <string name="app_list_url" translatable="false"></string>
+    <string name="raleigh_url" translatable="false"></string>
+
+</resources>

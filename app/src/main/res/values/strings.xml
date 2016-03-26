@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="user_agent" translatable="false">PremoFM-%s</string>
+
+    <string name="temp_user_email_domain" translatable="false">temp.premo.fm</string>
+
+    <string name="must_be_premo_fm_curator_title">Become a PremoFM Curator</string>
+    <string name="must_be_premo_fm_curator">Only PremoFM Curators can share their collections.\n\nRequest to be a PremoFM Curator.</string>
+
+    <string name="progress_authenticate_title">Please Wait</string>
+    <string name="progress_authenticate_message">Your journey awaits...</string>
+
+    <!-- menu item strings -->
+    <string name="action_mark_completed">Mark completed</string>
+    <string name="action_mark_all_episodes_completed">Mark all episodes completed</string>
+    <string name="action_delete_download">Delete download</string>
+    <string name="action_download">Download</string>
+    <string name="action_cancel_download">Cancel download</string>
+    <string name="action_search">Search</string>
+    <string name="action_category">Browse by category</string>
+    <string name="action_filter">Filter</string>
+    <string name="action_play">Play</string>
+    <string name="action_share_episode">Share episode</string>
+    <string name="action_share_channel">Share podcast</string>
+    <string name="action_favorite">Favorite</string>
+    <string name="action_unfavorite">Unfavorite</string>
+    <string name="action_add_to_queue">Add to now playing queue</string>
+    <string name="action_show_queue">Show now playing queue</string>
+    <string name="action_set_sleep_timer">Set sleep timer</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_delete_episode">Delete episode</string>
+    <string name="action_add">Add</string>
+    <string name="action_enable_notifications">New episode notifications</string>
+    <string name="action_enable_auto_download">Episode auto download</string>
+    <string name="action_cast">Cast</string>
+    <string name="action_pin">Pin</string>
+    <string name="action_unpin">Unpin episode</string>
+    <string name="action_set_playback_speed">Set playback speed</string>
+
+    <!-- sleep timer -->
+    <string name="sleep_timer_title">Stop Playing After...</string>
+    <string-array name="sleep_timer_labels">
+        <item>5 minutes</item>
+        <item>10 minutes</item>
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+    </string-array>
+
+    <string name="button_start_exploring">Let\'s Start Exploring</string>
+    <string name="button_create_collection">Let\'s Create a Collection</string>
+    <string name="button_try_again">Try Again</string>
+    <string name="no_results_found_title">No Results Found</string>
+    <string name="no_results_found_message">No results found for your search \'%s\'</string>
+    <string name="no_episodes_title">Episodes</string>
+    <string name="no_episodes_message">When you have things to listen to, they appear here.</string>
+    <string name="no_channels_title">Podcasts</string>
+    <string name="no_channels_message">Podcasts you are subscribed to would appear here.</string>
+    <string name="no_collections_title">Collections</string>
+    <string name="no_collections_message">The collections you create would appear here.  A collection is group of podcasts or episodes, like a playlist.</string>
+
+    <string name="notification_title_enter_password">Sign back into PrēmoFM</string>
+    <string name="notification_content_enter_password">Click to enter password</string>
+    <string name="notification_title_insufficient_space">Unable to download episodes</string>
+    <string name="notification_content_insufficient_space">There\'s not enough space on your device</string>
+    <string name="notification_title_connection_error">Unable to connect while downloading</string>
+    <string name="notification_content_connection_error">Unable to establish a connection to download episode %s</string>
+    <string name="notification_downloading_episodes">Downloading %d episodes</string>
+    <string name="notification_downloading_episode">Downloading %s</string>
+    <string name="notification_new_episode">New episode - %s</string>
+    <string name="notification_new_episodes">%d new episodes</string>
+    <string name="notification_play_episode">Play</string>
+    <string name="notification_show_notes">Info</string>
+    <string name="notification_cancel_download">Cancel Download</string>
+    <string name="notification_cancel_all_downloads">Cancel All Downloads</string>
+    <string name="notification_title_episode_downloaded">Episode downloaded</string>
+    <string name="notification_title_episodes_downloaded">%d episodes downloaded</string>
+
+    <string name="episode_favorite">Favorited</string>
+
+    <string name="filter_create_title">Create Filter</string>
+    <string name="filter_edit_title">Edit Filter</string>
+    <string name="filter_name_latest">Latest</string>
+    <string name="filter_name_downloaded">Downloaded</string>
+    <string name="filter_name_pinned">Pinned</string>
+    <string name="filter_name">Name</string>
+    <string name="filter_episodes_per_channel">Episodes per podcast</string>
+    <string name="filter_by_collection">Limit by collection</string>
+    <string name="filter_in_collection">Episodes in collection</string>
+    <string name="filter_by_episode_status_label">Episodes that are</string>
+    <string name="filter_episodes_added">User added</string>
+    <string name="filter_pinned">Pinned</string>
+    <string name="filter_limit_episodes_per_subscription">Limit per podcast</string>
+    <string name="filter_limit_episodes_by_date">Limit by date</string>
+    <string name="filter_episode_newer_than">Published since</string>
+    <string-array name="filter_date_options">
+        <item>Yesterday</item>
+        <item>Last week</item>
+        <item>Last month</item>
+        <item>Six months ago</item>
+    </string-array>
+    <string-array name="filter_episodes_per_options">
+        <item>1 episode</item>
+        <item>2 episodes</item>
+        <item>3 episodes</item>
+        <item>4 episodes</item>
+        <item>5 episodes</item>
+        <item>6 episodes</item>
+        <item>7 episodes</item>
+    </string-array>
+
+    <!-- dialog option strings -->
+    <string name="dialog_please_wait">Please Wait</string>
+    <string name="dialog_one_moment">It\'ll be a moment...</string>
+    <string name="dialog_updating_title">Please Wait</string>
+    <string name="dialog_updating_message">We are moving some things around behind the scenes...</string>
+    <string name="dialog_continue">Continue</string>
+    <string name="dialog_create">Create</string>
+    <string name="dialog_mark_completed">Mark Completed</string>
+    <string name="dialog_close">Close</string>
+    <string name="dialog_got_it">Got it</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_cancel_timer">Cancel Timer</string>
+    <string name="dialog_open_in_browser">Open in Browser</string>
+    <string name="dialog_save">Save</string>
+    <string name="dialog_clear">Clear</string>
+    <string name="dialog_delete_collection_confirmation">Delete this collection?</string>
+    <string name="dialog_delete_downloaded_episodes_confirmation">Delete all downloaded episodes?</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_select_all">Select All</string>
+    <string name="dialog_request">Request</string>
+    <string name="dialog_no_collection_selected">No Collection Selected</string>
+    <string name="dialog_logout_title">Logout</string>
+    <string name="dialog_logout_message">Are you sure you want to logout?</string>
+    <string name="dialog_skipping_sign_up">By skipping sign up, you are creating a temporary account.  You can claim your account at your convenience in PremoFM.</string>
+    <string name="dialog_mark_channel_completed">Mark podcast as completed?</string>
+    <string name="dialog_select_playback_speed">Set playback speed</string>
+
+    <!-- toast messages -->
+    <string name="toast_deleting_all_episodes">Deleting all episodes</string>
+
+    <!-- episode item strings -->
+    <string name="duration_in_progress">%s remaining</string>
+    <string name="duration_finished">%s completed</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+
+    <!-- activity titles -->
+    <string name="title_activity_onboarding">Welcome</string>
+    <string name="title_activity_preferences">Settings</string>
+    <string name="title_activity_play">Now Playing</string>
+    <string name="title_activity_search">Search</string>
+    <string name="title_activity_channel_profile">Podcast Profile</string>
+    <string name="title_activity_debug">Debug</string>
+    <string name="title_activity_user_profile">Your Profile</string>
+    <string name="title_activity_category">Browse by Category</string>
+
+    <string name="user_profile_activity_name_hint">Email</string>
+
+    <!-- fragment titles -->
+    <string name="title_fragment_home">Episodes</string>
+    <string name="title_fragment_subscriptions">Podcasts</string>
+    <string name="title_fragment_collections">Collections</string>
+    <string name="title_fragment_explore">Explore</string>
+
+    <!-- explore fragment tab labels -->
+    <string name="explore_fragment_type_top_channels">Top Podcasts</string>
+    <string name="explore_fragment_type_trending_channels">Trending Podcasts</string>
+    <string name="explore_fragment_type_top_collections">Top Collections</string>
+    <string name="explore_fragment_type_top_episodes">Top Episodes</string>
+
+    <!-- service titles -->
+    <string name="title_service_play">PodcastPlayerService</string>
+    <string name="title_service_push_handler">PushHandlerService</string>
+    <string name="title_service_download">DownloadService</string>
+    <string name="title_service_download_job">DownloadJobService</string>
+    <string name="title_service_push_changes_job">PushChangesJobService</string>
+    <string name="title_service_sync_episodes_job">SyncEpisodesJobService</string>
+    <string name="title_service_sync_service">SyncService</string>
+    <string name="title_service_delete_episodes">DeleteEpisodesService</string>
+    <string name="title_service_push_collections">PushCollectionsService</string>
+
+    <!-- search results strings -->
+    <string name="channel_search_results">Podcasts</string>
+
+    <!-- Drawer Menu Strings -->
+    <string name="drawer_action_home">Episodes</string>
+    <string name="drawer_action_subscriptions">Podcasts</string>
+    <string name="drawer_action_collections">Collections</string>
+    <string name="drawer_action_explore">Explore</string>
+    <string name="drawer_action_subheader">More</string>
+    <string name="drawer_action_feedback">Send feedback</string>
+    <string name="drawer_action_about">About</string>
+    <string name="drawer_action_settings">Settings</string>
+    <string name="drawer_action_debug">Debug</string>
+    <string name="drawer_action_setup_account">Create account</string>
+
+    <!-- Feedback Dialog Strings -->
+    <string name="dialog_feedback_title">How can we assist?</string>
+    <string-array name="dialog_feedback_options">
+        <item>I\'m having a problem</item>
+        <item>I\'d like to suggest an idea</item>
+        <item>I love PrēmoFM, I want to rate it</item>
+    </string-array>
+
+    <!-- Links -->
+
+
+    <!-- Email components -->
+    <string name="feedback_email" translatable="false">hello@mainmethod.co</string>
+    <string name="feedback_support_subject">Issue with PrēmoFM</string>
+    <string name="feedback_support_message">I\'m having an issue with...\n\n</string>
+    <string name="feedback_idea_subject">I have a suggestion for PrēmoFM</string>
+    <string name="feedback_idea_message">I thought of a great idea for PrēmoFM...\n\n</string>
+
+    <!-- search strings -->
+    <string name="hint_search">Podcast name, author, or website</string>
+
+    <!-- user profile strings -->
+    <string name="dialog_title_setup_account">Create Account</string>
+    <string name="dialog_title_change_password">Change Password</string>
+    <string name="dialog_title_enter_password">Enter Password</string>
+    <string name="dialog_title_change_email">Change Email</string>
+    <string name="dialog_title_change_nickname">Change Nickname</string>
+    <string name="user_profile_old_password">Old Password</string>
+    <string name="user_profile_new_password">New Password</string>
+    <string name="user_profile_new_password_confirm">Confirm New Password</string>
+    <string name="user_profile_add_nickname">Click to Add Nickname</string>
+    <string name="user_profile_account_info">Account</string>
+    <string name="user_profile_podcast_stats">Listening Stats</string>
+    <string name="user_profile_coming_soon">Coming soon</string>
+    <string name="hint_number_subscriptions">Podcasts</string>
+    <string name="hint_episode_listens">Listens</string>
+    <string name="hint_listening_time">Time</string>
+    <string name="button_logout">Logout</string>
+    <string name="button_change_password">Change Password</string>
+
+    <string name="toast_login_successful">Login was successful</string>
+    <string name="toast_login_not_successful">Oops, something went wrong, please try again</string>
+
+    <!-- hint strings -->
+    <string name="hint_nickname">Nickname</string>
+    <string name="hint_email_address">Email Address</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+
+    <!-- onboarding strings -->
+    <string name="onboarding_title">Welcome to Prēmo</string>
+    <string name="onboarding_tagline">A beautiful, social podcast experience</string>
+    <string name="onboarding_welcome_back">Welcome back!</string>
+    <string name="onboarding_welcome_to_premo">Welcome to PrēmoFM!</string>
+    <string name="onboarding_show_password">Show Password</string>
+    <string name="button_sign_in">Sign In</string>
+    <string name="button_sign_up">Create Account</string>
+    <string name="ime_go">Go</string>
+    <string name="button_try">Get Started</string>
+    <string name="liability_statement">By continuing, you agree to our
+        <a href="http://premo.fm/terms.html">Terms of Service</a> and <a href="http://premo.fm/privacy.html">Privacy Policy</a>.</string>
+    <string name="or">OR</string>
+    <string name="onboarding_email_explanation_title">How do we use your email address?</string>
+    <string name="onboarding_email_explanation_message">Your email address will ONLY be used to enable user profile syncing
+        (ie. episode progress, collections) and password resets.  This enables easier cross device integration for your convenience.
+        \n\nWe hate spam, so we will NOT spam you nor share your email address with any third party.</string>
+
+    <!-- channel profile strings -->
+    <string name="description">Description</string>
+    <string name="author">Author</string>
+    <string name="website">Website</string>
+    <string name="button_subscribe">Subscribe</string>
+    <string name="button_subscribing">Subscribing…</string>
+    <string name="button_unsubscribe">Unsubscribe</string>
+    <string name="button_unsubscribing">Unsubscribing…</string>
+    <string name="button_visit_website">Website</string>
+
+    <!-- collection strings -->
+    <string name="new_collection">Create a new collection</string>
+    <string name="channels">Podcasts</string>
+    <string name="episodes">Episodes</string>
+    <string name="episode_label">%d episode</string>
+    <string name="episodes_label">%d episodes</string>
+    <string name="channel_label">%d podcast</string>
+    <string name="channels_label">%d podcasts</string>
+    <string name="collection_add_episodes_title">Add episodes</string>
+    <string name="collection_episode_search">Search for episodes</string>
+    <string name="collection_name">Name</string>
+    <string name="collection_description">Description (Optional)</string>
+    <string name="collection_topics">Topics (Comma separated)</string>
+    <string name="collection_episode_added">%s added</string>
+    <string name="collection_create_filter">Create a Filter</string>
+    <string name="collection_type">Type:</string>
+    <string name="publish_collection">Share with everyone</string>
+
+    <string-array name="collection_types">
+        <item>Podcasts</item>
+        <item>Episodes</item>
+    </string-array>
+
+    <string name="episode_status_new">New</string>
+    <string name="episode_status_in_progress">In Progress</string>
+    <string name="episode_status_played">Played</string>
+    <string name="episode_status_completed">Completed</string>
+    <string name="episode_status_deleted">Deleted</string>
+
+    <string name="download_status_not_downloaded">Not Downloaded</string>
+    <string name="download_status_requested">Requested</string>
+    <string name="download_status_queued">Queued</string>
+    <string name="download_status_downloading">Downloading</string>
+    <string name="download_status_downloaded">Downloaded</string>
+    <string name="download_status_partially_downloaded">Partially Downloaded</string>
+
+    <!-- share strings -->
+    <string name="share_episode_text" formatted="false" translatable="false">%s - %s - %s via #PremoFM</string>
+    <string name="share_listening_episode_text" formatted="false">Listening to %s - %s - %s on #PremoFM</string>
+    <string name="share_channel_text" formatted="false">%s - %s via #PremoFM</string>
+    <string name="share_with">Share with</string>
+
+    <!-- tags -->
+    <string name="tag_play" translatable="false">play</string>
+    <string name="tag_pause" translatable="false">pause</string>
+    <string name="tag_info" translatable="false">info</string>
+    <string name="tag_download" translatable="false">download</string>
+    <string name="tag_add_to_playlist" translatable="false">add_to_playlist</string>
+
+    <string name="top_channels">Top Podcasts</string>
+    <string name="trending_channels">Trending Podcassts</string>
+    <string name="top_episodes">Top Episodes</string>
+    <string name="trending_episodes">Trending Episodes</string>
+    <string name="top_collections">Top Collections</string>
+    <string name="more_channels">More Podcasts</string>
+    <string name="more_episodes">More Episodes</string>
+    <string name="more_collections">More Collections</string>
+
+    <string name="episode_pinned">Episode pinned and is in your library</string>
+    <string name="episode_already_pinned">Episode was already pinned</string>
+    <string name="episode_not_pinned">Episode not pinned, try again</string>
+
+    <!-- Errors -->
+    <string name="error_non_matching_password">New passwords do not match</string>
+    <string name="error_invalid_nickname">Enter a valid nickname</string>
+    <string name="error_invalid_email">Enter a valid email address</string>
+    <string name="error_invalid_password">Enter a password longer than 8 characters</string>
+    <string name="error_incorrect_password">Your email or password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_general">Something bad happened</string>
+    <string name="error_api_no_response">A response was not received</string>
+    <string name="error_api_unavailable">Unable to reach the server</string>
+    <string name="error_api_cannot_retrieve_profile">Something went wrong retrieving your user profile</string>
+    <string name="error_api_device_not_registered">Something went wrong during device registration</string>
+    <string name="error_no_collection_name">Enter a collection name</string>
+    <string name="error_no_collection_topics">Enter one or more collection topics</string>
+    <string name="error_saving_collection">Unable to save collection, try again</string>
+    <string name="error_deleting_collection">Unable to delete collection, try again</string>
+    <string name="error_no_filter_name">Enter a valid filter name</string>
+    <string name="error_cannot_load_channel">This channel cannot be found</string>
+    <string name="empty_time">-:&#8212;</string>
+    <string name="time_left">-%s</string>
+
+    <string name="donate">Donate</string>
+    <string name="donate_message">PremoFM is a free podcast app to continue to support the podcast community.  Donate to provide development support to your favorite podcast app.</string>
+
+    <string-array name="donation_options">
+        <item>$1, one-time donation</item>
+        <item>$3, one-time donation</item>
+        <item>$1, monthly recurring subscription</item>
+    </string-array>
+
+    <string name="playlist">Now Playing</string>
+    <string name="delete_filter">Delete filter?</string>
+
+    <!-- showcase view strings -->
+    <string name="filter_showcase_title">Create new filters</string>
+    <string name="filter_showcase_message">You can create filters to organize your podcast episodes.  For example, create a filter to only show downloaded episodes.</string>
+
+    <string name="showcase_collection_title">Create new collections</string>
+    <string name="showcase_collection_message">Create collections to organize podcasts and episodes into playlists for easy playback and sharing (coming soon).</string>
+
+    <string name="showcase_category_title">Browse by category</string>
+    <string name="showcase_category_message">Browse the PremoFM catalog by category if you\'re looking for something new to listen to.</string>
+
+    <string name="showcase_playlist_title">What\'s playing next</string>
+    <string name="showcase_playlist_message">View what\'s currently playing and what\'s playing next.  Add to this list by selecting \'Add to now playing queue\' from an episode card.</string>
+    <string name="more">more</string>
+    <string name="channel_art">Channel Art</string>
+    <string name="downloaded_episode_filtering">Enable downloaded episode filtering</string>
+    <string name="completed_episode_filtering">Enable completed episode filtering</string>
+    <string name="not_downloaded_episode_filtering">Enable not downloaded episode filtering</string>
+    <string name="played_episode_filtering">Enable played episode filtering</string>
+    <string name="new_episode_filtering">Enable new episode filtering</string>
+    <string name="favorite_episode_filtering">Enable favorited episode filtering</string>
+    <string name="collection_filtering">Enable episode collection filtering</string>
+    <string name="published_since_filtering">Enable published date filtering</string>
+    <string name="episodes_per_subscription_filtering">Enable episodes per subscription filtering</string>
+    <string name="episodes_per_subscription">Episodes per subscription</string>
+    <string name="seek_backward">Rewind</string>
+    <string name="seek_forward">Fast Forward</string>
+    <string name="episode_notes">Episode Notes</string>
+    <string name="category_icon">Category Icon</string>
+    <string name="email_help">Email Help</string>
+    <string name="navigation_drawer">Navigation Drawer</string>
+    <string name="back">Back</string>
+    <string name="rate_app_message">Enjoying PremoFM?</string>
+    <string name="rate">Rate App</string>
+    <string name="collection">Collection</string>
+    <string name="enter_a_name">Enter a name</string>
+    <string name="select">Select...</string>
+    <string name="please_create_collection">A collection should be created first</string>
+    <string name="streaming">streaming</string>
+    <string name="loading">Loading...</string>
+    <string name="importing_opml">Importing OPML file...</string>
+    <string name="error_importing_opml">Unable to import OPML file, try again</string>
+    <string name="error_no_new_imports">No new podcasts were imported</string>
+    <string name="opml_import_successful">OPML file successfully imported</string>
+    <string name="exporting_opml">Exporting OPML file...</string>
+    <string name="error_exporting_opml">Unable to export OPML file, try again</string>
+    <string name="opml_export_successful">OPML file successfully exported</string>
+    <string name="min_playback_speed" translatable="false">0.5x</string>
+    <string name="max_playback_speed" translatable="false">2x</string>
+    <string name="normal_playback_speed">%s normal speed</string>
+</resources>

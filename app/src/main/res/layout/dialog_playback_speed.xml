@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/triple_margin"
+    android:paddingLeft="@dimen/triple_margin"
+    android:paddingRight="@dimen/triple_margin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        style="@style/DialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/dialog_select_playback_speed"
+        android:id="@+id/title"
+        android:layout_gravity="center_horizontal"/>
+
+    <TextView
+        style="@style/DialogText.Value"
+        android:id="@+id/current_playback_speed"
+        tools:text="1.3x normal speed"
+        android:layout_marginTop="@dimen/double_margin"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/triple_margin"
+        android:layout_marginBottom="@dimen/triple_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/DialogText.Value"
+            android:background="?selectableItemBackgroundBorderless"
+            android:id="@+id/min_playback_speed"
+            android:text="@string/min_playback_speed"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:id="@+id/playback_speed"
+            android:max="16"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/max_playback_speed"
+            android:layout_toRightOf="@+id/min_playback_speed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            style="@style/DialogText.Value"
+            android:background="?selectableItemBackgroundBorderless"
+            android:id="@+id/max_playback_speed"
+            android:text="@string/max_playback_speed"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

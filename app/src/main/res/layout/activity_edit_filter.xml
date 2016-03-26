@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/toolbar_actionbar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/filter_name_panel"
+                android:background="?selectableItemBackground"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/FilterDialog.Title"
+                    android:layout_marginTop="@dimen/base_margin"
+                    android:text="@string/filter_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    style="@style/FilterDialog.Title.Value"
+                    android:id="@+id/name"
+                    tools:text="Android"
+                    android:text="@string/select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <include
+                layout="@layout/separator"
+                android:layout_marginLeft="@dimen/base_margin"
+                android:layout_marginRight="@dimen/base_margin"
+                android:layout_marginTop="@dimen/base_margin"
+                android:layout_marginBottom="@dimen/base_margin"
+                android:layout_height="@dimen/separator_height"
+                android:layout_width="match_parent" />
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/enable_episodes_per_subscription_limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_limit_episodes_per_subscription"
+                android:contentDescription="@string/episodes_per_subscription_filtering"/>
+
+            <LinearLayout
+                android:id="@+id/episodes_per_subscription_panel"
+                android:visibility="gone"
+                android:background="?selectableItemBackground"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/FilterDialog.Title"
+                    android:text="@string/episodes_per_subscription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    style="@style/FilterDialog.Title.Value"
+                    android:id="@+id/episodes_per_subscription"
+                    tools:text="4"
+                    android:text="@string/select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <include
+                layout="@layout/separator"
+                android:layout_marginLeft="@dimen/base_margin"
+                android:layout_marginRight="@dimen/base_margin"
+                android:layout_marginTop="@dimen/base_margin"
+                android:layout_marginBottom="@dimen/base_margin"
+                android:layout_height="@dimen/separator_height"
+                android:layout_width="match_parent" />
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/enable_episodes_published_since"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_limit_episodes_by_date"
+                android:contentDescription="@string/published_since_filtering"/>
+
+            <LinearLayout
+                android:id="@+id/episodes_by_date_panel"
+                android:visibility="gone"
+                android:background="?selectableItemBackground"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/FilterDialog.Title"
+                    android:text="@string/filter_episode_newer_than"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    style="@style/FilterDialog.Title.Value"
+                    android:id="@+id/published_since"
+                    tools:text="Last Month"
+                    android:text="@string/select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <include
+                layout="@layout/separator"
+                android:layout_marginLeft="@dimen/base_margin"
+                android:layout_marginRight="@dimen/base_margin"
+                android:layout_marginTop="@dimen/base_margin"
+                android:layout_marginBottom="@dimen/base_margin"
+                android:layout_height="@dimen/separator_height"
+                android:layout_width="match_parent" />
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/limit_by_collections_enabled"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_by_collection"
+                android:contentDescription="@string/collection_filtering"/>
+
+            <LinearLayout
+                android:id="@+id/episodes_by_collections_panel"
+                android:visibility="gone"
+                android:background="?selectableItemBackground"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    style="@style/FilterDialog.Title"
+                    android:text="@string/collection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+                <TextView
+                    style="@style/FilterDialog.Title.Value"
+                    android:id="@+id/collection_name"
+                    tools:text="Android + Google"
+                    android:text="@string/select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+
+            <include
+                layout="@layout/separator"
+                android:layout_marginLeft="@dimen/base_margin"
+                android:layout_marginRight="@dimen/base_margin"
+                android:layout_marginTop="@dimen/base_margin"
+                android:layout_marginBottom="@dimen/base_margin"
+                android:layout_height="@dimen/separator_height"
+                android:layout_width="match_parent" />
+
+            <TextView
+                style="@style/FilterDialog.Title"
+                android:text="@string/filter_by_episode_status_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/filter_episodes_pinned"
+                android:text="@string/filter_pinned"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/filter_favorited"
+                android:text="@string/episode_favorite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/favorite_episode_filtering"/>
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/filter_new_episodes"
+                android:text="@string/episode_status_new"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/new_episode_filtering"/>
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/filter_played_episodes"
+                android:text="@string/episode_status_played"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/played_episode_filtering"/>
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/filter_completed_episodes"
+                android:text="@string/episode_status_completed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/completed_episode_filtering"/>
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/filter_downloaded_episodes"
+                android:text="@string/download_status_downloaded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/downloaded_episode_filtering"/>
+
+            <Switch
+                style="@style/FilterDialog.Option"
+                android:id="@+id/filter_not_downloaded_episodes"
+                android:text="@string/download_status_not_downloaded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/not_downloaded_episode_filtering"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

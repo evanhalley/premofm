@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#FF9800</color>
+    <color name="primary_dark">#F57C00</color>
+    <color name="primary_light">#FFE0B2</color>
+    <color name="accent">#607D8B</color>
+    <color name="primary_text_color">#DE000000</color>
+    <color name="faded_text_color">#44000000</color>
+    <color name="secondary_text_color">#8A000000</color>
+    <color name="primary_icon_color">#212121</color>
+    <color name="background_color">#FFFFFFFF</color>
+    <color name="card_list_background">#FFDCDCDC</color>
+    <color name="inner_widget_background_color">#FFFFFF</color>
+    <color name="mini_player_title_text_color">#FF757575</color>
+    <color name="default_now_playing_bg_color">#212121</color>
+    <color name="seek_bar_color">#FFFFFF</color>
+    <color name="disabled_seek_bar_color">#8CFFFFFF</color>
+    <color name="separator_color">#e0e0e0</color>
+    <color name="nav_drawer_selected_bg_color">#17000000</color>
+</resources>

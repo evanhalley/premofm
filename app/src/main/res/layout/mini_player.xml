@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mini_player"
+    android:visibility="invisible"
+    tools:visibility="visible"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="0dp"
+    card_view:cardElevation="@dimen/toolbar_elevation">
+
+    <RelativeLayout
+        android:layout_marginLeft="@dimen/base_margin"
+        android:layout_marginRight="@dimen/base_margin"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="@dimen/base_margin"
+        android:paddingRight="@dimen/base_margin"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/mini_player_height">
+
+        <ImageView
+            tools:src="@drawable/default_channel_art"
+            android:id="@+id/channel_art"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_width="@dimen/small_channel_art_size"
+            android:layout_height="@dimen/small_channel_art_size"
+            android:contentDescription="@string/channel_art"/>
+
+        <LinearLayout
+            android:background="?android:selectableItemBackground"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/channel_art"
+            android:layout_toLeftOf="@+id/play"
+            android:layout_marginLeft="@dimen/base_margin"
+            android:layout_marginRight="@dimen/base_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/MiniPlayer.TitleText"
+                tools:text="01: Where are the Llamas"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:id="@+id/episode_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/MiniPlayer.SubtitleText"
+                tools:text="Zoocast"
+                android:id="@+id/channel_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            tools:src="@drawable/ic_action_play"
+            android:id="@+id/play"
+            android:scaleType="fitCenter"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_width="@dimen/card_button_size"
+            android:layout_height="@dimen/card_button_size"
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/action_play"/>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

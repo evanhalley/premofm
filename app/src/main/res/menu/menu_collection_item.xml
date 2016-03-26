@@ -1,0 +1,18 @@
+<!--
+  ~ Copyright (c) 2014.
+  ~ Main Method Incorporated.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_play_collection"
+          android:title="@string/action_play"
+          android:orderInCategory="0"
+          android:visible="true"/>
+
+    <item android:id="@+id/action_delete"
+          android:title="@string/action_delete"
+          android:orderInCategory="1"
+          android:visible="true"/>
+
+</menu>

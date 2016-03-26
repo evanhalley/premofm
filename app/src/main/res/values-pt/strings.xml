@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string name="must_be_premo_fm_curator_title">Seja um curador PremoFM</string>
+    <string name="must_be_premo_fm_curator">Apenas curadores PremoFM podem compartilhar suas playlists.\n\nPeça para se tornar um.</string>
+
+
+    <string name="progress_authenticate_title">Por favor aguarde</string>
+    <string name="progress_authenticate_message">Sua jornada o espera...</string>
+
+    <!-- menu item strings -->
+    <string name="action_mark_completed">Marcar completo</string>
+    <string name="action_mark_all_episodes_completed">Marcar todos episódios como completos</string>
+    <string name="action_delete_download">Deletar transferidos</string>
+    <string name="action_download">Transferidos</string>
+    <string name="action_cancel_download">Cancelar transferências</string>
+    <string name="action_search">Procurar</string>
+    <string name="action_category">Navegar por categoria</string>
+    <string name="action_filter">Filtrar</string>
+    <string name="action_play">Reproduzir</string>
+    <string name="action_share_episode">Compartilhar episódio</string>
+    <string name="action_share_channel">Compartilhar podcast</string>
+    <string name="action_favorite">Favoritar</string>
+    <string name="action_unfavorite">Desfavoritar</string>
+    <string name="action_add_to_queue">Adicionar para lista de reprodução</string>
+    <string name="action_show_queue">Mostrar lista de reprodução atual</string>
+    <string name="action_set_sleep_timer">Configurar sleep timer</string>
+    <string name="action_save">Salvar</string>
+    <string name="action_delete">Deletar</string>
+    <string name="action_delete_episode">Deletar episódio</string>
+    <string name="action_add">Adicionar</string>
+    <string name="action_enable_notifications">Novas notificações de episódios</string>
+    <string name="action_enable_auto_download">Transferir episódio automaticamente</string>
+
+    <!-- sleep timer -->
+    <string name="sleep_timer_title">Parar de reproduzir ápos...</string>
+    <string-array name="sleep_timer_labels">
+        <item>5 minutos</item>
+        <item>10 minutos</item>
+        <item>15 minutos</item>
+        <item>30 minutos</item>
+        <item>1 hora</item>
+    </string-array>
+
+    <string name="button_start_exploring">Vamos começar a explorar</string>
+    <string name="button_create_collection">Vamos criar uma coleção</string>
+    <string name="button_try_again">Tente novamente</string>
+    <string name="no_results_found_title">Não foram encontrado resultados</string>
+    <string name="no_results_found_message">Sem resultados para sua pesquisa \'%s\'</string>
+    <string name="no_episodes_title">Episódios</string>
+    <string name="no_episodes_message">Quando tiver itens para ouvir, eles aparecerão aqui.</string>
+    <string name="no_channels_title">Podcasts</string>
+    <string name="no_channels_message">Podcasts inscritos aparecerão aqui.</string>
+    <string name="no_collections_title">Coleções</string>
+    <string name="no_collections_message">As coleções criadas aparecerão aqui. Uma coleção é um grupo de podcasts ou episódios, semelhante a uma playlist.</string>
+
+    <string name="notification_title_enter_password">Entrar novamente no PrēmoFM</string>
+    <string name="notification_content_enter_password">Toque para entrar a senha</string>
+    <string name="notification_title_insufficient_space">Não foi possível transferir episódios</string>
+    <string name="notification_content_insufficient_space">Não há espaço suficiente em seu armazenamento</string>
+    <string name="notification_title_connection_error">Impossível conectar enquanto transfere</string>
+    <string name="notification_content_connection_error">Impossível estabelecer uma conexão para transferir %s</string>
+    <string name="notification_downloading_episodes">Transferindo episódio %d</string>
+    <string name="notification_downloading_episode">Transferindo %s</string>
+    <string name="notification_new_episode">Novo episódio - %s</string>
+    <string name="notification_new_episodes">%d Novo episódios</string>
+    <string name="notification_play_episode">Reproduzir</string>
+    <string name="notification_show_notes">Info</string>
+    <string name="notification_cancel_download">Cancelar Transferência</string>
+    <string name="notification_cancel_all_downloads">Cancelar Todas Transferências</string>
+    <string name="notification_title_episode_downloaded">Episódio transferido</string>
+    <string name="notification_title_episodes_downloaded">%d episódios transferidos</string>
+
+    <string name="episode_favorite">Favoritado</string>
+
+    <string name="filter_create_title">Criar Filtro</string>
+    <string name="filter_edit_title">Editar Filtro</string>
+    <string name="filter_name_latest">Últimos</string>
+    <string name="filter_name_downloaded">Transferidos</string>
+    <string name="filter_name">Nome</string>
+    <string name="filter_episodes_per_channel">Mostrar <b>%s</b> episódio(s) por podcast</string>
+    <string name="filter_by_collection">Limitar por coleção</string>
+    <string name="filter_in_collection">Episódios na coleção</string>
+    <string name="filter_by_episode_status_label">Episódios que estão</string>
+    <string name="filter_episodes_added">Episódios que eu adicionei</string>
+    <string name="filter_limit_episodes_per_subscription">Limitar por podcast</string>
+    <string name="filter_limit_episodes_by_date">Limitar por data</string>
+    <string name="filter_episode_newer_than">Publicado desde</string>
+    <string-array name="filter_date_options">
+        <item>Ontem</item>
+        <item>Semana passada</item>
+        <item>Mês passado</item>
+        <item>Seis meses atrás</item>
+    </string-array>
+    <string-array name="filter_episodes_per_options">
+        <item>1 episódio</item>
+        <item>2 episódios</item>
+        <item>3 episódios</item>
+        <item>4 episódios</item>
+        <item>5 episódios</item>
+        <item>6 episódios</item>
+        <item>7 episódios</item>
+    </string-array>
+
+    <!-- dialog option strings -->
+    <string name="dialog_please_wait">Espere por favor</string>
+    <string name="dialog_one_moment">Em um momento...</string>
+    <string name="dialog_updating_title">Por favor, espere</string>
+    <string name="dialog_updating_message">Girando as engrenagens...</string>
+    <string name="dialog_continue">Continue</string>
+    <string name="dialog_create">Criar</string>
+    <string name="dialog_mark_completed">Marcar completo</string>
+    <string name="dialog_close">Fechar</string>
+    <string name="dialog_got_it">Entendi</string>
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_cancel_timer">Cancelar Timer</string>
+    <string name="dialog_open_in_browser">Abrir no navegador</string>
+    <string name="dialog_save">Salvar</string>
+    <string name="dialog_clear">Cancelar</string>
+    <string name="dialog_delete_collection_confirmation">Deletar esta coleção?</string>
+    <string name="dialog_delete_downloaded_episodes_confirmation">Deletar todos episódios transferidos?</string>
+    <string name="dialog_delete">Deletar</string>
+    <string name="dialog_select_all">Selecionar todos</string>
+    <string name="dialog_request">Pedir</string>
+    <string name="dialog_no_collection_selected">Sem coleção selecionada</string>
+    <string name="dialog_logout_title">Sair</string>
+    <string name="dialog_logout_message">Tem certeza que deseja sair?</string>
+    <string name="dialog_skipping_sign_up">Pulando o cadastro você criará uma conta temporária. Você pode criar esta conta permanentemente quando desejar no PremoFM.</string>
+    <string name="dialog_mark_channel_completed">Marcar podcast como completo?</string>
+
+    <!-- toast messages -->
+    <string name="toast_deleting_all_episodes">Apagar todos os episódios</string>
+
+    <!-- episode item strings -->
+    <string name="duration_in_progress">%s restantes</string>
+    <string name="duration_finished">%s completado</string>
+    <string name="today">Hoje</string>
+    <string name="yesterday">Ontem</string>
+
+    <!-- activity titles -->
+    <string name="title_activity_onboarding">Bem vindo</string>
+    <string name="title_activity_preferences">Preferências</string>
+    <string name="title_activity_play">Reproduzindo</string>
+    <string name="title_activity_search">Procurar</string>
+    <string name="title_activity_channel_profile">Perfil do Podcast</string>
+    <string name="title_activity_debug">Debug</string>
+    <string name="title_activity_user_profile">Seu perfil</string>
+    <string name="title_activity_category">Buscar por categoria</string>
+
+    <string name="user_profile_activity_name_hint">Email</string>
+
+    <!-- fragment titles -->
+    <string name="title_fragment_home">Episódios</string>
+    <string name="title_fragment_subscriptions">Podcasts</string>
+    <string name="title_fragment_collections">Coleções</string>
+    <string name="title_fragment_explore">Explorar</string>
+
+    <!-- explore fragment tab labels -->
+    <string name="explore_fragment_type_top_channels">Top Podcasts</string>
+    <string name="explore_fragment_type_trending_channels">Podcasts Populares</string>
+    <string name="explore_fragment_type_top_collections">Top coleções</string>
+    <string name="explore_fragment_type_top_episodes">Top Episódios</string>
+
+    <!-- service titles -->
+    <string name="title_service_play">PodcastPlayerService</string>
+    <string name="title_service_push_handler">PushHandlerService</string>
+    <string name="title_service_download">DownloadService</string>
+    <string name="title_service_download_job">DownloadJobService</string>
+    <string name="title_service_push_changes_job">PushChangesJobService</string>
+    <string name="title_service_sync_episodes_job">SyncEpisodesJobService</string>
+    <string name="title_service_sync_service">SyncService</string>
+    <string name="title_service_delete_episodes">DeleteEpisodesService</string>
+    <string name="title_service_push_collections">PushCollectionsService</string>
+
+    <!-- search results strings -->
+    <string name="channel_search_results">Podcasts</string>
+
+    <!-- Drawer Menu Strings -->
+    <string name="drawer_action_home">Episódios</string>
+    <string name="drawer_action_subscriptions">Podcasts</string>
+    <string name="drawer_action_collections">Coleções</string>
+    <string name="drawer_action_explore">Explorar</string>
+    <string name="drawer_action_subheader">Mais</string>
+    <string name="drawer_action_feedback">Enviar feedback</string>
+    <string name="drawer_action_about">Sobre</string>
+    <string name="drawer_action_settings">Preferências</string>
+    <string name="drawer_action_debug">Debug</string>
+    <string name="drawer_action_setup_account">Configurar conta</string>
+
+    <!-- Feedback Dialog Strings -->
+    <string name="dialog_feedback_title">Como podemos ajudar?</string>
+    <string-array name="dialog_feedback_options">
+        <item>Estou tendo um problema</item>
+        <item>Gostaria de sugerir uma idéia</item>
+        <item>Amei o PremoFM, quero avaliar!</item>
+    </string-array>
+
+    <!-- Links -->
+
+
+    <!-- Email components -->
+    <string name="feedback_support_subject">Problema com o PremoFM</string>
+    <string name="feedback_support_message">Estou tendo um problema com...\n\n</string>
+    <string name="feedback_idea_subject">Eu tenho uma sugestão para o PrēmoFM</string>
+    <string name="feedback_idea_message">Eu tive uma ótima idéia para  o PrēmoFM...\n\n</string>
+
+    <!-- search strings -->
+    <string name="hint_search">Nome, autor ou site do Podcast</string>
+
+    <!-- user profile strings -->
+    <string name="dialog_title_setup_account">Configurar conta</string>
+    <string name="dialog_title_change_password">Trocar senha</string>
+    <string name="dialog_title_enter_password">Senha</string>
+    <string name="dialog_title_change_email">Mudar Email</string>
+    <string name="dialog_title_change_nickname">Mudar Apelido</string>
+    <string name="user_profile_old_password">Senha Antiga</string>
+    <string name="user_profile_new_password">Senha Nova</string>
+    <string name="user_profile_new_password_confirm">Confirmar Senha</string>
+    <string name="user_profile_add_nickname">Toque para entrar apelido</string>
+    <string name="user_profile_account_info">Conta</string>
+    <string name="user_profile_podcast_stats">Estatísticas de uso</string>
+    <string name="user_profile_coming_soon">Em Breve</string>
+    <string name="hint_number_subscriptions">Podcasts</string>
+    <string name="hint_episode_listens">Ouve</string>
+    <string name="hint_listening_time">Tempo</string>
+    <string name="button_logout">Sair</string>
+    <string name="button_change_password">Mudar Senha</string>
+
+    <string name="toast_login_successful">Login foi um sucesso</string>
+    <string name="toast_login_not_successful">Oops, algo deu errado... Tente novamente</string>
+
+    <!-- hint strings -->
+    <string name="hint_nickname">Apelido</string>
+    <string name="hint_email_address">Email</string>
+    <string name="hint_password">Senha</string>
+    <string name="hint_confirm_password">Confirmar Senha</string>
+
+    <!-- onboarding strings -->
+    <string name="onboarding_title">Bem vindo ao Prēmo</string>
+    <string name="onboarding_tagline">Um experiência incrível e social para podcasts</string>
+    <string name="onboarding_welcome_back">Bem vindo de volta!</string>
+    <string name="onboarding_welcome_to_premo">Bem vindo ao PrēmoFM!</string>
+    <string name="onboarding_show_password">Mostrar Senha</string>
+    <string name="button_sign_in">Entrar</string>
+    <string name="button_sign_up">Criar conta</string>
+    <string name="ime_go">Vai</string>
+    <string name="button_try">Pular</string>
+    <string name="liability_statement">Continuando, você concorda com nossos
+        <a href="http://premo.fm/terms.html">Termos de serviço</a> e <a href="http://premo.fm/privacy.html">Politíca de privacidade</a>.</string>
+    <string name="or">OU</string>
+    <string name="onboarding_email_explanation_title">Como usamos seu email?</string>
+    <string name="onboarding_email_explanation_message">Seu email APENAS será usado para ativar nossa sincronização de perfil
+        (ie. progresso de episódios, coleções) e mudanças de senha.  Isso possibilita nossa opção de cross-plataforma para sua conveniência.
+        \n\nNós ODIAMOS spam, portanto jamais iremos enviar emails tercerizados a seu endereço.</string>
+
+    <!-- channel profile strings -->
+    <string name="description">Descrição</string>
+    <string name="author">Autor</string>
+    <string name="website">Site</string>
+    <string name="button_subscribe">Inscrever</string>
+    <string name="button_subscribing">Se inscrevendo...</string>
+    <string name="button_unsubscribe">Cancelar inscrição</string>
+    <string name="button_unsubscribing">Cancelando inscrição...</string>
+    <string name="button_visit_website">Site</string>
+
+    <!-- collection strings -->
+    <string name="new_collection">Criar uma nova coleção</string>
+    <string name="channels">Podcasts</string>
+    <string name="episodes">Episódios</string>
+    <string name="episode_label">%d episódio</string>
+    <string name="episodes_label">%d episódio</string>
+    <string name="channel_label">%d podcast</string>
+    <string name="channels_label">%d podcasts</string>
+    <string name="collection_add_episodes_title">Add episódios</string>
+    <string name="collection_episode_search">Procurar por episódios</string>
+    <string name="collection_name">Nome</string>
+    <string name="collection_description">Descrição (Opcional)</string>
+    <string name="collection_topics">Assunto (Separado por vírgula)</string>
+    <string name="collection_episode_added">%s adicionado</string>
+    <string name="collection_create_filter">Criar filtro</string>
+    <string name="collection_type">Tipo:</string>
+    <string name="publish_collection">Compartilhar com todos</string>
+
+    <string-array name="collection_types">
+        <item>Podcasts</item>
+        <item>Episódio</item>
+    </string-array>
+
+    <string name="episode_status_new">Novo</string>
+    <string name="episode_status_in_progress">Em progresso</string>
+    <string name="episode_status_played">Reproduzido</string>
+    <string name="episode_status_completed">Completado</string>
+    <string name="episode_status_deleted">Deletado</string>
+
+    <string name="download_status_not_downloaded">Não Transferido</string>
+    <string name="download_status_requested">Pedido</string>
+    <string name="download_status_queued">Em fila</string>
+    <string name="download_status_downloading">Transferindo</string>
+    <string name="download_status_downloaded">Transferido</string>
+    <string name="download_status_partially_downloaded">Transferido em partes</string>
+
+    <!-- share strings -->
+    <string name="share_listening_episode_text" formatted="false">Ouvindo %s - %s - %s no #PremoFM</string>
+    <string name="share_channel_text" formatted="false">%s - %s via #PremoFM</string>
+    <string name="share_with">Compartilhar com</string>
+
+    <string name="top_channels">Top Podcasts</string>
+    <string name="trending_channels">Podcasts Populares</string>
+    <string name="top_episodes">Top Episódios</string>
+    <string name="trending_episodes">Episódios Populares</string>
+    <string name="top_collections">Top Coleções</string>
+    <string name="more_channels">Mais Podcasts</string>
+    <string name="more_episodes">Mais Episódios</string>
+    <string name="more_collections">Mais Coleções</string>
+
+    <string name="episode_pinned">Episódio adicionado a sua biblioteca</string>
+    <string name="episode_already_pinned">O episódio já está em sua biblioteca</string>
+    <string name="episode_not_pinned">Não foi possível adicionar, tente novamente</string>
+
+    <!-- Errors -->
+    <string name="error_non_matching_password">Novas senhas não correspondem</string>
+    <string name="error_invalid_nickname">Entre um apelido válido</string>
+    <string name="error_invalid_email">Entre um email válido</string>
+    <string name="error_invalid_password">Entre uma senha com mais de 8 caracteres</string>
+    <string name="error_incorrect_password">Senha ou email incorreto</string>
+    <string name="error_field_required">Este campo é obrigátorio</string>
+    <string name="error_general">Algo deu errado</string>
+    <string name="error_api_no_response">Uma resposta não foi recebida</string>
+    <string name="error_api_unavailable">Impossível contatar o servidor</string>
+    <string name="error_api_cannot_retrieve_profile">Algo deu errado no pedido do seu perfil</string>
+    <string name="error_api_device_not_registered">Algo deu errado durante o registro do dispositivo</string>
+    <string name="error_no_collection_name">Entre o nome da coleção</string>
+    <string name="error_no_collection_topics">Entre um ou mais tópicos da coleção</string>
+    <string name="error_saving_collection">Impossível salvar, tente novamente</string>
+    <string name="error_deleting_collection">Impossível deletar a coleção, tente novamente</string>
+    <string name="error_no_filter_name">Entre um filtro correto</string>
+    <string name="empty_time">-:&#8212;</string>
+    <string name="time_left">-%s</string>
+
+    <string name="donate">Doar</string>
+    <string name="donate_message">PremoFM é um aplicativo de podcast gratuito, feito para dar suporte a comunidade.  Doe e ajude o desenvolvimento do seu aplicativo de podcast favorito.</string>
+
+    <string-array name="donation_options">
+        <item>$1, apenas uma vez</item>
+        <item>$3, apenas uma vez</item>
+        <item>$1, mensalmente</item>
+    </string-array>
+
+    <string name="playlist">Reproduzindo agora</string>
+    <string name="delete_filter">Deletar filtro?</string>
+
+    <!-- showcase view strings -->
+    <string name="filter_showcase_title">Crie novos fitros</string>
+    <string name="filter_showcase_message">Você pode criar filtros para organizar os episódios de seus podcasts.  Por exemplo, crie um filtro para mostrar apenas episódios transferidos.</string>
+
+    <string name="showcase_collection_title">Crie coleções novas</string>
+    <string name="showcase_collection_message">Crie novas coleções para organizar podcasts e episódios em listas de reprodução para reprodução rápida e compartilhamento (em breve).</string>
+
+    <string name="showcase_category_title">Explore por categorias</string>
+    <string name="showcase_category_message">Explore o catálogo do PremoFM por categoria, caso esteja buscando algo novo para ouvir.</string>
+
+    <string name="showcase_playlist_title">O que tocará a seguir</string>
+    <string name="showcase_playlist_message">Veja o que está sendo reproduzindo e o que tocará a seguir.  Faça isso selecionando \'Adicionar a lista de reprodução\' em um card de episódio.</string>
+    <string name="more">mais</string>
+    <string name="channel_art">Arte de canal</string>
+    <string name="downloaded_episode_filtering">Habilitar filtro de episódios transferidos</string>
+    <string name="completed_episode_filtering">Habilitar filtro de episódios terminados</string>
+    <string name="not_downloaded_episode_filtering">Habilitar filtro de episódios não transferidos</string>
+    <string name="played_episode_filtering">Habilitar filtro de episódios escutados</string>
+    <string name="new_episode_filtering">Habilitar filto de novos episódios</string>
+    <string name="favorite_episode_filtering">Habilitar filtro de episódios favoritos</string>
+    <string name="collection_filtering">Habilitar filtro de episódios em coleções</string>
+    <string name="published_since_filtering">Habilitr filtro de data de publicação</string>
+    <string name="episodes_per_subscription_filtering">Habilitar filtro de episódios por inscritos</string>
+    <string name="seek_backward">Rebobinar</string>
+    <string name="seek_forward">Avanço Rápido</string>
+    <string name="episode_notes">Nota de Episódios</string>
+    <string name="category_icon">Icone de Categoria</string>
+    <string name="email_help">Email de Ajuda</string>
+    <string name="navigation_drawer">Gaveta de Navegação</string>
+    <string name="back">Voltar</string>
+    <string name="action_cast">Elenco</string>
+    <string name="rate">Taxa App</string>
+    <string name="rate_app_message">Desfrutando PremoFM?</string>
+    <string name="collection">Coleção</string>
+    <string name="enter_a_name"> Digite um nome</string>
+    <string name="episodes_per_subscription"> Episódios por subscrição</string>
+    <string name="please_create_collection"> A colheita deve ser criado pela primeira vez</string>
+    <string name="select">Selecionar</string>
+    <string name="action_pin">Pino</string>
+    <string name="filter_pinned">Pinado</string>
+    <string name="app_name">PremoFM</string>
+    <string name="action_unpin">Desencavilhar episódio</string>
+    <string name="filter_name_pinned">Pinado</string>
+    <string name="error_cannot_load_channel">Este canal não pode ser encontrado</string>
+    <string name="loading">Carregando</string>
+    <string name="streaming">transmissão</string>
+    <string name="error_exporting_opml"> Não é possível exportar arquivos OPML , tente novamente</string>
+    <string name="error_importing_opml">Não é possível importar arquivos OPML, tente novamente</string>
+    <string name="error_no_new_imports">Não há novas podcasts foram importados</string>
+    <string name="exporting_opml">Exportando arquivos OPML ...</string>
+    <string name="importing_opml">Importar arquivo OPML ...</string>
+    <string name="opml_import_successful">Arquivo OPML importado com êxito</string>
+    <string name="opml_export_successful">Arquivo OPML exportado com sucesso</string>
+    <string name="pref_summary_import_export">Importação / Exportação</string>
+    <string name="pref_title_export_opml">Exportar para OPML</string>
+    <string name="pref_title_import_export">Importação / Exportação</string>
+    <string name="pref_title_import_opml">Importação de OPML</string>
+    <string name="prf_summary_export_opml">Podcasts exportação assinaturas para um arquivo OPML </string>
+    <string name="prf_summary_import_opml">Podcasts de importação assinaturas de um arquivo OPML</string>
+    <string name="action_set_playback_speed">Definir a velocidade de reprodução</string>
+    <string name="dialog_select_playback_speed">Definir a velocidade de reprodução</string>
+    <string name="normal_playback_speed">%s velocidade normal</string>
+</resources>

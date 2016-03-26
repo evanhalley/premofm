@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/EmptyList"
+              android:id="@+id/empty_list"
+              android:orientation="vertical"
+              android:layout_gravity="center"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+
+    <TextView
+        style="@style/EmptyList.Text.Title"
+        android:id="@+id/empty_list_title"
+        android:text="@string/no_episodes_title"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <TextView
+        style="@style/EmptyList.Text.Message"
+        android:id="@+id/empty_list_message"
+        android:text="@string/no_episodes_message"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        style="@style/BorderlessButton"
+        android:id="@+id/button_empty_list"
+        android:textColor="@color/primary_dark"
+        android:padding="@dimen/half_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_start_exploring"
+        android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>

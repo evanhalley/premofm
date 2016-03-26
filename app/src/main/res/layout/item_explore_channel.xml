@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    style="@style/PremoCard"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/card_min_height"
+    card_view:cardElevation="@dimen/card_elevation"
+    card_view:cardCornerRadius="@dimen/card_corner_radius"
+    xmlns:tools="http://schemas.android.com/tools">
+
+        <RelativeLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/item_explore_channel"
+            android:background="?android:selectableItemBackground"
+            android:layout_margin="@dimen/double_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                tools:src="@drawable/default_channel_art"
+                android:id="@+id/channel_art"
+                android:transitionName="channel_art"
+                android:layout_width="@dimen/medium_channel_art_size"
+                android:layout_height="@dimen/medium_channel_art_size"
+                android:layout_alignParentTop="true"
+                android:contentDescription="@string/channel_art"/>
+
+            <TextView
+                style="@style/Card.Text.Title"
+                android:id="@+id/primary_title"
+                tools:text="Loris Ipsum Podcast"
+                android:textSize="@dimen/large_text_size"
+                android:paddingLeft="@dimen/half_margin"
+                android:layout_toRightOf="@+id/channel_art"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/Card.Text.Title"
+                android:id="@+id/secondary_title"
+                tools:text="Dr. Loris, Mrs. Ipsum, Lil' Podcast"
+                android:paddingLeft="@dimen/half_margin"
+                android:paddingTop="@dimen/half_margin"
+                android:textSize="@dimen/medium_text_size"
+                android:layout_below="@+id/primary_title"
+                android:layout_toRightOf="@+id/channel_art"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                style="@style/DescriptionStyle"
+                android:id="@+id/description"
+                android:textSize="@dimen/small_text_size"
+                tools:text="Description"
+                android:paddingTop="@dimen/half_margin"
+                android:maxLines="5"
+                android:lineSpacingExtra="@dimen/description_line_spacing"
+                android:ellipsize="end"
+                android:background="?selectableItemBackground"
+                android:layout_below="@+id/channel_art"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/subscribe"
+                android:text="@string/button_subscribe"
+                android:background="?android:selectableItemBackground"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/borderless_button_size"
+                android:layout_below="@+id/description"/>
+
+        </RelativeLayout>
+
+</android.support.v7.widget.CardView>

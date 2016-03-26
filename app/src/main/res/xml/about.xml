@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_title_help" >
+
+        <Preference
+            android:key="@string/pref_key_view_faq"
+            android:title="@string/pref_title_view_faq" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_support" >
+
+        <Preference
+            android:key="@string/pref_key_rate"
+            android:title="@string/pref_title_rate" />
+
+        <Preference
+            android:key="@string/pref_key_donate"
+            android:title="@string/pref_title_donate"
+            android:summary="@string/pref_summary_donate"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_title_about" >
+
+        <Preference
+            android:key="@string/pref_key_twitter"
+            android:title="@string/pref_title_twitter"
+            android:summary="@string/pref_summary_twitter" />
+
+        <Preference
+            android:key="@string/pref_key_licenses"
+            android:title="@string/pref_title_licenses"
+            android:summary="@string/pref_summary_licenses" />
+
+        <Preference
+            android:key="@string/pref_key_privacy"
+            android:title="@string/pref_title_privacy" />
+
+        <Preference
+            android:key="@string/pref_key_tos"
+            android:title="@string/pref_title_tos" />
+
+        <Preference
+            android:key="@string/pref_key_translations"
+            android:title="@string/pref_title_translations" />
+
+        <Preference
+            android:key="@string/pref_key_premo_version"
+            android:title="@string/pref_title_premo_version"
+            android:summary="@string/pref_summary_premo_version" />
+
+        <Preference
+            android:key="@string/pref_key_built_by"
+            android:title="@string/pref_title_built_by"
+            android:summary="@string/pref_summary_built_by" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

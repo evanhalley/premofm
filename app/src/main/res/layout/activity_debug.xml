@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include layout="@layout/toolbar_actionbar" />
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Trigger Download Service"
+            android:id="@+id/trigger_download_service"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Simulate Sleep Timer Expiration"
+            android:id="@+id/simulate_sleep_timer_expiration"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test IAB Purchase"
+            android:id="@+id/test_iab_purchase"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reauthenticate"
+            android:id="@+id/reauthenticate"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notify to Reauth"
+            android:id="@+id/notify_to_reauth"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Single Episode Notification"
+            android:id="@+id/single_episode_notification"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Multiple Episode Notification"
+            android:id="@+id/multiple_episode_notification"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Push Collection Changes"
+            android:id="@+id/push_collection_changes"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Insufficient Space Notification"
+            android:id="@+id/insufficient_space_notification"
+            android:layout_gravity="center_horizontal"/>
+
+        <Button
+            android:layout_margin="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Push Episode Changes"
+            android:id="@+id/push_episode_changes"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+</ScrollView>

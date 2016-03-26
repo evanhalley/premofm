@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- about values -->
+    <string name="pref_title_help">Ajuda</string>
+    <string name="pref_title_support">Suporte</string>
+    <string name="pref_title_about">Sobre</string>
+
+    <string name="pref_summary_built_by">Somos amantes de podcast situados em Raleigh, North Carolina</string>
+
+    <string name="pref_title_premo_version">Versão</string>
+    <string name="pref_title_rate">Avalie o PremoFM na Play Store</string>
+
+    <string name="pref_title_donate">Ajude o PremoFM</string>
+    <string name="pref_summary_donate">Suporte o desenvolvimento e a manuntenção do PremoFM</string>
+
+    <string name="pref_title_view_faq">Ver perguntas frequentes</string>
+
+    <string name="pref_title_twitter">Siga @PremoFM no Twitter</string>
+    <string name="pref_summary_twitter">Dê sugestões e fique atualizado com o PremoFM</string>
+
+    <string name="pref_title_licenses">Licenças Open Source</string>
+    <string name="pref_summary_licenses">Licenças e detalhes para o software aberto</string>
+
+    <string name="pref_title_privacy">Política de privacidade</string>
+
+    <string name="pref_title_tos">Termos de uso</string>
+
+    <!-- top level settings screen -->
+
+    <string name="pref_title_playback">Reprodução</string>
+    <string name="pref_title_notifications">Notificações</string>
+    <string name="pref_title_downloads">Transferências</string>
+    <string name="pref_title_storage">Armazenamento</string>
+
+    <string name="pref_summary_playback">Reprodução</string>
+    <string name="pref_summary_notifications">Notificações</string>
+    <string name="pref_summary_downloads">Transferências</string>
+    <string name="pref_summary_storage">Armazenamento</string>
+
+    <string name="pref_title_enable_notifications">Notificações</string>
+    <string name="pref_summary_enable_notifications_checked">Envia notificações de novos episódios</string>
+
+    <string name="pref_title_notification_sound">Som</string>
+
+    <string name="pref_title_notification_vibrate">Vibrar</string>
+
+    <string name="pref_title_notification_light">Ligar LED de notificação</string>
+
+    <string name="pref_title_notification_channels">Notificações de podcasts</string>
+    <string name="pref_summary_notification_channel">%s podcast enviará notificações de novos episódios</string>
+    <string name="pref_summary_notification_channels">%s podcasts enviarão notificações de novos episódios</string>
+
+    <string name="pref_title_enable_auto_download">Downloads automáticos</string>
+    <string name="pref_summary_enable_auto_download_checked">Permite que episódios sejam transferidos automaticamente no modo de espera</string>
+
+    <string name="pref_title_auto_download_channels">Podcasts transferidos automaticamente</string>
+    <string name="pref_summary_auto_download_channel">%s podcast transferirá episódios automaticamente</string>
+    <string name="pref_summary_auto_download_channels">%s podcasts transferirão episódios automaticamente</string>
+
+    <string name="pref_title_auto_download_charging_only">Apenas enquanto carrega</string>
+
+    <string name="pref_title_auto_download_only_on_wifi">Apenas conectado no Wi-Fi</string>
+
+    <string name="pref_title_skip_forward">Duração do avanço rápido</string>
+    <string name="pref_summary_skip_forward">Avançar rápido %s segundos por reprodução</string>
+
+    <string name="pref_title_skip_backward">Duração do rebobinar</string>
+    <string name="pref_summary_skip_backward">Rebobinar %s segundos por reprodução</string>
+
+    <string name="pref_title_continuous_playback">Reproduzir o próximo episódio quando o atual concluir</string>
+    <string name="pref_summary_continuous_playback_checked">Reproduzir o próximo episódio quando a reprodução começar a partir de um filtro</string>
+
+    <string-array name="skip_entries">
+        <item>5 segundos</item>
+        <item>10 segundos</item>
+        <item>15 segundos</item>
+        <item>30 segundos</item>
+        <item>60 segundos</item>
+    </string-array>
+
+    <string-array name="skip_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string name="pref_title_episode_cache_limit">Número de episódios, por podcast, para manter</string>
+    <string name="pref_summary_episode_cache_limit">Último episódio será mantido no seu dispostivo</string>
+    <string name="pref_summary_episodes_cache_limit">Últimos %s episódios serão mantidos no seu dispositivo</string>
+
+    <string name="pref_title_delete_completed_episodes">Deletar episódios completos</string>
+    <string name="pref_summary_delete_completed_episodes_checked">Permite que os episódios transferidos deletem-se automaticamente ápos serem reproduzidos</string>
+
+    <string-array name="cached_episode_limit_entries">
+        <item>Último episódio</item>
+        <item>Últimos 2 episódios</item>
+        <item>Últimos 3 episódios</item>
+        <item>Últimos 5 episódios</item>
+        <item>Últimos 7 episódios</item>
+        <item>Últimos 10 episódios</item>
+    </string-array>
+	
+    <string-array name="cached_episode_limit_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+    </string-array>
+
+    <string name="pref_title_delete_all_episodes">Deletar todos episódios transferidos</string>
+
+    <string name="pref_title_pause_playback_during_notification">Pausar reprodução quando o som de notificação tocar</string>
+    <string name="pref_summary_pause_playback_during_notification_checked">Permite que a reprodução do podcast pare ao ínves de baixar o som quando receber notificação</string>
+    <string name="pref_title_translations">traduções</string>
+</resources>

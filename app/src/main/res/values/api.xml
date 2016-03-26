@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="api_version" translatable="false">1</string>
+    
+    <!-- user related api calls -->
+    <string name="api_authenticate_user" translatable="false">user/authenticate</string>
+    <string name="api_sign_up_user" translatable="false">user/sign_up</string>
+    <string name="api_update_user_email" translatable="false">user/update_email</string>
+    <string name="api_update_user_nickname" translatable="false">user/update_nickname</string>
+    <string name="api_update_password" translatable="false">user/update_password</string>
+    <string name="api_add_purchase" translatable="false">user/add_purchase</string>
+    <string name="api_get_profile" translatable="false">user</string>
+
+    <!-- device related api calls -->
+    <string name="api_register_device" translatable="false">app/register/google</string>
+
+    <!-- channel related api calls -->
+    <string name="api_get_channel" translatable="false">channel</string>
+    <string name="api_get_subscriptions" translatable="false">channel/subscriptions</string>
+    <string name="api_channel_subscribe" translatable="false">channel/subscribe</string>
+    <string name="api_channel_unsubscribe" translatable="false">channel/unsubscribe</string>
+    <string name="api_channel_bulk_subscribe" translatable="false">channel/bulk_subscribe</string>
+    <string name="api_get_top_channels" translatable="false">channel/top</string>
+    <string name="api_get_trending_channels" translatable="false">channel/trending</string>
+    <string name="api_get_channels_by_category" translatable="false">channel</string>
+
+    <!-- collection related api calls -->
+    <string name="api_get_collections" translatable="false">collection</string>
+    <string name="api_create_collections" translatable="false">collection/create</string>
+    <string name="api_update_collections" translatable="false">collection/update</string>
+    <string name="api_delete_collections" translatable="false">collection/delete</string>
+
+    <!-- category related api calls -->
+    <string name="api_get_categories" translatable="false">category</string>
+
+    <!-- episode related api calls -->
+    <string name="api_get_episodes" translatable="false">episodes</string>
+    <string name="api_get_trending_episodes" translatable="false">episodes/trending</string>
+
+    <!-- sync related api calls -->
+    <string name="api_sync_episodes" translatable="false">sync/episodes</string>
+
+    <!-- search related api calls -->
+    <string name="api_search" translatable="false">search</string>
+
+</resources>

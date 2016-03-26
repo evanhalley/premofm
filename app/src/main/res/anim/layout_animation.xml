@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layoutAnimation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/linear"
+    android:animation="@anim/up_from_bottom"
+    android:duration="100"
+    android:animationOrder="normal"
+    android:delay="0.25" />

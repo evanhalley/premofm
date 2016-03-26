@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_above="@+id/media_controls_layout"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/toolbar_actionbar" />
+
+        <ImageView
+            android:id="@+id/play_background"
+            android:background="@color/default_now_playing_bg_color"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"/>
+
+        <LinearLayout
+            android:layout_below="@+id/toolbar"
+            android:layout_above="@+id/times"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/episode_details"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/base_margin"
+                android:layout_marginLeft="@dimen/double_margin"
+                android:layout_marginRight="@dimen/double_margin"
+                android:gravity="center"
+                android:layout_weight="6"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/episode_title"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/extra_large_text_size"
+                    android:singleLine="true"
+                    tools:text="Episode Title"
+                    android:gravity="center_horizontal"
+                    android:ellipsize="end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/channel_title"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/medium_text_size"
+                    android:singleLine="true"
+                    tools:text="Channel Title"
+                    android:gravity="center_horizontal"
+                    android:ellipsize="end"
+                    android:paddingTop="@dimen/base_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:visibility="invisible"
+                    android:id="@+id/streaming"
+                    android:src="@drawable/ic_streaming"
+                    android:tint="@android:color/white"
+                    android:layout_marginBottom="@dimen/double_margin"
+                    android:layout_width="@dimen/streaming_icon_size"
+                    android:layout_height="@dimen/streaming_icon_size"
+                    android:contentDescription="@string/streaming" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_weight="5"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/channel_art"
+                    android:scaleType="fitCenter"
+                    android:background="?android:selectableItemBackgroundBorderless"
+                    android:src="@drawable/default_channel_art"
+                    android:padding="@dimen/double_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="175dp"
+                    android:layout_centerVertical="true"
+                    android:contentDescription="@string/channel_art"
+                    app:riv_corner_radius="30dp"
+                    app:riv_border_width="2dp"
+                    app:riv_border_color="#FFE8E8E8"
+                    app:riv_mutate_background="true"
+                    app:riv_oval="true" />
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/times"
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:layout_height="34dp">
+
+            <TextView
+                style="@style/NowPlayingTime"
+                android:id="@+id/time_elapsed"
+                android:text="@string/empty_time"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingLeft="@dimen/double_margin"
+                android:paddingBottom="@dimen/double_margin"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <SeekBar
+                android:id="@+id/seek_bar"
+                android:minHeight="3dp"
+                android:maxHeight="3dp"
+                tools:progress="20"
+                tools:secondaryProgress="45"
+                android:progressDrawable="@drawable/seek_bar"
+                android:layout_marginLeft="@dimen/base_margin"
+                android:layout_marginRight="@dimen/base_margin"
+                android:layout_weight="10"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/channel_art"
+                android:layout_alignParentEnd="true"/>
+
+            <TextView
+                style="@style/NowPlayingTime"
+                android:id="@+id/time_left"
+                android:text="@string/empty_time"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:paddingRight="@dimen/double_margin"
+                android:paddingBottom="@dimen/double_margin"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/media_controls_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        card_view:cardCornerRadius="0dp"
+        card_view:cardElevation="@dimen/card_elevation">
+
+        <LinearLayout
+            android:id="@+id/media_controls"
+            android:background="@color/primary"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/mini_player_height"
+            android:orientation="horizontal">
+
+            <ImageButton
+                style="@style/NowPlayingButton"
+                android:id="@+id/favorite"
+                android:src="@drawable/ic_favorite_outline"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/card_button_size"
+                android:contentDescription="@string/action_favorite"/>
+
+            <ImageButton
+                style="@style/NowPlayingButton"
+                android:id="@+id/seek_backward"
+                android:src="@drawable/ic_action_rewind"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/card_button_size"
+                android:contentDescription="@string/seek_backward"/>
+
+            <ImageButton
+                style="@style/NowPlayingButton"
+                android:id="@+id/play"
+                android:src="@drawable/ic_action_play"
+                android:layout_centerHorizontal="true"
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/card_button_size"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/action_play"/>
+
+            <ImageButton
+                style="@style/NowPlayingButton"
+                android:id="@+id/seek_forward"
+                android:src="@drawable/ic_action_forward"
+                android:layout_weight="3"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/card_button_size"
+                android:contentDescription="@string/seek_forward"/>
+
+            <ImageButton
+                style="@style/NowPlayingButton"
+                android:id="@+id/episode_info"
+                android:src="@drawable/ic_info"
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/card_button_size"
+                android:contentDescription="@string/episode_notes"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</RelativeLayout>

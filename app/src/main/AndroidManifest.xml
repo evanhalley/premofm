@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mainmethod.premofm" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-permission android:name="com.android.vending.BILLING" />
+
+    <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <permission
+        android:name="com.mainmethod.premofm.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.mainmethod.premofm.permission.C2D_MESSAGE" />
+
+
+    <application
+        android:name="com.mainmethod.premofm.PremoApp"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+
+        <meta-data android:name="com.mainmethod.premofm.config.PremoGlideModule"
+                   android:value="GlideModule"/>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!-- Activities -->
+        <activity
+            android:name="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:theme="@style/AppTheme.Onboarding"
+            android:name="com.mainmethod.premofm.ui.activity.OnboardingActivity"
+            android:label="@string/title_activity_onboarding" />
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name="com.mainmethod.premofm.ui.activity.SettingsActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:label="@string/title_activity_preferences" />
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name="com.mainmethod.premofm.ui.activity.NowPlayingActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:label="@string/title_activity_play"
+            android:launchMode="singleTask" />
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name=".ui.activity.ChannelSearchActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity" />
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name="com.mainmethod.premofm.ui.activity.ChannelCategoryActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:label="@string/title_activity_category"/>
+        <activity
+            android:theme="@style/AppTheme.ChannelProfile"
+            android:name="com.mainmethod.premofm.ui.activity.ChannelProfileActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:label="@string/title_activity_channel_profile" />
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name="com.mainmethod.premofm.ui.activity.EditCollectionActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"/>
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name="com.mainmethod.premofm.ui.activity.EditFilterActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:windowSoftInputMode="stateUnchanged"/>
+
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name="com.mainmethod.premofm.ui.activity.DebugActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:label="@string/title_activity_debug"/>
+        <activity
+            android:theme="@style/AppTheme.Secondary"
+            android:name="com.mainmethod.premofm.ui.activity.UserProfileActivity"
+            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
+            android:label="@string/title_activity_user_profile"/>
+
+        <activity android:name="com.mainmethod.premofm.ui.activity.LinkActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="itunes.apple.com" />
+                <data android:pathPrefix="/us/podcast" />
+            </intent-filter>
+        </activity>
+
+        <!-- Services -->
+        <service
+            android:name="com.mainmethod.premofm.service.PodcastPlayerService"
+            android:label="@string/title_service_play"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.DownloadService"
+            android:label="@string/title_service_download"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.DeleteEpisodeService"
+            android:label="@string/title_service_delete_episodes"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.ApiService"
+            android:label="@string/title_service_sync_service"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.job.PushChangesJobService"
+            android:label="@string/title_service_push_changes_job"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.job.SyncEpisodesJobService"
+            android:label="@string/title_service_sync_episodes_job"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.job.PushCollectionChangesJobService"
+            android:label="@string/title_service_push_collections"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.job.DownloadJobService"
+            android:label="@string/title_service_download_job"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <service
+            android:name="com.mainmethod.premofm.service.PremoGcmListenerService"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name="com.mainmethod.premofm.service.PremoInstanceIdListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <!-- Content Provider -->
+        <provider
+            android:name="com.mainmethod.premofm.data.PremoContentProvider"
+            android:authorities="${applicationId}.data"
+            android:exported="false" />
+
+        <!-- Broadcast Receivers -->
+        <receiver
+            android:name="com.google.android.gms.gcm.GcmReceiver"
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.mainmethod.premofm" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.mainmethod.premofm.receiver.DeviceStatusReceiver">
+            <intent-filter>
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.intent.action.ACTION_BATTERY_LOW"/>
+                <action android:name="android.intent.action.ACTION_BATTERY_OKAY"/>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:name="com.mainmethod.premofm.ui.widget.WidgetProvider" >
+            <intent-filter >
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+
+        <receiver
+            android:name="com.mainmethod.premofm.receiver.ClearNotificationsReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.mainmethod.premo.clearEpisodeNotifications"/>
+                <action android:name="com.mainmethod.premo.clearDownloadNotifications"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name="com.mainmethod.premofm.receiver.RemoteControlReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
+         dispatching on non-Google Play devices -->
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

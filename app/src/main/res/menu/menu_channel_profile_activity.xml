@@ -1,0 +1,24 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto" >
+
+      <item android:id="@+id/action_share_channel"
+          android:title="@string/action_share_channel"
+          android:icon="@drawable/ic_action_share"
+          android:orderInCategory="2"
+          app:showAsAction="ifRoom"/>
+
+      <item android:id="@+id/action_mark_all_channels_completed"
+            android:title="@string/action_mark_all_episodes_completed"
+            android:icon="@drawable/ic_action_mark_channel_completed"
+            android:orderInCategory="3"
+            app:showAsAction="ifRoom"/>
+
+      <group android:checkableBehavior="all"
+            app:showAsAction="never">
+
+            <item android:id="@+id/action_enable_notifications"
+                  android:title="@string/action_enable_notifications" />
+            <item android:id="@+id/action_enable_auto_download"
+                  android:title="@string/action_enable_auto_download" />
+      </group>
+</menu>

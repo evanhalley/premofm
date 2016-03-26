@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      tools:context=".PremoActivity">
+
+    <item android:id="@+id/action_filter"
+          android:title="@string/action_filter"
+          android:icon="@drawable/ic_action_add_filter"
+          android:orderInCategory="2"
+          app:showAsAction="ifRoom"/>
+</menu>

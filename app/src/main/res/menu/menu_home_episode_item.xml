@@ -1,0 +1,48 @@
+<!--
+  ~ Copyright (c) 2014.
+  ~ Main Method Incorporated.
+  -->
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_add_to_queue"
+          android:title="@string/action_add_to_queue"
+          android:orderInCategory="0"
+          android:visible="true"/>
+
+    <item android:id="@+id/action_delete"
+          android:title="@string/action_delete_download"
+          android:orderInCategory="1"
+          android:visible="false"/>
+
+    <item android:id="@+id/action_download"
+          android:title="@string/action_download"
+          android:orderInCategory="2"
+          android:visible="true"/>
+
+    <item android:id="@+id/action_cancel_download"
+          android:title="@string/action_cancel_download"
+          android:orderInCategory="3"
+          android:visible="false"/>
+
+    <item android:id="@+id/action_favorite"
+          android:title="@string/action_favorite"
+          android:orderInCategory="4"
+          android:visible="true"/>
+
+    <item android:id="@+id/action_mark_completed"
+          android:title="@string/action_mark_completed"
+          android:orderInCategory="5"
+          android:visible="true"/>
+
+    <item android:id="@+id/action_share"
+          android:title="@string/action_share_episode"
+          android:orderInCategory="6"
+          android:visible="true"/>
+
+    <item android:id="@+id/action_unpin"
+          android:title="@string/action_unpin"
+          android:orderInCategory="7"
+          android:visible="true"/>
+
+</menu>

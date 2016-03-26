@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:transitionName="channel_art"
+    android:gravity="center_vertical"
+    android:id="@+id/channel_art"
+    android:layout_height="@dimen/large_channel_art_size"
+    android:layout_width="@dimen/large_channel_art_size"
+    android:contentDescription="@string/channel_art"/>

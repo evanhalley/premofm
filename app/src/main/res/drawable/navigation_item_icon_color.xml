@@ -1,0 +1,10 @@
+<!--
+  ~ Copyright (c) 2014.
+  ~ Main Method Incorporated.
+  -->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true" android:color="?colorControlActivated"/>
+    <item android:state_checked="true" android:color="?colorControlActivated" />
+    <item android:color="@android:color/black"/>
+</selector>

@@ -1,0 +1,382 @@
+<!--
+  ~ Copyright (c) $year.
+  ~ Main Method Incorporated.
+  -->
+
+<resources>
+
+    <style name="Widget"/>
+
+    <style name="ActionBar" parent="@style/android:Theme.Material">
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="android:actionOverflowButtonStyle">@style/ActionBar.Overflow</item>
+    </style>
+
+    <style name="ActionBar.Overflow" parent="@style/android:Widget.Material.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_more</item>
+    </style>
+
+    <style name="ActionBar.ExpandedTitleText" parent="@style/android:TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/expanded_action_bar_text_size</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="ActionBar.TitleText" parent="@style/android:TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/action_bar_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="ActionBar.SubtitleText" parent="@style/android:TextAppearance.Material.Widget.ActionBar.Subtitle">
+
+        <item name="android:textSize">@dimen/action_bar_subtitle_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="ActionBar.Tabs">
+        <item name="android:background">@color/primary</item>
+        <item name="android:elevation">@dimen/toolbar_elevation</item>
+    </style>
+
+    <style name="MiniPlayer" parent="@style/android:Theme.Material.Light">
+    </style>
+
+    <style name="MiniPlayer.TitleText" parent="@style/android:TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/mini_player_title_text_color</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="MiniPlayer.SubtitleText" parent="@style/android:TextAppearance.Material.Widget.ActionBar.Subtitle">
+        <item name="android:textColor">@color/mini_player_title_text_color</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- General Styles -->
+    <style name="Layout">
+        <item name="android:background">@color/background_color</item>
+    </style>
+
+    <style name="BorderlessButton">
+        <item name="android:background">?android:selectableItemBackground</item>
+    </style>
+
+    <!-- The Premo (Main Activity) -->
+    <style name="Drawer">
+        <item name="android:background">@color/background_color</item>
+        <item name="android:layout_width">@dimen/drawer_width</item>
+        <item name="android:divider">@null</item>
+        <item name="android:dividerHeight">0dp</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+    </style>
+
+    <style name="PremoFragment">
+        <item name="android:paddingBottom">@dimen/mini_player_height</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:scrollbars">vertical</item>
+    </style>
+
+    <style name="PremoFragment.Grid">
+
+    </style>
+
+    <style name="PremoFragment.List">
+        <item name="android:scrollbars">none</item>
+        <item name="android:paddingLeft">@dimen/base_margin</item>
+        <item name="android:paddingRight">@dimen/base_margin</item>
+    </style>
+
+    <style name="PremoFragment.List.NoPadding">
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+    </style>
+
+    <style name="DescriptionStyle">
+        <item name="android:lineSpacingExtra">@dimen/description_line_spacing</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/primary_text_color</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">5</item>
+    </style>
+
+    <style name="DescriptionStyle.Completed">
+        <item name="android:textColor">@color/faded_text_color</item>
+    </style>
+
+    <style name="Playlist.Text">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Playlist.Text.Title">
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_text_color</item>
+    </style>
+
+    <style name="Playlist.Text.NowPlayingTitle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+
+    <!-- Episode Card -->
+    <style name="Card">
+
+    </style>
+
+    <style name="Card.Text">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Card.Text.Title">
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/primary_text_color</item>
+    </style>
+
+    <style name="Card.Text.Subtitle">
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textColor">@color/secondary_text_color</item>
+    </style>
+
+    <style name="Card.Text.Subtitle.New">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Card.Text.Title.New">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Card.Text.Title.Explore">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Card.Text.Title.Completed">
+        <item name="android:textColor">@color/faded_text_color</item>
+    </style>
+
+    <style name="Card.Text.Duration">
+        <item name="android:textColor">@color/secondary_text_color</item>
+    </style>
+
+    <style name="Card.Text.Duration.Completed">
+        <item name="android:textColor">@color/faded_text_color</item>
+    </style>
+
+    <style name="Card.Text.ChannelTitle">
+        <item name="android:textColor">@color/primary_text_color</item>
+    </style>
+
+    <style name="Card.Text.ChannelTitle.Completed">
+        <item name="android:textColor">@color/faded_text_color</item>
+    </style>
+
+    <style name="Card.Text.PublishedDate">
+        <item name="android:textColor">@color/secondary_text_color</item>
+    </style>
+
+    <style name="Card.Text.PublishedDate.Completed">
+        <item name="android:textColor">@color/faded_text_color</item>
+    </style>
+
+    <style name="Card.Icon">
+        <item name="android:background">?android:selectableItemBackgroundBorderless</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="Card.Icon.Completed">
+        <item name="android:tint">@color/faded_text_color</item>
+    </style>
+
+    <style name="Card.ChannelArt">
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
+    <style name="UserProfile">
+
+    </style>
+
+    <style name="UserProfile.Content">
+        <item name="android:padding">@dimen/base_margin</item>
+    </style>
+
+    <style name="UserProfile.Text">
+        <item name="android:textColor">@color/primary_text_color</item>
+        <item name="android:padding">2dp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="UserProfile.Text.Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="UserProfile.Text.Label">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="UserProfile.Text.Content">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- Card Styling -->
+    <style name="PremoCard">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_marginTop">@dimen/half_margin</item>
+        <item name="android:layout_marginBottom">@dimen/half_margin</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:elevation">@dimen/card_elevation</item>
+    </style>
+
+    <style name="PremoCard.WithMargin">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:layout_marginTop">@dimen/half_margin</item>
+        <item name="android:layout_marginBottom">@dimen/half_margin</item>
+        <item name="android:layout_marginLeft">@dimen/base_margin</item>
+        <item name="android:layout_marginRight">@dimen/base_margin</item>
+        <item name="android:elevation">@dimen/card_elevation</item>
+    </style>
+
+    <style name="NowPlayingTime">
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="NowPlayingButton">
+        <item name="android:tint">@android:color/white</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">?android:selectableItemBackground</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingBottom">9dp</item>
+        <item name="android:layout_height">@dimen/mini_player_height</item>
+    </style>
+
+    <!-- Item Views -->
+
+    <style name="ListItemPrimaryText">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="DialogTitle">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/large_text_size</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="DialogText">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textSize">@dimen/medium_text_size</item>
+    </style>
+
+    <style name="DialogText.Value">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Widget.Label">
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Widget.Label.EpisodeTitle">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+    </style>
+
+    <style name="Widget.Label.ChannelTitle">
+        <item name="android:textSize">@dimen/extra_small_text_size</item>
+        <item name="android:textColor">@color/secondary_text_color</item>
+    </style>
+
+    <style name="FilterDialog">
+        <item name="android:paddingLeft">@dimen/double_margin</item>
+        <item name="android:paddingRight">@dimen/double_margin</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="FilterDialog.Spinner">
+        <item name="android:layout_marginRight">@dimen/double_margin</item>
+    </style>
+
+    <style name="FilterDialog.Option">
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:paddingTop">@dimen/base_margin</item>
+        <item name="android:paddingBottom">@dimen/base_margin</item>
+    </style>
+
+    <style name="FilterDialog.Title">
+        <item name="android:textSize">@dimen/medium_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="FilterDialog.Title.Value">
+        <item name="android:layout_marginTop">@dimen/base_margin</item>
+        <item name="android:textSize">@dimen/small_text_size</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <!-- playlist values -->
+    <style name="Playlist">
+    </style>
+
+    <style name="Playlist.Label">
+        <item name="android:textSize">12sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="EmptyList">
+        <item name="android:padding">10dp</item>
+    </style>
+
+    <style name="EmptyList.Text">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="EmptyList.Text.Title">
+        <item name="android:textSize">@dimen/extra_large_text_size</item>
+    </style>
+
+    <style name="EmptyList.Text.Message">
+        <item name="android:textSize">@dimen/large_text_size</item>
+    </style>
+
+    <style name="PremoShowcaseTheme" parent="ShowcaseView">
+        <item name="sv_backgroundColor">#EE33b5e5</item>
+        <item name="sv_buttonBackgroundColor">#000000</item>
+        <item name="sv_showcaseColor">#33b5e5</item>
+        <item name="sv_buttonText">Got It</item>
+        <item name="sv_tintButtonColor">true</item>
+        <item name="sv_titleTextAppearance">@style/PremoShowcaseTitle</item>
+        <item name="sv_detailTextAppearance">@style/PremoShowcaseDetail</item>
+    </style>
+
+    <style name="PremoShowcaseTitle" parent="TextAppearance.ShowcaseView.Title.Light">
+        <item name="android:textColor">#E8F7FC</item>
+    </style>
+
+    <style name="PremoShowcaseDetail" parent="TextAppearance.ShowcaseView.Detail.Light">
+        <item name="android:textColor">#E8F7FC</item>
+    </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="closeIcon">@null</item>
+        <item name="searchIcon">@null</item>
+        <item name="android:maxWidth">400dp</item>
+        <item name="queryHint">@string/hint_search</item>
+        <item name="iconifiedByDefault">false</item>
+    </style>
+
+
+</resources>

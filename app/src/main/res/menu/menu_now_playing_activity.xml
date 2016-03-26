@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_sleep_timer"
+        android:orderInCategory="2"
+        app:showAsAction="always"
+        android:title=""
+        android:visible="false"/>
+
+    <item
+        android:id="@+id/action_playback_speed"
+        android:orderInCategory="3"
+        app:showAsAction="always"
+        android:title="1X"
+        android:visible="true"/>
+
+    <item
+        android:id="@+id/action_sleep"
+        android:icon="@drawable/ic_action_sleep"
+        android:orderInCategory="4"
+        app:showAsAction="always"
+        android:title="@string/action_set_sleep_timer"
+        android:visible="true"/>
+
+    <item
+        android:id="@+id/action_share_episode"
+        android:icon="@drawable/ic_action_share"
+        android:orderInCategory="5"
+        app:showAsAction="ifRoom"
+        android:title="@string/action_share_episode"
+        android:visible="true"/>
+
+    <item
+        android:id="@+id/action_play_queue"
+        android:icon="@drawable/ic_action_play_queue"
+        android:orderInCategory="6"
+        app:showAsAction="ifRoom"
+        android:title="@string/action_show_queue"
+        android:visible="true"/>
+
+</menu>

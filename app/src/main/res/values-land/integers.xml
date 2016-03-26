@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2014.
+  ~ Main Method Incorporated.
+  -->
+
+<resources>
+
+    <integer name="collection_fragment_columns">3</integer>
+
+</resources>

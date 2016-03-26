@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/triple_margin"
+    android:paddingLeft="@dimen/triple_margin"
+    android:paddingRight="@dimen/triple_margin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        style="@style/DialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/new_collection"
+        android:id="@+id/title"
+        android:layout_gravity="center_horizontal"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/name_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="@string/collection_name"
+            android:ems="10"
+            android:id="@+id/name"
+            android:singleLine="true"
+            android:layout_gravity="center_horizontal"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/description_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/description"
+            android:hint="@string/collection_description"
+            android:maxLines="2"
+            android:layout_gravity="center_horizontal"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/collection_type"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/DialogText"
+            android:id="@+id/collection_type_label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/collection_type"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/channels"
+            android:id="@+id/channels_selection"
+            android:layout_gravity="center_horizontal"
+            android:checked="true"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/episodes"
+            android:id="@+id/episodes_selection"
+            android:layout_gravity="center_horizontal"
+            android:checked="false"/>
+
+    </LinearLayout>
+
+    <Switch
+        android:id="@+id/create_filter"
+        android:layout_marginTop="@dimen/base_margin"
+        android:text="@string/collection_create_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:id="@+id/publish_collection"
+        android:enabled="false"
+        android:layout_marginTop="@dimen/base_margin"
+        android:text="@string/publish_collection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>

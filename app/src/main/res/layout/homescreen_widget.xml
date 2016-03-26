@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/outer_widget_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/widget"
+        android:orientation="horizontal"
+        android:background="@drawable/inner_widget_background"
+        android:layout_margin="@dimen/half_margin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:src="@drawable/default_channel_art"
+            android:background="@drawable/widget_art_background"
+            android:id="@+id/channel_art"
+            android:minHeight="@dimen/small_channel_art_size"
+            android:minWidth="@dimen/small_channel_art_size"
+            android:layout_margin="@dimen/half_margin"
+            android:scaleType="centerInside"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/channel_art"/>
+
+        <LinearLayout
+            android:id="@+id/metadata"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="@style/Widget.Label.EpisodeTitle"
+                android:id="@+id/episode_title"
+                tools:text="Loris Ipsum Eter 123"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                style="@style/Widget.Label.ChannelTitle"
+                tools:text="Loris Ipsum Eter 123"
+                android:id="@+id/channel_title"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/controls"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/half_margin"
+            android:layout_marginBottom="@dimen/half_margin"
+            android:layout_marginRight="@dimen/half_margin"
+            android:layout_weight="3"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/widget_control_size">
+
+            <ImageButton
+                android:id="@+id/seek_backward"
+                android:src="@drawable/ic_action_rewind"
+                android:background="?android:selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/seek_backward"/>
+
+            <ImageButton
+                android:id="@+id/play"
+                android:src="@drawable/ic_action_play"
+                android:background="?android:selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/action_play"/>
+
+            <ImageButton
+                android:id="@+id/seek_forward"
+                android:src="@drawable/ic_action_forward"
+                android:background="?android:selectableItemBackground"
+                android:scaleType="fitCenter"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/seek_forward"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

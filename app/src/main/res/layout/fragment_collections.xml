@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:background="@color/card_list_background"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        style="@style/PremoFragment.List"
+        android:id="@+id/playlist"
+        android:scrollbars="vertical"
+        android:layoutAnimation="@anim/layout_animation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/item_collection"/>
+
+    <include
+        layout="@layout/empty_list"
+        android:visibility="invisible"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</FrameLayout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2014.
+  ~ Main Method Incorporated.
+  -->
+
+<resources>
+
+    <style name="AppTheme" parent="AppTheme.Base"/>
+
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:homeAsUpIndicator">@drawable/ic_action_back</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <item name="android:textColorPrimary">@color/primary_text_color</item>
+        <item name="android:textColorSecondary">@color/secondary_text_color</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorControlNormal">@color/primary_dark</item>
+        <item name="android:colorControlActivated">@color/primary_dark</item>
+        <item name="android:colorControlHighlight">@color/nav_drawer_selected_bg_color</item>
+        <item name="colorControlNormal">@color/primary_dark</item>
+        <item name="colorControlActivated">@color/primary_dark</item>
+        <item name="colorControlHighlight">@color/nav_drawer_selected_bg_color</item>
+
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowSharedElementEnterTransition">@android:transition/move</item>
+        <item name="android:windowSharedElementExitTransition">@android:transition/move</item>
+        <!-- Animations -->
+        <!-- specify enter and exit transitions -->
+        <item name="android:windowEnterTransition">@android:transition/fade</item>
+
+        <item name="searchViewStyle">@style/SearchViewStyle</item>
+    </style>
+
+    <style name="AppTheme.Onboarding" parent="AppTheme.Base">
+        <item name="android:statusBarColor">@color/primary_dark</item>
+    </style>
+
+    <style name="AppTheme.Secondary" parent="AppTheme.Base">
+        <item name="android:statusBarColor">@color/primary_dark</item>
+    </style>
+
+    <style name="AppTheme.ChannelProfile" parent="AppTheme.Base">
+    </style>
+
+    <style name="AppTheme.CastIcon" parent="Theme.AppCompat">
+
+    </style>
+
+    <style name="AppTheme.Dialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColorPrimary">@color/primary_text_color</item>
+        <item name="android:textColorSecondary">@color/secondary_text_color</item>
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorAccent">@color/accent</item>
+        <item name="android:colorControlNormal">@color/primary_dark</item>
+        <item name="android:colorControlActivated">@color/primary</item>
+        <item name="android:colorControlHighlight">@color/primary</item>
+        <item name="colorControlNormal">@color/primary_dark</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/primary</item>
+    </style>
+</resources>

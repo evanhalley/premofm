@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- about values -->
+    <string name="pref_title_help">Help</string>
+    <string name="pref_title_support">Support</string>
+    <string name="pref_title_about">About</string>
+
+    <string name="pref_key_built_by" translatable="false">built_by</string>
+    <string name="pref_title_built_by" translatable="false">Main Method LLC</string>
+    <string name="pref_summary_built_by">Meticulously handcrafted in Raleigh-Durham, NC</string>
+
+    <string name="pref_key_premo_version" translatable="false">version</string>
+    <string name="pref_title_premo_version">Version</string>
+    <string name="pref_summary_premo_version" translatable="false">v0.9.8</string>
+
+    <string name="pref_key_rate" translatable="false">rate</string>
+    <string name="pref_title_rate">Rate PremoFM in the Play Store</string>
+
+    <string name="pref_key_donate" translatable="false">donate</string>
+    <string name="pref_title_donate">Support PremoFM</string>
+    <string name="pref_summary_donate">Support the development of PremoFM</string>
+
+    <string name="pref_key_view_faq" translatable="false">view_faq</string>
+    <string name="pref_title_view_faq">View frequently asked questions</string>
+
+    <string name="pref_key_twitter" translatable="false">twitter</string>
+    <string name="pref_title_twitter">Follow @PremoFM on Twitter</string>
+    <string name="pref_summary_twitter">Give feedback and stay up to date with PremoFM</string>
+
+    <string name="pref_key_licenses" translatable="false">licenses</string>
+    <string name="pref_title_licenses">Open source licenses</string>
+    <string name="pref_summary_licenses">License details for open source software</string>
+
+    <string name="pref_key_privacy" translatable="false">privacy</string>
+    <string name="pref_title_privacy">Privacy policy</string>
+
+    <string name="pref_key_tos" translatable="false">tos</string>
+    <string name="pref_title_tos">Terms of service</string>
+
+    <string name="pref_key_translations" translatable="false">translations</string>
+    <string name="pref_title_translations">Translations</string>
+
+    <!-- top level settings screen -->
+    <string name="pref_key_playback" translatable="false">playback</string>
+    <string name="pref_key_notifications" translatable="false">notifications</string>
+    <string name="pref_key_downloads" translatable="false">downloads</string>
+    <string name="pref_key_storage" translatable="false">storage</string>
+    <string name="pref_key_import_export" translatable="false">import_export</string>
+
+    <string name="pref_title_playback">Playback</string>
+    <string name="pref_title_notifications">Notifications</string>
+    <string name="pref_title_downloads">Downloads</string>
+    <string name="pref_title_storage">Storage</string>
+    <string name="pref_title_import_export">Import / Export</string>
+
+    <string name="pref_summary_playback">Playback</string>
+    <string name="pref_summary_notifications">Notifications</string>
+    <string name="pref_summary_downloads">Downloads</string>
+    <string name="pref_summary_storage">Storage</string>
+    <string name="pref_summary_import_export">Import / Export</string>
+
+    <string name="pref_key_enable_notifications" translatable="false">notifications</string>
+    <string name="pref_title_enable_notifications">Notifications</string>
+    <string name="pref_summary_enable_notifications_checked">Show notification when a new episode is published</string>
+
+    <string name="pref_key_notification_sound" translatable="false">sound</string>
+    <string name="pref_title_notification_sound">Sound</string>
+
+    <string name="pref_key_notification_vibrate" translatable="false">vibrate</string>
+    <string name="pref_title_notification_vibrate">Vibrate</string>
+
+    <string name="pref_key_notification_light" translatable="false">light</string>
+    <string name="pref_title_notification_light">Pulse notification light</string>
+
+    <string name="pref_key_notification_channels" translatable="false">notification_channels</string>
+    <string name="pref_title_notification_channels">Podcasts notifications</string>
+    <string name="pref_summary_notification_channel">%s podcast will show new episode notifications</string>
+    <string name="pref_summary_notification_channels">%s podcasts will show new episode notifications</string>
+
+    <string name="pref_key_enable_auto_download" translatable="false">enable_auto_download</string>
+    <string name="pref_title_enable_auto_download">Automatic download</string>
+    <string name="pref_summary_enable_auto_download_checked">Allow episodes to download automatically in the background</string>
+
+    <string name="pref_key_auto_download_channels" translatable="false">auto_download_channels</string>
+    <string name="pref_title_auto_download_channels">Podcasts to automatically download</string>
+    <string name="pref_summary_auto_download_channel">%s podcast will have episodes downloaded automatically</string>
+    <string name="pref_summary_auto_download_channels">%s podcasts will have episodes downloaded automatically</string>
+
+    <string name="pref_key_auto_download_charging_only" translatable="false">auto_download_while_charging</string>
+    <string name="pref_title_auto_download_charging_only">Only while charging</string>
+
+    <string name="pref_key_auto_download_only_on_wifi" translatable="false">auto_download_only_on_wifi</string>
+    <string name="pref_title_auto_download_only_on_wifi">Only while connected to WiFi</string>
+
+    <string name="pref_key_skip_forward" translatable="false">skip_forward</string>
+    <string name="pref_title_skip_forward">Fast forward duration</string>
+    <string name="pref_summary_skip_forward">Fast forward podcasts %s seconds at a time</string>
+
+    <string name="pref_key_skip_backward" translatable="false">skip_backward</string>
+    <string name="pref_title_skip_backward">Rewind duration</string>
+    <string name="pref_summary_skip_backward">Rewind podcasts %s seconds at a time</string>
+
+    <string name="pref_key_continuous_playback" translatable="false">continuous_playback</string>
+    <string name="pref_title_continuous_playback">Play next episode when current has completed</string>
+    <string name="pref_summary_continuous_playback_checked">Plays the next episode when playback starts from a filter</string>
+
+    <string-array name="skip_entries">
+        <item>5 seconds</item>
+        <item>10 seconds</item>
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>60 seconds</item>
+    </string-array>
+
+    <string-array name="skip_values">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+    <string name="pref_key_episode_cache_limit" translatable="false">cached_episode_limit</string>
+    <string name="pref_title_episode_cache_limit">Number of episodes, per podcast, to keep</string>
+    <string name="pref_summary_episode_cache_limit">Latest episode will be kept on your device</string>
+    <string name="pref_summary_episodes_cache_limit">Latest %s episodes will be kept on your device</string>
+
+    <string name="pref_key_delete_completed_episodes" translatable="false">delete_completed_episodes</string>
+    <string name="pref_title_delete_completed_episodes">Delete completed episodes</string>
+    <string name="pref_summary_delete_completed_episodes_checked">Allow downloaded episodes to be automatically deleted when finished</string>
+
+    <string-array name="cached_episode_limit_entries">
+        <item>Latest episode</item>
+        <item>Latest 2 episodes</item>
+        <item>Latest 3 episodes</item>
+        <item>Latest 5 episodes</item>
+        <item>Latest 7 episodes</item>
+        <item>Latest 10 episodes</item>
+    </string-array>
+
+    <string-array name="cached_episode_limit_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+    </string-array>
+
+    <string name="pref_key_delete_all_episodes" translatable="false">delete_all_completed_episodes</string>
+    <string name="pref_title_delete_all_episodes">Delete all downloaded episodes</string>
+
+    <string name="pref_key_pause_playback_during_notification" translatable="false">pause_playback_during_notification</string>
+    <string name="pref_title_pause_playback_during_notification">Pause playback during notification sound</string>
+    <string name="pref_summary_pause_playback_during_notification_checked">Allow playback to pause instead of quieted when a notification is received</string>
+
+    <string name="pref_key_import_opml" translatable="false">import_opml</string>
+    <string name="pref_title_import_opml">Import from OPML</string>
+    <string name="prf_summary_import_opml">Import podcasts subscriptions from an OPML file</string>
+
+    <string name="pref_key_export_opml" translatable="false">export_opml</string>
+    <string name="pref_title_export_opml">Export to OPML</string>
+    <string name="prf_summary_export_opml">Export podcasts subscriptions to an OPML file</string>
+</resources>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background"
+          android:gravity="center_vertical|fill_horizontal">
+        <shape android:shape="rectangle"
+               android:tint="?attr/colorControlNormal">
+            <size android:height="@dimen/seek_bar_height" />
+            <solid android:color="@color/disabled_seek_bar_color" />
+            <corners android:radius="@dimen/seek_bar_corner_radius" />
+        </shape>
+    </item>
+    <item android:id="@android:id/secondaryProgress"
+          android:gravity="center_vertical|fill_horizontal">
+        <scale android:scaleWidth="100%">
+            <selector>
+                <item android:state_enabled="false"
+                      android:drawable="@android:color/transparent" />
+                <item>
+                    <shape android:shape="rectangle"
+                           android:tint="?attr/colorControlActivated">
+                        <size android:height="@dimen/seek_bar_height" />
+                        <solid android:color="@color/disabled_seek_bar_color" />
+                        <corners android:radius="@dimen/seek_bar_corner_radius" />
+                    </shape>
+                </item>
+            </selector>
+        </scale>
+    </item>
+    <item android:id="@android:id/progress"
+          android:gravity="center_vertical|fill_horizontal">
+        <scale android:scaleWidth="100%">
+            <selector>
+                <item android:state_enabled="false"
+                      android:drawable="@android:color/transparent" />
+                <item>
+                    <shape android:shape="rectangle"
+                           android:tint="?attr/colorControlActivated">
+                        <size android:height="@dimen/seek_bar_height" />
+                        <solid android:color="@color/seek_bar_color" />
+                        <corners android:radius="@dimen/seek_bar_corner_radius" />
+                    </shape>
+                </item>
+            </selector>
+        </scale>
+    </item>
+</layer-list>

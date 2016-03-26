@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_playlist_episode"
+    android:background="@android:color/white"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/channel_art"
+        tools:src="@drawable/default_channel_art"
+        android:layout_margin="@dimen/half_margin"
+        android:layout_height="@dimen/small_channel_art_size"
+        android:layout_width="@dimen/small_channel_art_size"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"/>
+
+    <LinearLayout
+        android:id="@+id/episode_data"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_alignTop="@id/channel_art"
+        android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/channel_art"
+        android:layout_height="wrap_content">
+
+        <TextView
+            style="@style/Card.Text.Title.New"
+            android:id="@+id/episode_title"
+            android:textSize="@dimen/medium_text_size"
+            android:maxLines="2"
+            android:ellipsize="end"
+            tools:text="Daring Fireball"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            style="@style/Card.Text.Subtitle.New"
+            android:id="@+id/channel_title"
+            tools:text="Jerry MacGuire"
+            android:maxLines="1"
+            android:textSize="@dimen/small_text_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</RelativeLayout>
