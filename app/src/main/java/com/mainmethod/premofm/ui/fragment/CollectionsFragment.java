@@ -154,7 +154,6 @@ public class CollectionsFragment extends BaseFragment implements LoaderManager.L
             extras.putString(EditCollectionActivity.PARAM_DESCRIPTION, description);
             extras.putInt(EditCollectionActivity.PARAM_COLLECTION_TYPE, collectionType);
             extras.putBoolean(EditCollectionActivity.PARAM_CREATE_FILTER, createFilter.isChecked());
-            extras.putBoolean(EditCollectionActivity.PARAM_IS_PUBLIC, publish.isChecked());
             getBaseActivity().startPremoActivity(EditCollectionActivity.class, -1, extras);
             dialog.dismiss();
         });

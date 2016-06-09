@@ -14,7 +14,7 @@ import org.parceler.Parcel;
 public class Channel implements Collectable {
 
     private int mId = -1;
-    private String mServerId;
+    private String mGeneratedId;
     private String mTitle;
     private String mAuthor;
     private String mDescription;
@@ -36,12 +36,12 @@ public class Channel implements Collectable {
         mId = id;
     }
 
-    public String getServerId() {
-        return mServerId;
+    public String getGeneratedId() {
+        return mGeneratedId;
     }
 
-    public void setServerId(String serverId) {
-        mServerId = serverId;
+    public void setGeneratedId(String generatedId) {
+        mGeneratedId = generatedId;
     }
 
     public String getTitle() {
@@ -117,7 +117,7 @@ public class Channel implements Collectable {
     public String toString() {
         return "Channel{" +
                 "mId=" + mId +
-                ", mServerId='" + mServerId + '\'' +
+                ", mGeneratedId='" + mGeneratedId + '\'' +
                 ", mTitle='" + mTitle + '\'' +
                 ", mAuthor='" + mAuthor + '\'' +
                 ", mDescription='" + mDescription + '\'' +
@@ -159,7 +159,7 @@ public class Channel implements Collectable {
         if (!mDescription.equals(channel.mDescription)) return false;
         if (!mFeedUrl.equals(channel.mFeedUrl)) return false;
         if (!mNetwork.equals(channel.mNetwork)) return false;
-        if (!mServerId.equals(channel.mServerId)) return false;
+        if (!mGeneratedId.equals(channel.mGeneratedId)) return false;
         if (!mSiteUrl.equals(channel.mSiteUrl)) return false;
         if (!mTags.equals(channel.mTags)) return false;
         if (!mTitle.equals(channel.mTitle)) return false;

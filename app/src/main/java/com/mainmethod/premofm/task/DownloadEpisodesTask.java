@@ -194,7 +194,7 @@ public class DownloadEpisodesTask extends AsyncTask<Void, Integer, Boolean> {
         // loop over each channel
         for (int i = 0; i < channels.size(); i++) {
 
-            if (serverIdSet.contains(channels.get(i).getServerId())) {
+            if (serverIdSet.contains(channels.get(i).getGeneratedId())) {
                 // get all channel's episodes
                 List<Episode> episodes =  EpisodeModel.getEpisodesByChannel(mContext,
                         channels.get(i));
@@ -320,7 +320,7 @@ public class DownloadEpisodesTask extends AsyncTask<Void, Integer, Boolean> {
                 Set<String> episodeServerIds = new TreeSet<>();
 
                 for (int i = 0; i < downloadedEpisodes.size(); i++) {
-                    episodeServerIds.add(downloadedEpisodes.get(i).getServerId());
+                    episodeServerIds.add(downloadedEpisodes.get(i).getGeneratedId());
                 }
                 // add them to the preferences
                 AppPrefHelper.getInstance(mContext).addToStringSet(
@@ -384,7 +384,7 @@ public class DownloadEpisodesTask extends AsyncTask<Void, Integer, Boolean> {
 
     private String buildFilename(Episode episode) {
         // build the filename
-        String filename = episode.getTitle().hashCode() + "-" + episode.getServerId();
+        String filename = episode.getTitle().hashCode() + "-" + episode.getGeneratedId();
         String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(
                 episode.getMimeType());
 

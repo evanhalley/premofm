@@ -291,7 +291,7 @@ public class SettingsFragment extends PreferenceFragment implements
             for (int i = 0; i < mSelectedItems.length; i++) {
 
                 if (mSelectedItems[i]) {
-                    serverIdList.add(mChannels.get(i).getServerId());
+                    serverIdList.add(mChannels.get(i).getGeneratedId());
                 }
             }
         }
@@ -299,7 +299,7 @@ public class SettingsFragment extends PreferenceFragment implements
         else if (which == Dialog.BUTTON_NEUTRAL) {
 
             for (int i = 0; i < mChannels.size(); i++) {
-                serverIdList.add(mChannels.get(i).getServerId());
+                serverIdList.add(mChannels.get(i).getGeneratedId());
             }
         }
         String serverIdStr = TextUtils.join(",", serverIdList);
@@ -317,7 +317,7 @@ public class SettingsFragment extends PreferenceFragment implements
             for (int i = 0; i < mSelectedItems.length; i++) {
 
                 if (mSelectedItems[i]) {
-                    serverIdList.add(mChannels.get(i).getServerId());
+                    serverIdList.add(mChannels.get(i).getGeneratedId());
                 }
             }
         }
@@ -325,7 +325,7 @@ public class SettingsFragment extends PreferenceFragment implements
         else if (which == Dialog.BUTTON_NEUTRAL) {
 
             for (int i = 0; i < mChannels.size(); i++) {
-                serverIdList.add(mChannels.get(i).getServerId());
+                serverIdList.add(mChannels.get(i).getGeneratedId());
             }
         }
         String serverIdStr = TextUtils.join(",", serverIdList);
@@ -348,7 +348,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
         for (int i = 0; i < channelTitles.length; i++) {
             channelTitles[i] = mChannels.get(i).getTitle();
-            mSelectedItems[i] = serverIds.contains(mChannels.get(i).getServerId());
+            mSelectedItems[i] = serverIds.contains(mChannels.get(i).getGeneratedId());
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
@@ -374,7 +374,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
         for (int i = 0; i < channelTitles.length; i++) {
             channelTitles[i] = mChannels.get(i).getTitle();
-            mSelectedItems[i] = serverIds.contains(mChannels.get(i).getServerId());
+            mSelectedItems[i] = serverIds.contains(mChannels.get(i).getGeneratedId());
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())

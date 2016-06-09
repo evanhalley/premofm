@@ -13,6 +13,8 @@ import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
 import com.mainmethod.premofm.config.ConfigurationManager;
 
+import timber.log.Timber;
+
 /**
  * Created by evan on 12/1/14.
  */
@@ -51,6 +53,10 @@ public class PremoApp extends Application {
         super.onCreate();
         // configuration manager
         ConfigurationManager.getInstance(this);
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        }
 
         try {
             mVersionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;

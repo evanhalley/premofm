@@ -56,7 +56,7 @@ public class ChannelModel {
         }
         Channel channel = new Channel();
         channel.setId(cursor.getInt(cursor.getColumnIndex(PremoContract.ChannelEntry._ID)));
-        channel.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.GENERATED_ID)));
+        channel.setGeneratedId(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.GENERATED_ID)));
         channel.setTitle(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.TITLE)));
         channel.setAuthor(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.AUTHOR)));
         channel.setDescription(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.DESCRIPTION)));
@@ -74,7 +74,7 @@ public class ChannelModel {
      */
     public static ContentValues fromChannel(Channel channel) {
         ContentValues record = new ContentValues();
-        record.put(PremoContract.ChannelEntry.GENERATED_ID, channel.getServerId());
+        record.put(PremoContract.ChannelEntry.GENERATED_ID, channel.getGeneratedId());
         record.put(PremoContract.ChannelEntry.TITLE, channel.getTitle());
         record.put(PremoContract.ChannelEntry.DESCRIPTION, channel.getDescription());
         record.put(PremoContract.ChannelEntry.AUTHOR, channel.getAuthor());
@@ -121,7 +121,7 @@ public class ChannelModel {
         List<Channel> channelList = getChannels(context);
 
         for (int i = 0; i < channelList.size(); i++) {
-            channelMap.put(channelList.get(i).getServerId(), channelList.get(i));
+            channelMap.put(channelList.get(i).getGeneratedId(), channelList.get(i));
         }
 
         return channelMap;
@@ -203,17 +203,17 @@ public class ChannelModel {
         Map<String, Channel> serverChannelMap = new ArrayMap<>();
 
         for (Channel channel : localChannels) {
-            localChannelMap.put(channel.getServerId(), channel);
+            localChannelMap.put(channel.getGeneratedId(), channel);
         }
 
         for (Channel channel : serverChannels) {
-            serverChannelMap.put(channel.getServerId(), channel);
+            serverChannelMap.put(channel.getGeneratedId(), channel);
         }
 
         // what channels are new?
         for (Channel channel : serverChannelMap.values()) {
 
-            if (!localChannelMap.containsKey(channel.getServerId())) {
+            if (!localChannelMap.containsKey(channel.getGeneratedId())) {
                 channelsToAdd.add(channel);
             }
         }
@@ -221,14 +221,14 @@ public class ChannelModel {
         // what channels should we delete
         for (Channel channel : localChannelMap.values()) {
 
-            if (!serverChannelMap.containsKey(channel.getServerId())) {
+            if (!serverChannelMap.containsKey(channel.getGeneratedId())) {
                 channelsToDelete.add(channel);
             }
         }
 
         // what channels should we update
         for (Channel channel : serverChannelMap.values()) {
-            Channel localChannel = localChannelMap.get(channel.getServerId());
+            Channel localChannel = localChannelMap.get(channel.getGeneratedId());
 
             if (localChannel != null) {
 

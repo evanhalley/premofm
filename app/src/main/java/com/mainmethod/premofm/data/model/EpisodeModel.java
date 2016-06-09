@@ -154,7 +154,7 @@ public class EpisodeModel {
                 PremoContract.EpisodeEntry.CONTENT_URI,
                 null,
                 CHANNEL_EPISODE_QUERY,
-                new String[]{ channel.getServerId() },
+                new String[]{ channel.getGeneratedId() },
                 DEFAULT_EPISODE_SORT);
     }
 
@@ -312,8 +312,7 @@ public class EpisodeModel {
      */
     public static ContentValues fromEpisode(Episode episode) {
         ContentValues record = new ContentValues();
-        record.put(PremoContract.EpisodeEntry.GENERATED_ID, episode.getServerId());
-        record.put(PremoContract.EpisodeEntry.GUID, episode.getGuid());
+        record.put(PremoContract.EpisodeEntry.GENERATED_ID, episode.getGeneratedId());
         record.put(PremoContract.EpisodeEntry.TITLE, episode.getTitle());
         record.put(PremoContract.EpisodeEntry.DESCRIPTION, episode.getDescription());
         record.put(PremoContract.EpisodeEntry.DESCRIPTION_HTML, episode.getDescriptionHtml());
@@ -332,7 +331,7 @@ public class EpisodeModel {
         record.put(PremoContract.EpisodeEntry.EPISODE_STATUS_ID, episode.getEpisodeStatus());
         record.put(PremoContract.EpisodeEntry.DOWNLOAD_STATUS_ID, episode.getDownloadStatus());
         record.put(PremoContract.EpisodeEntry.MANUAL_DOWNLOAD, episode.isManualDownload() ? 1 : 0);
-        record.put(PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID, episode.getChannelServerId());
+        record.put(PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID, episode.getChannelGeneratedId());
         record.put(PremoContract.EpisodeEntry.CHANNEL_TITLE, episode.getChannelTitle());
         record.put(PremoContract.EpisodeEntry.CHANNEL_AUTHOR, episode.getChannelAuthor());
         record.put(PremoContract.EpisodeEntry.CHANNEL_ARTWORK_URL, episode.getChannelArtworkUrl());
@@ -353,10 +352,9 @@ public class EpisodeModel {
         }
         Episode episode = new Episode();
         episode.setId(cursor.getInt(cursor.getColumnIndex(PremoContract.EpisodeEntry._ID)));
-        episode.setChannelServerId(cursor.getString(cursor.getColumnIndex(
+        episode.setChannelGeneratedId(cursor.getString(cursor.getColumnIndex(
                 PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID)));
-        episode.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.GENERATED_ID)));
-        episode.setGuid(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.GUID)));
+        episode.setGeneratedId(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.GENERATED_ID)));
         episode.setTitle(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.TITLE)));
         episode.setDescription(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.DESCRIPTION)), false);
         episode.setDescriptionHtml(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.DESCRIPTION_HTML)));
@@ -376,8 +374,6 @@ public class EpisodeModel {
                 cursor.getColumnIndex(PremoContract.EpisodeEntry.MANUAL_DOWNLOAD)) == 1);
         episode.setFavorite(cursor.getInt(
                 cursor.getColumnIndex(PremoContract.EpisodeEntry.FAVORITE)) == 1);
-        episode.setUpdatedAt(cursor.getLong(
-                cursor.getColumnIndex(PremoContract.EpisodeEntry.UPDATED_AT)));
         episode.setChannelTitle(cursor.getString(
                 cursor.getColumnIndex(PremoContract.EpisodeEntry.CHANNEL_TITLE)));
         episode.setChannelAuthor(cursor.getString
@@ -409,9 +405,9 @@ public class EpisodeModel {
             throw new IllegalArgumentException("Cannot process null or closed cursor");
         }
         Episode episode = new Episode();
-        episode.setChannelServerId(cursor.getString(cursor.getColumnIndex(
+        episode.setChannelGeneratedId(cursor.getString(cursor.getColumnIndex(
                 PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID)));
-        episode.setServerId(cursor.getString(cursor.getColumnIndex(
+        episode.setGeneratedId(cursor.getString(cursor.getColumnIndex(
                 PremoContract.EpisodeEntry.GENERATED_ID)));
         episode.setProgress(cursor.getLong(cursor.getColumnIndex(
                 PremoContract.EpisodeEntry.PROGRESS)));
@@ -428,7 +424,7 @@ public class EpisodeModel {
 
     public static List<Episode> getEpisodesByChannel(Context context, Channel channel) {
         return getEpisodes(context, PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ?",
-                new String[] { channel.getServerId() },
+                new String[] { channel.getGeneratedId() },
                 PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS + " DESC");
     }
 
@@ -485,7 +481,7 @@ public class EpisodeModel {
                 for (int j = 0; j < collectionEpisodes.size(); j++) {
 
                     if (collection.getCollectedServerIds().get(i).contentEquals(
-                            collectionEpisodes.get(j).getServerId())) {
+                            collectionEpisodes.get(j).getGeneratedId())) {
                         episodes.add(collectionEpisodes.get(j));
                         break;
                     }
@@ -649,7 +645,7 @@ public class EpisodeModel {
 
             for (int i = 0; i < episodeList.size(); i++) {
 
-                if (!doesEpisodeExist(context, episodeList.get(i).getServerId())) {
+                if (!doesEpisodeExist(context, episodeList.get(i).getGeneratedId())) {
 
                     if (channel != null) {
                         episodeList.get(i).setChannelTitle(channel.getTitle());
@@ -732,14 +728,14 @@ public class EpisodeModel {
         // add existing episode list to map for easy lookup
         for (int i = 0; i < existingEpisodeList.size(); i++) {
             Episode episode = existingEpisodeList.get(i);
-            existingEpisodeMap.put(episode.getServerId(), episode);
+            existingEpisodeMap.put(episode.getGeneratedId(), episode);
         }
 
         // add episode to new list if it's not in the existing episodes list
         for (int i = 0; i < newEpisodeList.size(); i++) {
             Episode episode = newEpisodeList.get(i);
 
-            if (!existingEpisodeMap.containsKey(episode.getServerId())) {
+            if (!existingEpisodeMap.containsKey(episode.getGeneratedId())) {
                 newEpisodes.add(episode);
             }
         }
@@ -788,7 +784,7 @@ public class EpisodeModel {
 
             for (Episode episode : episodeList) {
                 // Join some channel metadata to the episode for convenience sake (and because I HATE joins)
-                Channel channel = channelMap.get(episode.getChannelServerId());
+                Channel channel = channelMap.get(episode.getChannelGeneratedId());
 
                 if (channel == null) {
                     continue;
@@ -862,7 +858,7 @@ public class EpisodeModel {
         // what episodes are new?
         for (Episode episode : serverEpisodes.values()) {
 
-            if (!localEpisodes.containsKey(episode.getServerId())) {
+            if (!localEpisodes.containsKey(episode.getGeneratedId())) {
                 episodeList.add(episode);
             }
         }
@@ -875,7 +871,7 @@ public class EpisodeModel {
 
         // what channels should we update
         for (Episode episode : serverEpisodes.values()) {
-            Episode localEpisode = localEpisodes.get(episode.getServerId());
+            Episode localEpisode = localEpisodes.get(episode.getGeneratedId());
 
             // skip updating episodes that are currently playing
             if (localEpisode != null && localEpisode.getEpisodeStatus()
@@ -1054,7 +1050,7 @@ public class EpisodeModel {
 
         for (int i = 0; i < episodeList.size(); i++) {
             Episode episode = episodeList.get(i);
-            collectableMap.put(episode.getServerId(), episode) ;
+            collectableMap.put(episode.getGeneratedId(), episode) ;
         }
         return collectableMap;
     }

@@ -40,6 +40,7 @@ import java.lang.ref.WeakReference;
 /**
  * Handles functionality for controlling audio from an activity
  * Created by evan on 12/28/14.
+ * TODO fix CAST IMPL
  */
 public abstract class PlayableActivity extends BaseActivity {
 
@@ -66,9 +67,9 @@ public abstract class PlayableActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMediaRouter = MediaRouter.getInstance(this);
-        mMediaRouteSelector = new MediaRouteSelector.Builder()
+        /*mMediaRouteSelector = new MediaRouteSelector.Builder()
                 .addControlCategory(CastMediaControlIntent.categoryForCast(BuildConfig.CAST_APP_ID))
-                .build();
+                .build();*/
     }
 
     @Override
@@ -81,16 +82,16 @@ public abstract class PlayableActivity extends BaseActivity {
                 new ContextThemeWrapper(this, R.style.AppTheme_CastIcon));
         MenuItemCompat.setActionProvider(item, mediaRouteActionProvider);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
+        //mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
         return true;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mMediaRouterCallback = new MediaRouterCallback(this);
+        /*mMediaRouterCallback = new MediaRouterCallback(this);
         mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
-                MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
+                MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);*/
         Intent intent = new Intent(this, PodcastPlayerService.class);
         startService(intent);
     }
@@ -98,7 +99,7 @@ public abstract class PlayableActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mMediaRouter.removeCallback(mMediaRouterCallback);
+        //mMediaRouter.removeCallback(mMediaRouterCallback);
     }
 
     @Override

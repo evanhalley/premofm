@@ -87,7 +87,7 @@ public class NotificationHelper {
 
         if (episodeList.size() == 1) {
             Episode episode = EpisodeModel.getEpisodeByServerId(context,
-                    episodeList.get(0).getServerId());
+                    episodeList.get(0).getGeneratedId());
             String title = context.getString(R.string.notification_new_episode,
                     episode.getChannelTitle());
             builder.setContentTitle(title);

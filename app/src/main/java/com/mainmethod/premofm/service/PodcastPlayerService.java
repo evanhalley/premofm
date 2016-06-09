@@ -435,7 +435,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 break;
         }
         updateWidget();
-        String serverId = mCurrentEpisode != null ? mCurrentEpisode.getServerId() : "";
+        String serverId = mCurrentEpisode != null ? mCurrentEpisode.getGeneratedId() : "";
         BroadcastHelper.broadcastPlayerStateChange(this, mMediaPlayerState, serverId);
     }
 
@@ -525,7 +525,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
             mMediaPlayer.startPlayback(playImmediately);
             mMediaPlayer.setPlaybackSpeed(
                     AppPrefHelper.getInstance(this).getPlaybackSpeed(
-                            mCurrentEpisode.getChannelServerId()));
+                            mCurrentEpisode.getChannelGeneratedId()));
         } else {
             Log.d(TAG, "Audiofocus not granted, result code: " + result);
         }
@@ -719,7 +719,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
             episode = EpisodeModel.getEpisodeById(this, episodeId);
             // create a playlist and add this episode to it
             Playlist playlist = new Playlist();
-            playlist.addToBeginning(episode.getServerId());
+            playlist.addToBeginning(episode.getGeneratedId());
             PlaylistModel.savePlaylist(this, playlist);
         }
 

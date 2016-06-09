@@ -127,7 +127,7 @@ public class DeleteEpisodeService extends IntentService {
                     PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.DOWNLOAD_STATUS_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.EPISODE_STATUS_ID + " = ?",
-                    new String[]{channel.getServerId(),
+                    new String[]{channel.getGeneratedId(),
                             String.valueOf(DownloadStatus.DOWNLOADED),
                             String.valueOf(EpisodeStatus.COMPLETED)}, null);
 
@@ -191,7 +191,7 @@ public class DeleteEpisodeService extends IntentService {
                     PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.DOWNLOAD_STATUS_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.MANUAL_DOWNLOAD + " != ?",
-                    new String[]{channel.getServerId(),
+                    new String[]{channel.getGeneratedId(),
                             String.valueOf(DownloadStatus.DOWNLOADED),
                             String.valueOf(1)},
                     PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS + " ASC");

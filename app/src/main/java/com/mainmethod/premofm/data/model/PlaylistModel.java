@@ -73,7 +73,7 @@ public class PlaylistModel {
             if (episode == null) {
                 continue;
             }
-            episodeServerIds.add(episode.getServerId());
+            episodeServerIds.add(episode.getGeneratedId());
         }
         return episodeServerIds;
     }

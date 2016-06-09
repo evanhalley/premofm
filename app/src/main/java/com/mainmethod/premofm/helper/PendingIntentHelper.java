@@ -124,9 +124,9 @@ public class PendingIntentHelper {
 
         if (episode != null) {
             playIntent.putExtra(NowPlayingActivity.PARAM_PRIMARY_COLOR, paletteHelper.getPrimaryColor(
-                    episode.getChannelServerId()));
+                    episode.getChannelGeneratedId()));
             playIntent.putExtra(NowPlayingActivity.PARAM_TEXT_COLOR, paletteHelper.getTextColor(
-                    episode.getChannelServerId()));
+                    episode.getChannelGeneratedId()));
         }
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(premoIntent);

@@ -32,7 +32,6 @@ import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.ColorHelper;
-import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.ImageLoadHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.PaletteHelper;
@@ -77,7 +76,7 @@ public class ChannelProfileActivity
         args.putBoolean(PARAM_VISITING_FROM_EXPLORE, visitingFromExplore);
         args.putParcelable(ChannelProfileActivity.PARAM_CHANNEL, Parcels.wrap(channel));
         args.putLong(PARAM_NUM_STORED_EPISODES,
-                EpisodeModel.getNumberOfEpisodesForChannel(activity, channel.getServerId()));
+                EpisodeModel.getNumberOfEpisodesForChannel(activity, channel.getGeneratedId()));
         activity.startPremoActivity(ChannelProfileActivity.class, channelArt,
                 "channel_art", -1, args);
     }
@@ -102,7 +101,7 @@ public class ChannelProfileActivity
 
         // channel passed in as unsubscribed, check the db
         if (!mChannel.isSubscribed()) {
-            int channelId = ChannelModel.channelIsSubscribed(this, mChannel.getServerId());
+            int channelId = ChannelModel.channelIsSubscribed(this, mChannel.getGeneratedId());
 
             if (channelId != -1) {
                 mChannel.setId(channelId);
@@ -163,9 +162,9 @@ public class ChannelProfileActivity
 
         if (mChannel.isSubscribed()) {
             downloadItem.setChecked(prefHelper.isServerIdAdded(R.string.pref_key_auto_download_channels,
-                    mChannel.getServerId()));
+                    mChannel.getGeneratedId()));
             notifyItem.setChecked(prefHelper.isServerIdAdded(R.string.pref_key_notification_channels,
-                    mChannel.getServerId()));
+                    mChannel.getGeneratedId()));
         } else {
             downloadItem.setVisible(false);
             notifyItem.setVisible(false);
@@ -188,7 +187,7 @@ public class ChannelProfileActivity
                         .setMessage(R.string.dialog_mark_channel_completed)
                         .setPositiveButton(R.string.dialog_mark_completed, (dialog, which) -> {
                             EpisodeModel.markEpisodesCompletedByChannelAsync(ChannelProfileActivity.this,
-                                    mChannel.getServerId());
+                                    mChannel.getGeneratedId());
                         })
                         .setNegativeButton(R.string.dialog_cancel, null)
                         .show();
@@ -198,11 +197,11 @@ public class ChannelProfileActivity
                 if (item.isChecked()) {
                     item.setChecked(false);
                     UserPrefHelper.get(this).removeServerId(R.string.pref_key_auto_download_channels,
-                            mChannel.getServerId());
+                            mChannel.getGeneratedId());
                 } else {
                     item.setChecked(true);
                     UserPrefHelper.get(this).addServerId(R.string.pref_key_auto_download_channels,
-                            mChannel.getServerId());
+                            mChannel.getGeneratedId());
                 }
                 return true;
             case R.id.action_enable_notifications:
@@ -210,11 +209,11 @@ public class ChannelProfileActivity
                 if (item.isChecked()) {
                     item.setChecked(false);
                     UserPrefHelper.get(this).removeServerId(R.string.pref_key_notification_channels,
-                            mChannel.getServerId());
+                            mChannel.getGeneratedId());
                 } else {
                     item.setChecked(true);
                     UserPrefHelper.get(this).addServerId(R.string.pref_key_notification_channels,
-                            mChannel.getServerId());
+                            mChannel.getGeneratedId());
                 }
                 return true;
             default:
@@ -276,7 +275,7 @@ public class ChannelProfileActivity
                         new BitmapDrawable(activity.getResources(), bitmap));
 
                 PaletteHelper.get(activity).getChannelColors(
-                        activity.mChannel.getServerId(), bitmap, new PaletteLoaded(activity));
+                        activity.mChannel.getGeneratedId(), bitmap, new PaletteLoaded(activity));
             }
         }
 
@@ -333,7 +332,7 @@ public class ChannelProfileActivity
 
             if (isSubscribed) {
                 activity.mChannel = ChannelModel.getChannelByServerId(activity,
-                        activity.mChannel.getServerId());
+                        activity.mChannel.getGeneratedId());
             } else {
                 activity.mChannel.setId(-1);
             }

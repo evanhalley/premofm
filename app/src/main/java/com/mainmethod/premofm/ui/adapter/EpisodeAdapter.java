@@ -254,8 +254,8 @@ public class EpisodeAdapter extends
 
         Episode episode = EpisodeModel.toEpisode(cursor);
         episodeHolder.episodeId = episode.getId();
-        episodeHolder.episodeServerId = episode.getServerId();
-        episodeHolder.channelServerId = episode.getChannelServerId();
+        episodeHolder.episodeServerId = episode.getGeneratedId();
+        episodeHolder.channelServerId = episode.getChannelGeneratedId();
         episodeHolder.updatedAt = episode.getUpdatedAt();
         episodeHolder.episodeTitle.setText(episode.getTitle());
         episodeHolder.downloadStatusId = episode.getDownloadStatus();

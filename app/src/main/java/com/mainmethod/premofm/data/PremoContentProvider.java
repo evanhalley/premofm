@@ -212,7 +212,6 @@ public class PremoContentProvider extends ContentProvider {
                 }
                 break;
             case FILTERS:
-                values.put(PremoContract.FilterEntry.UPDATED_AT, DatetimeHelper.getTimestamp());
                 id = mOpenHelper.getWritableDatabase().insert(
                         PremoContract.FilterEntry.TABLE_NAME, null, values);
 
@@ -286,7 +285,6 @@ public class PremoContentProvider extends ContentProvider {
                         PremoContract.CollectionEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             case FILTERS:
-                values.put(PremoContract.FilterEntry.UPDATED_AT, DatetimeHelper.getTimestamp());
                 rowsUpdated = mOpenHelper.getWritableDatabase().update(
                         PremoContract.FilterEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;

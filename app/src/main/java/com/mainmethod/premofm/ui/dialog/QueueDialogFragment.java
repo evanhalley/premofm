@@ -106,7 +106,7 @@ public class QueueDialogFragment
             if (episodes != null) {
 
                 for (Episode episode : episodes) {
-                    episodeServerIds.add(episode.getServerId());
+                    episodeServerIds.add(episode.getGeneratedId());
                 }
             }
             Playlist playlist = new Playlist(episodeServerIds);
@@ -150,11 +150,11 @@ public class QueueDialogFragment
         public void onBindViewHolder(ViewHolder holder, int position) {
             Episode episode = mPlaylist.get(position);
             ImageLoadHelper.loadImageIntoView(getActivity(), episode.getArtworkUrl(), holder.channelArt);
-            holder.episodeServerId = episode.getServerId();
+            holder.episodeServerId = episode.getGeneratedId();
             holder.episodeTitle.setText(episode.getTitle());
             holder.channelTitle.setText(episode.getChannelTitle());
 
-            if (episode.getServerId().contentEquals(mEpisode.getServerId())) {
+            if (episode.getGeneratedId().contentEquals(mEpisode.getGeneratedId())) {
                 holder.episodeTitle.setTextAppearance(getActivity(), R.style.Playlist_Text_NowPlayingTitle);
                 holder.channelTitle.setTextAppearance(getActivity(), R.style.Playlist_Text_NowPlayingTitle);
             } else {

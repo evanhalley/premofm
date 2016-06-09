@@ -81,7 +81,7 @@ public class CollectionModel {
         List<String> serverIds = new ArrayList<>(collectables.size());
 
         for (int i = 0; i < collectables.size(); i++) {
-            serverIds.add(((Collectable) collectables.get(i)).getServerId());
+            serverIds.add(((Collectable) collectables.get(i)).getGeneratedId());
         }
         return serverIds;
     }
@@ -200,8 +200,8 @@ public class CollectionModel {
             while (cursor != null && cursor.moveToNext()) {
                 Collection collection = toCollection(cursor);
 
-                if (!(TextUtils.isEmpty(collection.getServerId()))) {
-                    collections.put(collection.getServerId(), collection);
+                if (!(TextUtils.isEmpty(collection.getGeneratedId()))) {
+                    collections.put(collection.getGeneratedId(), collection);
                 }
             }
         } finally {

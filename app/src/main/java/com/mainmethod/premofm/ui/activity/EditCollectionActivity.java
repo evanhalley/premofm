@@ -66,7 +66,6 @@ public class EditCollectionActivity
     public static final String PARAM_COLLECTION_ID      = "collectionId";
     public static final String PARAM_COLLECTION_TYPE    = "collectionType";
     public static final String PARAM_CREATE_FILTER      = "createFilter";
-    public static final String PARAM_IS_PUBLIC          = "isPublic";
 
     private static final int MINIMUM_SEARCH_LENGTH      = 3;
 
@@ -102,7 +101,6 @@ public class EditCollectionActivity
             mCollection.setName(extras.getString(PARAM_NAME));
             mCollection.setDescription(extras.getString(PARAM_DESCRIPTION));
             mCollection.setType(extras.getInt(PARAM_COLLECTION_TYPE));
-            mCollection.setIsPublic(extras.getBoolean(PARAM_IS_PUBLIC));
             mCreateFilter = extras.getBoolean(PARAM_CREATE_FILTER);
             populateNameAndDescription(mCollection.getName(), mCollection.getDescription());
 
@@ -148,7 +146,7 @@ public class EditCollectionActivity
 
         for (int i = 0; i < channels.size(); i++) {
             Collectable channel = channels.get(i);
-            collectableMap.put(channel.getServerId(), channel);
+            collectableMap.put(channel.getGeneratedId(), channel);
             mCollectableList.add(channel);
         }
 
@@ -376,7 +374,7 @@ public class EditCollectionActivity
         List<String> serverIds = new ArrayList<>(collectables.size());
 
         for (Collectable collectable : collectables) {
-            serverIds.add(collectable.getServerId());
+            serverIds.add(collectable.getGeneratedId());
         }
         mCollection.setCollectedServerIds(serverIds);
         int collectionId = CollectionModel.saveCollection(this, mCollection, true);

@@ -71,18 +71,18 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener 
             case R.id.single_episode_notification:
                 Episode episode = EpisodeModel.getEpisodeById(this, 1);
                 Set<String> episodeIds = new TreeSet<>();
-                episodeIds.add(episode.getServerId());
+                episodeIds.add(episode.getGeneratedId());
                 AppPrefHelper.getInstance(this).addToStringSet(
                         AppPrefHelper.PROPERTY_EPISODE_NOTIFICATIONS, episodeIds);
                 NotificationHelper.showNewEpisodeNotification(this);
                 break;
             case R.id.multiple_episode_notification:
                 Set<String> episodeIds1 = new TreeSet<>();
-                episodeIds1.add(EpisodeModel.getEpisodeById(this, 1).getServerId());
-                episodeIds1.add(EpisodeModel.getEpisodeById(this, 2).getServerId());
-                episodeIds1.add(EpisodeModel.getEpisodeById(this, 3).getServerId());
-                episodeIds1.add(EpisodeModel.getEpisodeById(this, 4).getServerId());
-                episodeIds1.add(EpisodeModel.getEpisodeById(this, 5).getServerId());
+                episodeIds1.add(EpisodeModel.getEpisodeById(this, 1).getGeneratedId());
+                episodeIds1.add(EpisodeModel.getEpisodeById(this, 2).getGeneratedId());
+                episodeIds1.add(EpisodeModel.getEpisodeById(this, 3).getGeneratedId());
+                episodeIds1.add(EpisodeModel.getEpisodeById(this, 4).getGeneratedId());
+                episodeIds1.add(EpisodeModel.getEpisodeById(this, 5).getGeneratedId());
                 AppPrefHelper.getInstance(this).addToStringSet(
                         AppPrefHelper.PROPERTY_EPISODE_NOTIFICATIONS, episodeIds1);
                 NotificationHelper.showNewEpisodeNotification(this);

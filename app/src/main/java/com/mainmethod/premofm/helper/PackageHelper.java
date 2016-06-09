@@ -10,8 +10,6 @@ import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.mainmethod.premofm.BuildConfig;
-
 /**
  * Simplifies retrieving metadata values from the AndroidManifest file
  * Created by evan on 3/29/15.

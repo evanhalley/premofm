@@ -250,7 +250,7 @@ public class NowPlayingActivity extends PlayableActivity implements
 
                 if (mEpisode != null) {
                     IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByServerId(this,
-                            mEpisode.getServerId()));
+                            mEpisode.getGeneratedId()));
                 }
                 return true;
             case R.id.action_play_queue:
@@ -267,7 +267,7 @@ public class NowPlayingActivity extends PlayableActivity implements
                             AnalyticsHelper.CATEGORY_PLAYBACK_SPEED,
                             AnalyticsHelper.ACTION_CLICK,
                             null);
-                    PlaybackSpeedDialog.show(this, mEpisode.getChannelServerId());
+                    PlaybackSpeedDialog.show(this, mEpisode.getChannelGeneratedId());
                 }
                 return true;
             default:
@@ -355,7 +355,7 @@ public class NowPlayingActivity extends PlayableActivity implements
             }
 
             if (mPrimaryColor == -1 && mTextColor == -1) {
-                String channelServerId = episode.getChannelServerId();
+                String channelServerId = episode.getChannelGeneratedId();
 
                 ImageLoadHelper.loadImageAsync(this, episode.getChannelArtworkUrl(), new ImageLoadHelper.OnImageLoaded() {
                     @Override
@@ -400,7 +400,7 @@ public class NowPlayingActivity extends PlayableActivity implements
             String title;
             if (mEpisode != null) {
                 title = AppPrefHelper.getInstance(this).getPlaybackSpeedLabel(
-                                mEpisode.getChannelServerId());
+                                mEpisode.getChannelGeneratedId());
             } else {
                 title = MediaHelper.formatSpeed(MediaHelper.DEFAULT_PLAYBACK_SPEED);
             }

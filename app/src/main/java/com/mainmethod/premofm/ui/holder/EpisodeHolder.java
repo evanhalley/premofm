@@ -200,7 +200,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
                 return true;
             case R.id.action_add_to_queue:
                 PlaylistModel.addEpisodeToPlaylist(itemView.getContext(),
-                        EpisodeModel.getEpisodeById(itemView.getContext(), episodeId).getServerId());
+                        EpisodeModel.getEpisodeById(itemView.getContext(), episodeId).getGeneratedId());
 
                 if (!isChannelSubscribed) {
                     EpisodeModel.manuallyAddEpisode(itemView.getContext(), episodeId);

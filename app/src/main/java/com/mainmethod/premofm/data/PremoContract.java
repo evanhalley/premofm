@@ -44,10 +44,9 @@ public class PremoContract {
         /** episode schema **/
         public static final String TABLE_NAME = "episode";
         public static final String GENERATED_ID = "generatedId";
-        public static final String CHANNEL_GENERATED_ID = "channelGenerated";
+        public static final String CHANNEL_GENERATED_ID = "channelGeneratedId";
         public static final String EPISODE_STATUS_ID = "episodeStatusId";
         public static final String DOWNLOAD_STATUS_ID = "downloadStatusId";
-        public static final String GUID = "guid";
         public static final String TITLE = "title";
         public static final String DESCRIPTION = "description";
         public static final String DESCRIPTION_HTML = "descriptionHtml";
@@ -78,7 +77,6 @@ public class PremoContract {
                 EPISODE_STATUS_ID + " INTEGER NOT NULL," +
                 DOWNLOAD_STATUS_ID + " INTEGER NOT NULL," +
                 MANUAL_DOWNLOAD + " INTEGER NOT NULL," +
-                GUID + " TEXT NOT NULL," +
                 TITLE + " TEXT NOT NULL," +
                 DESCRIPTION + " TEXT," +
                 DESCRIPTION_HTML + " TEXT," +
@@ -97,7 +95,6 @@ public class PremoContract {
                 LOCAL_MEDIA_URL + " TEXT," +
                 SIZE + " INTEGER," +
                 DOWNLOADED_SIZE + " INTEGER," +
-                MIME_TYPE + " TEXT," +
                 UPDATED_AT + " INTEGER);";
 
         public static Uri buildUri(long id) {
@@ -196,7 +193,6 @@ public class PremoContract {
         public static final String USER_CREATED = "userCreated";
         public static final String FAVORITE = "favorite";
         public static final String FILTER_ORDER = "filterOrder";
-        public static final String UPDATED_AT = "updatedAt";
         public static final String EPISODES_PER_CHANNEL = "episodesPerChannel";
         public static final String DAYS_SINCE_PUBLISHED = "daysSincePublished";
         public static final String EPISODES_MANUALLY_ADDED = "episodesManuallyAdded";
@@ -213,8 +209,7 @@ public class PremoContract {
                 FILTER_ORDER + " INTEGER NOT NULL," +
                 EPISODES_PER_CHANNEL + " INTEGER NOT NULL DEFAULT -1," +
                 DAYS_SINCE_PUBLISHED + " INTEGER NOT NULL DEFAULT -1," +
-                EPISODES_MANUALLY_ADDED + " INTEGER NOT NULL DEFAULT 0," +
-                UPDATED_AT + " INTEGER NOT NULL);";
+                EPISODES_MANUALLY_ADDED + " INTEGER NOT NULL DEFAULT 0);";
 
         public static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
