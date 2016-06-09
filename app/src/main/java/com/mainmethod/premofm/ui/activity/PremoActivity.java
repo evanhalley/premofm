@@ -6,18 +6,14 @@ package com.mainmethod.premofm.ui.activity;
 
 import android.app.AlertDialog;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
@@ -25,19 +21,14 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
-import com.mainmethod.premofm.helper.AppPrefHelper;
-import com.mainmethod.premofm.helper.BroadcastHelper;
-import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.object.User;
 import com.mainmethod.premofm.service.job.DownloadJobService;
 import com.mainmethod.premofm.ui.fragment.BaseFragment;
 import com.mainmethod.premofm.ui.fragment.ChannelsFragment;
@@ -58,9 +49,6 @@ public class PremoActivity
 
     private static final String TAG = PremoActivity.class.getSimpleName();
 
-    private static final int MAX_LISTENING_TO_RATE      = 54_000; // 15 hours
-    private static final int MIN_LISTENING_TO_RATE      = 36_000; // 10 hours
-    private static final int MIN_DURATION_SEC           = 1_209_600; // 2 weeks, seconds
     private static final int FEEDBACK_OPTION_PROBLEM    = 0;
     private static final int FEEDBACK_OPTION_IDEA       = 1;
     private static final int FEEDBACK_RATE_APP          = 2;
@@ -80,13 +68,6 @@ public class PremoActivity
 
     private boolean mInExploreExperience;
 
-    private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            populateUserDetails();
-        }
-    };
-
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
         super.onCreateBase(savedInstanceState);
@@ -98,7 +79,6 @@ public class PremoActivity
         mTabs.setTabMode(TabLayout.MODE_SCROLLABLE);
         setupNavDrawer();
         loadUI(savedInstanceState);
-        populateUserDetails();
         DownloadJobService.scheduleEpisodeDownload(this);
 
         // dismiss any new episode or new download notifications
@@ -116,25 +96,9 @@ public class PremoActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mAccountChangeReceiver,
-                new IntentFilter(BroadcastHelper.INTENT_ACCOUNT_CHANGE));
-        populateUserDetails();
-        showRateMessage();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mAccountChangeReceiver);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         mTabs = null;
-        mAccountChangeReceiver = null;
     }
 
     @Override
@@ -294,27 +258,6 @@ public class PremoActivity
         }
     }
 
-    private void populateUserDetails() {
-
-        if (mNavigationView == null) {
-            return;
-        }
-        User user = User.load(this);
-
-        // put the email in the nav header
-        if (user != null) {
-
-            if (user.isTempUser()) {
-                ((TextView) mNavHeader.findViewById(R.id.username)).setText(R.string.drawer_action_setup_account);
-            } else if (user.getNickname() != null && user.getNickname().length() > 0) {
-                ((TextView) mNavHeader.findViewById(R.id.username)).setText(user.getNickname());
-            } else {
-                ((TextView) mNavHeader.findViewById(R.id.username)).setText(user.getEmail());
-            }
-            mNavHeader.findViewById(R.id.navigation_header).setOnClickListener(this);
-        }
-    }
-
     private void onDrawerItemSelected(int itemId) {
         onDrawerItemSelected(mNavigationView.getMenu().findItem(itemId));
     }
@@ -446,44 +389,6 @@ public class PremoActivity
                 .setAction(actionTextResId, clickListener)
                 .setActionTextColor(getResources().getColor(R.color.primary))
                 .show();
-    }
-
-    private void showRateMessage() {
-
-        if (AppPrefHelper.getInstance(this).hasAskedForRating()) {
-            return;
-        }
-
-        User user = User.load(this);
-
-        if (user == null) {
-            return;
-        }
-        boolean showRating;
-
-        if (user.getListeningTime() > MAX_LISTENING_TO_RATE) {
-            showRating = true;
-        } else {
-            long firstBoot = AppPrefHelper.getInstance(this).getFirstBoot();
-            long today = DatetimeHelper.getTimestamp();
-            long diff = (today - firstBoot) / 1_000;
-            showRating = diff > MIN_DURATION_SEC && user.getListeningTime() > MIN_LISTENING_TO_RATE;
-        }
-
-        if (showRating) {
-            showSnackbarMessage(R.string.rate_app_message, R.string.rate, v -> {
-                IntentHelper.openAppListing(v.getContext());
-                AnalyticsHelper.sendEvent(v.getContext(),
-                        AnalyticsHelper.CATEGORY_RATE_PREMOFM,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
-            });
-            AnalyticsHelper.sendEvent(this,
-                    AnalyticsHelper.CATEGORY_RATE_PREMOFM,
-                    AnalyticsHelper.ACTION_VIEW,
-                    null);
-            AppPrefHelper.getInstance(this).setAskedForRating();
-        }
     }
 
     private class TabViewPagerOnTabSelectedListener extends TabLayout.ViewPagerOnTabSelectedListener{

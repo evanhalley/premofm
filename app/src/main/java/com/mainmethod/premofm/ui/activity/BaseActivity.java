@@ -13,21 +13,12 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
-import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.config.ConfigurationManager;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.UpdateHelper;
-import com.mainmethod.premofm.helper.XORHelper;
-import com.mainmethod.premofm.helper.billing.IabHelper;
-import com.mainmethod.premofm.helper.billing.IabResult;
-import com.mainmethod.premofm.helper.billing.Purchase;
-import com.mainmethod.premofm.object.User;
-
-import org.parceler.Parcels;
 
 /**
  * Created by evan on 12/1/14.
@@ -35,8 +26,6 @@ import org.parceler.Parcels;
 public abstract class BaseActivity extends AppCompatActivity implements UpdateHelper.OnUpdateCompleteListener {
 
     private static final String TAG = "BaseActivity";
-
-    private static final int REQUEST_CODE = 10001;
 
     protected abstract void onCreateBase(Bundle savedInstanceState);
 
@@ -54,8 +43,6 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
     private ProgressDialog mProgressDialog;
 
-    private IabHelper mIabHelper;
-
     private Menu mMenu;
 
     private boolean userIsOnboarding() {
@@ -67,9 +54,6 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
         super.onCreate(savedInstanceState);
         ((PremoApp) getApplication()).getTracker();
         ConfigurationManager.getInstance(this);
-        boolean userIsOnboarding = userIsOnboarding();
-        User user = User.load(this);
-        boolean userIsSignedIn = user != null;
 
         /**
          * How this works, we always want to check to see if the user has signed in,
@@ -82,22 +66,14 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
          */
 
         // user hasn't signed in and isnt' in the process, redirect them to sign in/up
-        if (!userIsSignedIn && !userIsOnboarding) {
+        if (!AppPrefHelper.getInstance(this).hasUserOnboarded()) {
             // user has not signed in and isn't onboarding, let's onboard them
             Log.i(TAG, "User has not logged in, proceeding to intro screen");
             Intent activityIntent = new Intent(this, OnboardingActivity.class);
             activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(activityIntent);
             finish();
-        }
-
-        // not signed, but the user is onboarding
-        else if (!userIsSignedIn && userIsOnboarding) {
-            startBaseActivity(savedInstanceState, false);
-        }
-
-        // signed in and not onboarding
-        else if (userIsSignedIn && !userIsOnboarding) {
+        } else {
 
             // app was updated, execute the update
             if (UpdateHelper.wasUpdated(this)) {
@@ -107,22 +83,17 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
             // app was not updated
             else {
-                startAppWithSignedInUser(savedInstanceState);
+                startApp(savedInstanceState);
             }
-        }
-
-        // signed and onboarding, not a legit case
-        else {
-            throw new IllegalStateException("User is signed in and onboarding, app in bad state");
         }
     }
 
     @Override
     public void onUpdateComplete() {
-        startAppWithSignedInUser(null);
+        startApp(null);
     }
 
-    private void startAppWithSignedInUser(Bundle savedInstanceState) {
+    private void startApp(Bundle savedInstanceState) {
         Intent intent = getIntent();
         Bundle args = intent.getExtras();
         boolean isUsersFirstSignIn = args != null &&
@@ -270,18 +241,4 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
             mProgressDialog.dismiss();
         }
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        boolean handled = false;
-
-        if (mIabHelper != null) {
-            handled = mIabHelper.handleActivityResult(requestCode, resultCode, data);
-        }
-
-        if (!handled) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
 }

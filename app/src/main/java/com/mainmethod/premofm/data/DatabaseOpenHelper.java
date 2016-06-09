@@ -11,9 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.mainmethod.premofm.helper.DatetimeHelper;
-import com.mainmethod.premofm.object.SyncStatus;
-
 /**
  * Our database maintenance class
  * Created by evan on 12/3/14.

@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 
 import com.mainmethod.premofm.BuildConfig;
-import com.mainmethod.premofm.object.SyncStatus;
 
 /**
  * Created by evan on 3/4/15.

@@ -8,50 +8,27 @@ package com.mainmethod.premofm.ui.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.ChannelModel;
-import com.mainmethod.premofm.data.model.CollectionModel;
-import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
-import com.mainmethod.premofm.helper.ResourceHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;
-import com.mainmethod.premofm.helper.opml.OpmlReader;
-import com.mainmethod.premofm.helper.opml.OpmlWriter;
 import com.mainmethod.premofm.object.Channel;
-import com.mainmethod.premofm.object.Credential;
-import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.object.User;
 import com.mainmethod.premofm.service.DeleteEpisodeService;
 import com.mainmethod.premofm.service.job.DownloadJobService;
-import com.mainmethod.premofm.util.IOUtil;
 
-import org.json.JSONArray;
-
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * UI for changing user preferences

@@ -5,7 +5,6 @@
 
 package com.mainmethod.premofm.ui.fragment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -18,8 +17,6 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.DialogHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
-import com.mainmethod.premofm.helper.billing.IabHelper;
-import com.mainmethod.premofm.ui.activity.BaseActivity;
 
 /**
  * Shows app info
@@ -67,11 +64,6 @@ public class AboutFragment extends PreferenceFragment implements
                     AnalyticsHelper.ACTION_CLICK,
                     null);
             IntentHelper.openAppListing(getActivity());
-            return true;
-        }
-
-        else if (key.contentEquals(getString(R.string.pref_key_donate))) {
-            showDonationDialog();
             return true;
         }
 
@@ -142,34 +134,6 @@ public class AboutFragment extends PreferenceFragment implements
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        String productId;
 
-        switch (mDonationOptions.getSelectedItemPosition()) {
-            case 0:
-                productId = IabHelper.PROD_ID_PREMOFM_FOLLOWER;
-                break;
-            case 1:
-                productId = IabHelper.PROD_ID_PREMOFM_LISTENER;
-                break;
-            case 2:
-                productId = IabHelper.PROD_ID_PREMOFM_PATRON;
-                break;
-            default:
-                return;
-        }
-    }
-
-    private void showDonationDialog() {
-        AnalyticsHelper.sendEvent(getActivity(),
-                AnalyticsHelper.CATEGORY_SUPPORT_PREMOFM,
-                AnalyticsHelper.ACTION_CLICK,
-                null);
-        Dialog dialog = new AlertDialog.Builder(getActivity())
-                .setView(R.layout.dialog_donate)
-                .setPositiveButton(R.string.dialog_continue, this)
-                .setNegativeButton(R.string.dialog_cancel, null)
-                .create();
-        dialog.show();
-        mDonationOptions = (Spinner) dialog.findViewById(R.id.donation_options);
     }
 }

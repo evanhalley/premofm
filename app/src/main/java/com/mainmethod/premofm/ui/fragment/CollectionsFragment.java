@@ -42,7 +42,6 @@ import com.mainmethod.premofm.helper.ShowcaseHelper;
 import com.mainmethod.premofm.object.Collectable;
 import com.mainmethod.premofm.object.Collection;
 import com.mainmethod.premofm.object.Playlist;
-import com.mainmethod.premofm.object.User;
 import com.mainmethod.premofm.service.PodcastPlayerService;
 import com.mainmethod.premofm.ui.activity.BaseActivity;
 import com.mainmethod.premofm.ui.activity.EditCollectionActivity;
@@ -119,7 +118,6 @@ public class CollectionsFragment extends BaseFragment implements LoaderManager.L
     }
 
     private void showAddCollectionDialog() {
-        final User user = User.load(getActivity());
         // show dialog that let's the user enter a name and description for their new playlist
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setPositiveButton(R.string.dialog_create, this)
@@ -138,26 +136,6 @@ public class CollectionsFragment extends BaseFragment implements LoaderManager.L
         channelType.setOnCheckedChangeListener((buttonView, isChecked) -> episodeType.setChecked(!isChecked));
 
         episodeType.setOnCheckedChangeListener((buttonView, isChecked) -> channelType.setChecked(!isChecked));
-
-        publish.setOnCheckedChangeListener((buttonView, isChecked) -> {
-
-            if (isChecked && !user.isCurator()) {
-                // show dialog to apply to be a PremoFM Curator
-                publish.setChecked(false);
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.must_be_premo_fm_curator_title)
-                        .setMessage(R.string.must_be_premo_fm_curator)
-                        .setNegativeButton(R.string.dialog_cancel, null)
-                        .setPositiveButton(R.string.dialog_request, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog1, int which) {
-                                // TODO request
-                            }
-                        }).show();
-                publish.setChecked(false);
-            }
-
-        });
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             String name = nameView.getText().toString();

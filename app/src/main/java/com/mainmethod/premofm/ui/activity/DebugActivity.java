@@ -5,27 +5,16 @@
 
 package com.mainmethod.premofm.ui.activity;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.View;
-import android.widget.Toast;
 
 import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.AppPrefHelper;
-import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
-import com.mainmethod.premofm.helper.XORHelper;
-import com.mainmethod.premofm.helper.billing.IabHelper;
-import com.mainmethod.premofm.helper.billing.IabResult;
-import com.mainmethod.premofm.helper.billing.Purchase;
 import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.object.User;
 import com.mainmethod.premofm.service.DownloadService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
 
@@ -35,9 +24,7 @@ import java.util.TreeSet;
 /**
  * Created by evan on 10/14/14.
  */
-public class DebugActivity extends BaseActivity implements View.OnClickListener,
-        IabHelper.OnIabSetupFinishedListener, IabHelper.OnIabPurchaseFinishedListener {
-    private IabHelper mIabHelper;
+public class DebugActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
@@ -47,7 +34,6 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener,
             finish();
             return;
         }
-        setupIabHelper();
         findViewById(R.id.trigger_download_service).setOnClickListener(this);
         findViewById(R.id.simulate_sleep_timer_expiration).setOnClickListener(this);
         findViewById(R.id.test_iab_purchase).setOnClickListener(this);
@@ -82,10 +68,6 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener,
             case R.id.simulate_sleep_timer_expiration:
                 PodcastPlayerService.sendIntent(this, PodcastPlayerService.ACTION_SLEEP_TIMER, -1);
                 break;
-            case R.id.test_iab_purchase:
-                User user = User.load(this);
-                mIabHelper.launchPurchaseFlow(this, "premofm_listener.test", 123, this, user.getId());
-                break;
             case R.id.single_episode_notification:
                 Episode episode = EpisodeModel.getEpisodeById(this, 1);
                 Set<String> episodeIds = new TreeSet<>();
@@ -111,31 +93,6 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener,
                         R.string.notification_content_insufficient_space);
                 break;
         }
-    }
-
-    @Override
-    public void onIabSetupFinished(IabResult result) {
-
-    }
-
-    @Override
-    public void onIabPurchaseFinished(IabResult result, Purchase info) {
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (mIabHelper != null) {
-            mIabHelper.handleActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void setupIabHelper() {
-        String key = XORHelper.decode(getString(R.string.google_play_license), 27);
-        mIabHelper = new IabHelper(this, key);
-        mIabHelper.enableDebugLogging(BuildConfig.DEBUG);
-        mIabHelper.startSetup(this);
     }
 
     @Override

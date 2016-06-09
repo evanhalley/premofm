@@ -20,7 +20,6 @@ import com.mainmethod.premofm.data.PremoContract;
 import com.mainmethod.premofm.helper.ResourceHelper;
 import com.mainmethod.premofm.object.Collectable;
 import com.mainmethod.premofm.object.Collection;
-import com.mainmethod.premofm.object.SyncStatus;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -247,7 +246,6 @@ public class CollectionModel {
 
     public static int saveCollection(Context context, Collection collection, boolean pushToServer) {
         ContentValues values = fromCollection(collection);
-        int syncStatus = SyncStatus.NONE;
         int collectionId = -1;
 
         // this is an existing collection

@@ -10,18 +10,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.DatabaseOpenHelper;
-import com.mainmethod.premofm.data.model.ChannelModel;
-import com.mainmethod.premofm.data.model.CollectionModel;
 import com.mainmethod.premofm.data.model.FilterModel;
-import com.mainmethod.premofm.object.Channel;
-import com.mainmethod.premofm.object.User;
-
-import java.util.List;
 
 /**
  * Manages the upgrade process as the device is updated from the Play Store
@@ -89,12 +82,6 @@ public class UpdateHelper {
             // because -> https://code.google.com/p/android/issues/detail?id=6641
             PreferenceManager.setDefaultValues(context, R.xml.settings, false);
 
-            String registrationId = AppPrefHelper.getInstance(context).getRegistrationId();
-
-            if (registrationId == null) {
-                Log.d(TAG, "Registration ID is null, retrieving a new one");
-            }
-
             // create a couple filters
             FilterModel.createSampleFilters(context);
         }
@@ -105,28 +92,6 @@ public class UpdateHelper {
             AppPrefHelper.getInstance(context).remove(AppPrefHelper.PROPERTY_EPISODE_NOTIFICATIONS);
             AppPrefHelper.getInstance(context).remove(AppPrefHelper.PROPERTY_DOWNLOAD_NOTIFICATIONS);
 
-            // more updates here
-            if (oldVersionCode <= 100001 && newVersionCode >= 100002) {
-                // upgraded playlists, remove current playlist data
-                AppPrefHelper.getInstance(context).removePlaylist();
-                AppPrefHelper.getInstance(context).removeLastPlayedEpisodeId();
-            }
-
-            // more updates here
-            if (oldVersionCode <= 100003 && newVersionCode >= 100003) {
-                // opt all channels into notifications
-                List<Channel> channels = ChannelModel.getChannels(context);
-                List<String> serverIds = CollectionModel.getCollectableServerIds(channels);
-                String serverIdStr = TextUtils.join(",", serverIds);
-                UserPrefHelper.get(context).putString(
-                        context.getString(R.string.pref_key_notification_channels), serverIdStr);
-            }
-
-            if (oldVersionCode <= 100020 && newVersionCode >= 100021) {
-                User user = User.load(context);
-                user.setListeningTime(0);
-                User.save(context, user);
-            }
         }
 
         // save the new version code

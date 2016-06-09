@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
+import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 
 public class OnboardingActivity extends BaseActivity implements View.OnClickListener,
@@ -58,8 +59,7 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
         mPagerAdapter = new OnboardingViewPagerAdapter();
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.addOnPageChangeListener(this);
-        findViewById(R.id.sign_in).setOnClickListener(this);
-        findViewById(R.id.try_now).setOnClickListener(this);
+        findViewById(R.id.get_started).setOnClickListener(this);
         ((TextView) findViewById(R.id.privacy_and_tos)).setMovementMethod(new LinkMovementMethod());
     }
 
@@ -90,43 +90,12 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
     public void onClick(final View v) {
 
         switch (v.getId()) {
-            case R.id.sign_in:
-                if (mAuthFormIsShowing) {
-                    showProgressDialog(R.string.progress_authenticate_title,
-                            R.string.progress_authenticate_message);
-                } else {
-                    mAuthFormIsShowing = true;
-                    final View form = findViewById(R.id.auth_form);
-                    final int targetHeight =getResources().getDimensionPixelSize(R.dimen.auth_form_height);
-
-                    // Older versions of android (pre API 21) cancel animations for views with a height of 0.
-                    form.getLayoutParams().height = 1;
-                    form.setVisibility(View.VISIBLE);
-                    Animation a = new Animation() {
-                        @Override
-                        protected void applyTransformation(float interpolatedTime, Transformation t) {
-                            form.getLayoutParams().height = interpolatedTime == 1
-                                    ? RelativeLayout.LayoutParams.WRAP_CONTENT
-                                    : (int)(targetHeight * interpolatedTime);
-                            form.requestLayout();
-                        }
-
-                        @Override
-                        public boolean willChangeBounds() {
-                            return true;
-                        }
-                    };
-
-                    // 1dp/ms
-                    a.setDuration(400);
-                    v.startAnimation(a);
-                }
-                break;
-            case R.id.try_now:
+            case R.id.get_started:
                 AnalyticsHelper.sendEvent(OnboardingActivity.this, AnalyticsHelper.CATEGORY_TRY_IT,
                         AnalyticsHelper.ACTION_CLICK, "");
                 showProgressDialog(R.string.progress_authenticate_title,
                         R.string.progress_authenticate_message);
+                AppPrefHelper.getInstance(this).setUserHasOnboarded();
                 break;
         }
     }

@@ -18,7 +18,6 @@ import java.util.TreeSet;
  */
 public class AppPrefHelper {
 
-    public static final String PROPERTY_USER_PROFILE            = "UserProfile";
     private static final String PROPERTY_REG_ID                  = "RegistrationId";
     private static final String PROPERTY_APP_VERSION             = "AppVersion";
     private static final String PROPERTY_LAST_PLAYED_EPISODE     = "LastPlayedEpisode";
@@ -27,9 +26,10 @@ public class AppPrefHelper {
     private static final String PROPERTY_PLAYLIST                = "Playlist2";
     private static final String PROPERTY_SLEEP_TIMER             = "SleepTimer";
     private static final String PROPERTY_ASKED_FOR_RATING       = "AskedForRating";
+    private static final String PROPERTY_USER_HAS_ONBOARDED     = "UserHasOnboarded";
     public static final String PROPERTY_FIRST_BOOT              = "FirstBoot";
     public static final String PROPERTY_EPISODE_NOTIFICATIONS   = "EpisodeNotifications";
-    public static final String PROPERTY_DOWNLOAD_NOTIFICATIONS  = "DowloadNotifications";
+    public static final String PROPERTY_DOWNLOAD_NOTIFICATIONS  = "DownloadNotifications";
 
     private static final String PROPERTY_VIEWED_FILTER_SHOWCASE  = "ViewedFilterShowcase";
     private static final String PROPERTY_VIEWED_COLLECTION_SHOWCASE  = "ViewedCollectionShowcase";
@@ -93,6 +93,14 @@ public class AppPrefHelper {
 
     public void setPlaybackSpeed(String serverId, float speed) {
         mPreferences.edit().putFloat(PROPERTY_PLAYBACK_SPEED + serverId, speed).apply();
+    }
+
+    public boolean hasUserOnboarded() {
+        return mPreferences.getBoolean(PROPERTY_USER_HAS_ONBOARDED, false);
+    }
+
+    public void setUserHasOnboarded() {
+        mPreferences.edit().putBoolean(PROPERTY_USER_HAS_ONBOARDED, true).apply();
     }
 
     public boolean hasAskedForRating() {

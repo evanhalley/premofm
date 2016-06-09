@@ -50,7 +50,6 @@ import com.mainmethod.premofm.object.DownloadStatus;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
 import com.mainmethod.premofm.object.Playlist;
-import com.mainmethod.premofm.object.User;
 import com.mainmethod.premofm.ui.view.RoundedCornersTransformation;
 import com.mainmethod.premofm.ui.widget.WidgetProvider;
 
@@ -1035,7 +1034,6 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
         private static final int UPDATE_DELAY = 20_000;
         private final Bundle mBundle;
-        private long mLastProgress = -1;
 
         public UpdateEpisodeProgressTask() {
             mBundle = new Bundle();
@@ -1043,7 +1041,6 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
         @Override
         protected void onCancelled() {
-            updateUserListeningTime();
             Log.d(TAG, "Update task cancelled");
         }
 
@@ -1061,31 +1058,12 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                     mBundle.putLong(EpisodeModel.PARAM_EPISODE_DURATION, mCurrentEpisode.getDuration());
                     EpisodeModel.updateEpisodeAsync(PodcastPlayerService.this,
                             mCurrentEpisode.getId(), mBundle);
-                    updateUserListeningTime();
                     Thread.sleep(UPDATE_DELAY);
                 } catch (InterruptedException e) {
                     Log.d(TAG, "Update task interrupted");
                 }
             }
             return null;
-        }
-
-        private void updateUserListeningTime() {
-
-            if (mMediaPlayerState == MediaPlayerState.STATE_PLAYING || mMediaPlayerState == MediaPlayerState.STATE_PAUSED) {
-                long progress = getProgress();
-
-                if (mLastProgress == -1) {
-                    mLastProgress = progress;
-                } else {
-                    long difference = (progress - mLastProgress) / 1_000;
-                    User user = User.load(PodcastPlayerService.this);
-                    user.setListeningTime(user.getListeningTime() + difference);
-                    User.save(PodcastPlayerService.this, user);
-                    Log.d(TAG, "Listening time: " + user.getListeningTime());
-                    mLastProgress = progress;
-                }
-            }
         }
     }
 
