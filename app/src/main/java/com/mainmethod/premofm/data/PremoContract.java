@@ -44,8 +44,8 @@ public class PremoContract {
 
         /** episode schema **/
         public static final String TABLE_NAME = "episode";
-        public static final String SERVER_ID = "serverId";
-        public static final String CHANNEL_SERVER_ID = "channelServerId";
+        public static final String GENERATED_ID = "generatedId";
+        public static final String CHANNEL_GENERATED_ID = "channelGenerated";
         public static final String EPISODE_STATUS_ID = "episodeStatusId";
         public static final String DOWNLOAD_STATUS_ID = "downloadStatusId";
         public static final String GUID = "guid";
@@ -74,8 +74,8 @@ public class PremoContract {
         public static final String CREATE_SQL = "" +
                 "CREATE TABLE " + TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SERVER_ID + " TEXT NOT NULL," +
-                CHANNEL_SERVER_ID + " TEXT NOT NULL," +
+                GENERATED_ID + " TEXT NOT NULL," +
+                CHANNEL_GENERATED_ID + " TEXT NOT NULL," +
                 EPISODE_STATUS_ID + " INTEGER NOT NULL," +
                 DOWNLOAD_STATUS_ID + " INTEGER NOT NULL," +
                 MANUAL_DOWNLOAD + " INTEGER NOT NULL," +
@@ -118,7 +118,7 @@ public class PremoContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CHANNEL;
 
         public static final String TABLE_NAME = "channel";
-        public static final String SERVER_ID = "serverId";
+        public static final String GENERATED_ID = "generatedId";
         public static final String TITLE = "title";
         public static final String AUTHOR = "author";
         public static final String DESCRIPTION = "description";
@@ -131,7 +131,7 @@ public class PremoContract {
         public static final String CREATE_SQL = "" +
                 "CREATE TABLE " + TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SERVER_ID + " TEXT NOT NULL," +
+                GENERATED_ID + " TEXT NOT NULL," +
                 TITLE + " TEXT NOT NULL," +
                 AUTHOR + " TEXT," +
                 DESCRIPTION + " TEXT," +
@@ -158,28 +158,20 @@ public class PremoContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_COLLECTION;
 
         public static final String TABLE_NAME = "collection";
-        public static final String SERVER_ID = "serverId";
         public static final String NAME = "name";
         public static final String DESCRIPTION = "description";
         public static final String COLLECTION_TYPE = "collectionType";
-        public static final String COLLECTED_SERVER_IDS = "collectedServerIds";
+        public static final String COLLECTED_GENERATED_IDS = "collectedGeneratedIds";
         public static final String PARAMS = "params";
-        public static final String SYNC_STATUS = "syncStatus";
-        public static final String UPDATED_AT = "updatedAt";
-        public static final String AUTHOR_SERVER_ID = "author";
 
         public static final String CREATE_SQL = "" +
                 "CREATE TABLE " + TABLE_NAME + " (" +
                 _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-                SERVER_ID + " TEXT," +
                 NAME + " TEXT NOT NULL," +
                 DESCRIPTION + " TEXT," +
                 COLLECTION_TYPE + " INTEGER NOT NULL," +
                 PARAMS + " TEXT NOT NULL," +
-                COLLECTED_SERVER_IDS + " TEXT," +
-                AUTHOR_SERVER_ID + " TEXT, " +
-                SYNC_STATUS + " INTEGER NOT NULL DEFAULT " + SyncStatus.PENDING_CREATE + "," +
-                UPDATED_AT + " INTEGER);";
+                COLLECTED_GENERATED_IDS + " TEXT);";
 
         public static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

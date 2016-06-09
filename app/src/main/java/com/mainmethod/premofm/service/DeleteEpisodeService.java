@@ -124,7 +124,7 @@ public class DeleteEpisodeService extends IntentService {
             // is this channel in a collection
 
             List<Episode> episodeList = EpisodeModel.getEpisodes(this,
-                    PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " = ? AND " +
+                    PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.DOWNLOAD_STATUS_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.EPISODE_STATUS_ID + " = ?",
                     new String[]{channel.getServerId(),
@@ -188,7 +188,7 @@ public class DeleteEpisodeService extends IntentService {
             // is this channel in a collection
 
             List<Episode> episodeList = EpisodeModel.getEpisodes(this,
-                    PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " = ? AND " +
+                    PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.DOWNLOAD_STATUS_ID + " = ? AND " +
                             PremoContract.EpisodeEntry.MANUAL_DOWNLOAD + " != ?",
                     new String[]{channel.getServerId(),

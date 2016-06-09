@@ -30,7 +30,6 @@ import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
 import com.mainmethod.premofm.object.Filter;
 import com.mainmethod.premofm.object.Playlist;
-import com.mainmethod.premofm.service.ApiService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
 import com.mainmethod.premofm.ui.holder.ChannelInfoHolder;
 import com.mainmethod.premofm.ui.holder.EpisodeHolder;
@@ -154,18 +153,7 @@ public class EpisodeAdapter extends
 
         switch (v.getId()) {
             case R.id.subscribe:
-                String action;
-                Bundle bundle = new Bundle();
-                bundle.putString(ApiService.PARAM_CHANNEL_SERVER_ID, mChannel.getServerId());
-
-                if (!mChannel.isSubscribed()) {
-                    action = ApiService.ACTION_SUBSCRIBE_CHANNEL;
-                } else {
-                    action = ApiService.ACTION_UNSUBSCRIBE_CHANNEL;
-                }
-                ApiService.start(v.getContext(), action, bundle);
-                mChannelSubscriptionChangePending = true;
-                notifyItemChanged(0);
+                //TODO SUBSCRIBE
                 break;
             case R.id.website:
                 IntentHelper.openBrowser(v.getContext(), mChannel.getSiteUrl());

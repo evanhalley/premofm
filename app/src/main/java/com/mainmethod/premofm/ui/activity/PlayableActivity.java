@@ -27,7 +27,6 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
 import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiHelper;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
@@ -198,10 +197,10 @@ public abstract class PlayableActivity extends BaseActivity {
         fragment.show(getFragmentManager(), "Queue");
     }
 
-    protected void favoriteEpisode(ApiHelper.OnToggleFavoriteEpisodeListener listener) {
+    protected void favoriteEpisode(EpisodeModel.OnToggleFavoriteEpisodeListener listener) {
 
         if (getEpisode() != null) {
-            ApiHelper.toggleFavoriteAsync(this, getEpisode().getId(), listener);
+            EpisodeModel.toggleFavoriteAsync(this, getEpisode().getId(), listener);
         }
     }
 

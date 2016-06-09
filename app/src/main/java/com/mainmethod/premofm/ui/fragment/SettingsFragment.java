@@ -22,9 +22,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiException;
-import com.mainmethod.premofm.api.ApiManager;
-import com.mainmethod.premofm.api.PostApiResponse;
 import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.CollectionModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
@@ -429,12 +426,13 @@ public class SettingsFragment extends PreferenceFragment implements
         }
 
         if (requestCode == IntentHelper.REQUEST_CODE_OPEN_OPML_FILE) {
-            executeOpmlImport(intent.getData());
+            //executeOpmlImport(intent.getData());
         } else if (requestCode == IntentHelper.REQUEST_CODE_SAVE_OPML_FILE) {
-            executeOpmlExport(intent.getData());
+            //executeOpmlExport(intent.getData());
         }
     }
 
+    /*
     private void executeOpmlImport(Uri uri) {
         ProgressDialog dialog = ProgressDialog.show(getActivity(),
                 getString(R.string.dialog_please_wait),
@@ -614,5 +612,5 @@ public class SettingsFragment extends PreferenceFragment implements
             ResourceHelper.closeResource(reader);
         }
         return channel;
-    }
+    }*/
 }

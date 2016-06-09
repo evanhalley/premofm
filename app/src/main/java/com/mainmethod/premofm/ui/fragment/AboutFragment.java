@@ -157,8 +157,6 @@ public class AboutFragment extends PreferenceFragment implements
             default:
                 return;
         }
-
-        ((BaseActivity) getActivity()).startPurchaseFlow(productId);
     }
 
     private void showDonationDialog() {

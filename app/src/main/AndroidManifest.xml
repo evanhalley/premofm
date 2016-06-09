@@ -65,15 +65,6 @@
             android:label="@string/title_activity_play"
             android:launchMode="singleTask" />
         <activity
-            android:theme="@style/AppTheme.Secondary"
-            android:name=".ui.activity.ChannelSearchActivity"
-            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity" />
-        <activity
-            android:theme="@style/AppTheme.Secondary"
-            android:name="com.mainmethod.premofm.ui.activity.ChannelCategoryActivity"
-            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
-            android:label="@string/title_activity_category"/>
-        <activity
             android:theme="@style/AppTheme.ChannelProfile"
             android:name="com.mainmethod.premofm.ui.activity.ChannelProfileActivity"
             android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
@@ -93,24 +84,6 @@
             android:name="com.mainmethod.premofm.ui.activity.DebugActivity"
             android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
             android:label="@string/title_activity_debug"/>
-        <activity
-            android:theme="@style/AppTheme.Secondary"
-            android:name="com.mainmethod.premofm.ui.activity.UserProfileActivity"
-            android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
-            android:label="@string/title_activity_user_profile"/>
-
-        <activity android:name="com.mainmethod.premofm.ui.activity.LinkActivity">
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-                <data android:host="itunes.apple.com" />
-                <data android:pathPrefix="/us/podcast" />
-            </intent-filter>
-        </activity>
 
         <!-- Services -->
         <service
@@ -129,30 +102,6 @@
             android:exported="false" />
 
         <service
-            android:name="com.mainmethod.premofm.service.ApiService"
-            android:label="@string/title_service_sync_service"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
-
-        <service
-            android:name="com.mainmethod.premofm.service.job.PushChangesJobService"
-            android:label="@string/title_service_push_changes_job"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
-
-        <service
-            android:name="com.mainmethod.premofm.service.job.SyncEpisodesJobService"
-            android:label="@string/title_service_sync_episodes_job"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
-
-        <service
-            android:name="com.mainmethod.premofm.service.job.PushCollectionChangesJobService"
-            android:label="@string/title_service_push_collections"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false" />
-
-        <service
             android:name="com.mainmethod.premofm.service.job.DownloadJobService"
             android:label="@string/title_service_download_job"
             android:permission="android.permission.BIND_JOB_SERVICE"
@@ -162,22 +111,6 @@
             android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
             android:exported="false"/>
-
-        <service
-            android:name="com.mainmethod.premofm.service.PremoGcmListenerService"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </service>
-
-        <service
-            android:name="com.mainmethod.premofm.service.PremoInstanceIdListenerService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
-            </intent-filter>
-        </service>
 
         <!-- Content Provider -->
         <provider

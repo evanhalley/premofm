@@ -26,7 +26,6 @@ import com.mainmethod.premofm.helper.billing.IabHelper;
 import com.mainmethod.premofm.helper.billing.IabResult;
 import com.mainmethod.premofm.helper.billing.Purchase;
 import com.mainmethod.premofm.object.User;
-import com.mainmethod.premofm.service.ApiService;
 
 import org.parceler.Parcels;
 
@@ -146,7 +145,6 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
             if (firstSignIn) {
                 Log.d(TAG, "User's first sign in, initiating first application sync");
-                ApiService.initiateFirstSignInProcess(this);
                 AppPrefHelper.getInstance(this).putLong(AppPrefHelper.PROPERTY_FIRST_BOOT,
                         DatetimeHelper.getTimestamp());
             }
@@ -271,63 +269,6 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
         }
-    }
-
-    public void startPurchaseFlow(final String productId) {
-        String key = XORHelper.decode(getString(R.string.google_play_license), 27);
-        mIabHelper = new IabHelper(this, key);
-        mIabHelper.enableDebugLogging(BuildConfig.DEBUG);
-        mIabHelper.startSetup(result -> {
-            Log.d(TAG, "IAB Response: " + result.getResponse());
-            User user = User.load(BaseActivity.this);
-            mIabHelper.launchPurchaseFlow(BaseActivity.this, productId, REQUEST_CODE,
-                    (result1, info) -> {
-
-                        // initiate the flow here
-                        if (result1.isSuccess() && result1.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-
-                            if (info.getItemType() == IabHelper.ITEM_TYPE_INAPP) {
-                                mIabHelper.consumeAsync(info, new IabHelper.OnConsumeFinishedListener() {
-                                    @Override
-                                    public void onConsumeFinished(Purchase info, IabResult result1) {
-
-                                        if (result1.isSuccess() && result1.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-                                            Bundle args = new Bundle();
-                                            args.putParcelable(ApiService.PARAM_PURCHASE, Parcels.wrap(info));
-                                            ApiService.start(BaseActivity.this, ApiService.ACTION_ADD_PURCHASE, args);
-
-                                            AnalyticsHelper.sendEvent(BaseActivity.this,
-                                                    AnalyticsHelper.CATEGORY_PURCHASE,
-                                                    AnalyticsHelper.ACTION_CLICK,
-                                                    "purchase");
-                                        }
-
-                                        if (mIabHelper != null) {
-                                            mIabHelper.dispose();
-                                        }
-                                    }
-                                });
-                            } else {
-
-                                Bundle args = new Bundle();
-                                args.putParcelable(ApiService.PARAM_PURCHASE, Parcels.wrap(info));
-                                ApiService.start(BaseActivity.this, ApiService.ACTION_ADD_PURCHASE, args);
-
-                                AnalyticsHelper.sendEvent(BaseActivity.this,
-                                        AnalyticsHelper.CATEGORY_PURCHASE,
-                                        AnalyticsHelper.ACTION_CLICK,
-                                        "purchase");
-
-                                if (mIabHelper != null) {
-                                    mIabHelper.dispose();
-                                }
-                            }
-                        } else {
-                            mIabHelper.dispose();
-                        }
-                    },
-                    user.getId());
-        });
     }
 
     @Override

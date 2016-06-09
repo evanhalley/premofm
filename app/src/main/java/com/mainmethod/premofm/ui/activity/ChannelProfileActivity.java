@@ -40,7 +40,6 @@ import com.mainmethod.premofm.helper.PaletteHelper.OnPaletteLoaded;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.service.ApiService;
 import com.mainmethod.premofm.ui.adapter.EpisodeAdapter;
 
 import org.parceler.Parcels;
@@ -69,14 +68,8 @@ public class ChannelProfileActivity
     private ImageView mChannelArt;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private boolean mVisitingFromExplore;
-
-    private boolean mLoadingFromServer;
-    private long mOldestTimestamp = DatetimeHelper.getTimestamp();
-    private long mNewestTimestamp = -1;
-    private boolean mKeepLoadingChannels = true;
     private EpisodeAdapter mAdapter;
     private SubscriptionBroadcastReceiver mSubscriptionBroadcastReceiver;
-    private EpisodesLoadedBroadcastReceiver mEpisodesLoadedReceiver;
 
     public static void openChannelProfile(BaseActivity activity, Channel channel, View channelArt,
                                           boolean visitingFromExplore) {
@@ -116,10 +109,6 @@ public class ChannelProfileActivity
             }
         }
         setupHeader();
-
-        if (extras.getLong(PARAM_NUM_STORED_EPISODES) == 0) {
-            getEpisodesFromServer();
-        }
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -136,30 +125,7 @@ public class ChannelProfileActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        int position = cursor.getPosition();
-
-        // get the newest timestampt
-        if (mNewestTimestamp == -1) {
-
-            if (cursor.moveToFirst()) {
-                Episode episode = EpisodeModel.toEpisode(cursor);
-                mNewestTimestamp = episode.getPublishedAt().getTime();
-                Bundle args = new Bundle();
-                args.putParcelable(ApiService.PARAM_CHANNEL, Parcels.wrap(mChannel));
-                args.putLong(ApiService.PARAM_TIMESTAMP, mNewestTimestamp);
-                ApiService.start(this, ApiService.ACTION_GET_CHANNEL_EPISODES_NEWER_THAN, args);
-            }
-        }
-        
-        // no channels returned and the channel is unsubscribed, get more from the server
-        if (cursor.moveToLast()) {
-            // get the last episodes published time, use it for the timestamp
-            Episode episode = EpisodeModel.toEpisode(cursor);
-            mOldestTimestamp = episode.getPublishedAt().getTime();
-        }
-        cursor.moveToPosition(position);
         mAdapter.changeCursor(cursor);
-        mRecyclerView.addOnScrollListener(new ScrollListener(this));
     }
 
     @Override
@@ -171,21 +137,16 @@ public class ChannelProfileActivity
     protected void onResume() {
         super.onResume();
         mSubscriptionBroadcastReceiver = new SubscriptionBroadcastReceiver(this);
-        mEpisodesLoadedReceiver = new EpisodesLoadedBroadcastReceiver(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(mSubscriptionBroadcastReceiver,
                 new IntentFilter(BroadcastHelper.INTENT_SUBSCRIPTION_CHANGE));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mEpisodesLoadedReceiver,
-                new IntentFilter(BroadcastHelper.INTENT_EPISODES_LOADED_FROM_SERVER));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mSubscriptionBroadcastReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mEpisodesLoadedReceiver);
         mRecyclerView.clearOnScrollListeners();
         mSubscriptionBroadcastReceiver = null;
-        mEpisodesLoadedReceiver = null;
     }
 
     @Override
@@ -294,16 +255,6 @@ public class ChannelProfileActivity
 
     }
 
-    private void getEpisodesFromServer() {
-        mLoadingFromServer = true;
-        Bundle args = new Bundle();
-        args.putParcelable(ApiService.PARAM_CHANNEL, Parcels.wrap(mChannel));
-        args.putLong(ApiService.PARAM_TIMESTAMP, mOldestTimestamp);
-        ApiService.start(ChannelProfileActivity.this,
-                ApiService.ACTION_GET_CHANNEL_EPISODES_OLDER_THAN,
-                args);
-    }
-
     private static class ImageLoadedListener implements ImageLoadHelper.OnImageLoaded {
 
         private WeakReference<ChannelProfileActivity> mActivity;
@@ -339,43 +290,6 @@ public class ChannelProfileActivity
             activity.mChannelArt.setImageDrawable(
                     new BitmapDrawable(activity.getResources(), BitmapFactory.decodeResource(
                             activity.getResources(), R.drawable.default_channel_art)));
-        }
-    }
-
-    private static class ScrollListener extends RecyclerView.OnScrollListener {
-
-        private WeakReference<ChannelProfileActivity> mActivity;
-
-        public ScrollListener(ChannelProfileActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            ChannelProfileActivity activity = mActivity.get();
-
-            if(activity == null) {
-                return;
-            }
-
-            if (!activity.mKeepLoadingChannels) {
-                return;
-            }
-
-            if (activity.mLoadingFromServer) {
-                return;
-            }
-
-            int mVisibleItemCount = activity.mRecyclerView.getChildCount();
-            int mTotalItemCount = activity.mLayoutManager.getItemCount();
-            int mFirstVisibleItem = activity.mLayoutManager.findFirstVisibleItemPosition();
-
-            if (!activity.mLoadingFromServer && ((mTotalItemCount - mVisibleItemCount) <=
-                    (mFirstVisibleItem + VISIBLE_THRESHOLD))) {
-                // we are at the end, let's get more from the server
-                activity.getEpisodesFromServer();
-            }
         }
     }
 
@@ -425,36 +339,6 @@ public class ChannelProfileActivity
             }
             activity.mAdapter.setChannel(activity.mChannel);
             activity.mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private static class EpisodesLoadedBroadcastReceiver extends BroadcastReceiver {
-
-        private WeakReference<ChannelProfileActivity> mActivity;
-
-        public EpisodesLoadedBroadcastReceiver(ChannelProfileActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ChannelProfileActivity activity = mActivity.get();
-
-            if (activity == null) {
-                return;
-            }
-
-            if (activity.mChannel == null) {
-                return;
-            }
-
-            if (activity.mChannel.getServerId().contentEquals(intent.getStringExtra(BroadcastHelper.EXTRA_CHANNEL_SERVER_ID))) {
-                activity.mLoadingFromServer = false;
-
-                if (intent.getIntExtra(BroadcastHelper.EXTRA_NUMBER_EPISODES_LOADED, 0) == 0) {
-                    activity.mKeepLoadingChannels = false;
-                }
-            }
         }
     }
 }

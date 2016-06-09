@@ -37,10 +37,7 @@ public class CollectionModel {
 
     public static Loader<Cursor> getCursorLoader(Context context) {
         return new CursorLoader(context, PremoContract.CollectionEntry.CONTENT_URI,
-                null,
-                PremoContract.CollectionEntry.SYNC_STATUS + " != ?",
-                new String[] { String.valueOf(SyncStatus.PENDING_DELETE) },
-                PremoContract.CollectionEntry.NAME + " ASC");
+                null, null, null, PremoContract.CollectionEntry.NAME + " ASC");
     }
 
     public static ContentValues fromCollection(Collection collection) {
@@ -50,14 +47,12 @@ public class CollectionModel {
             record.put(PremoContract.CollectionEntry._ID, collection.getId());
         }
         record.put(PremoContract.CollectionEntry.NAME, collection.getName());
-        record.put(PremoContract.CollectionEntry.SERVER_ID, collection.getServerId());
         record.put(PremoContract.CollectionEntry.DESCRIPTION, collection.getDescription());
         record.put(PremoContract.CollectionEntry.PARAMS, TextUtils.join(",",
                 collection.getParameters()));
-        record.put(PremoContract.CollectionEntry.COLLECTED_SERVER_IDS, TextUtils.join(",",
+        record.put(PremoContract.CollectionEntry.COLLECTED_GENERATED_IDS, TextUtils.join(",",
                 collection.getCollectedServerIds()));
         record.put(PremoContract.CollectionEntry.COLLECTION_TYPE, collection.getType());
-        record.put(PremoContract.CollectionEntry.AUTHOR_SERVER_ID, collection.getAuthorServerId());
         return record;
     }
 
@@ -68,10 +63,8 @@ public class CollectionModel {
         }
         Collection collection = new Collection();
         collection.setId(cursor.getInt(cursor.getColumnIndex(PremoContract.CollectionEntry._ID)));
-        collection.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.CollectionEntry.SERVER_ID)));
         collection.setName(cursor.getString(cursor.getColumnIndex(PremoContract.CollectionEntry.NAME)));
         collection.setDescription(cursor.getString(cursor.getColumnIndex(PremoContract.CollectionEntry.DESCRIPTION)));
-        collection.setAuthorServerId(cursor.getString(cursor.getColumnIndex(PremoContract.CollectionEntry.AUTHOR_SERVER_ID)));
         collection.setType(cursor.getInt(cursor.getColumnIndex(PremoContract.CollectionEntry.COLLECTION_TYPE)));
 
         String parameterStr = cursor.getString(
@@ -79,10 +72,9 @@ public class CollectionModel {
         List<String> parameters = new ArrayList<>(Arrays.asList(TextUtils.split(parameterStr, ",")));
         collection.setParameters(parameters);
 
-        String collectedServerIdStr = cursor.getString( cursor.getColumnIndex(PremoContract.CollectionEntry.COLLECTED_SERVER_IDS));
+        String collectedServerIdStr = cursor.getString( cursor.getColumnIndex(PremoContract.CollectionEntry.COLLECTED_GENERATED_IDS));
         List<String> collectedServerIds = new ArrayList<>(Arrays.asList(TextUtils.split(collectedServerIdStr, ",")));
         collection.setCollectedServerIds(collectedServerIds);
-        collection.setSyncStatus(cursor.getInt(cursor.getColumnIndex(PremoContract.CollectionEntry.SYNC_STATUS)));
         return collection;
     }
 
@@ -107,7 +99,7 @@ public class CollectionModel {
             cursor = context.getContentResolver().query(PremoContract.CollectionEntry.CONTENT_URI,
                     null,
                     PremoContract.CollectionEntry.COLLECTION_TYPE + " == ? AND " +
-                        PremoContract.CollectionEntry.COLLECTED_SERVER_IDS + " LIKE '%" + channelServerId +  "%'",
+                        PremoContract.CollectionEntry.COLLECTED_GENERATED_IDS + " LIKE '%" + channelServerId +  "%'",
                     new String[]{String.valueOf(Collection.COLLECTION_TYPE_CHANNEL)},
                     null);
 
@@ -150,8 +142,7 @@ public class CollectionModel {
     public static List<Collection> getPendingCollections(Context context) {
         ArrayList<Collection> collections = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(PremoContract.CollectionEntry.CONTENT_URI,
-                null, PremoContract.CollectionEntry.SYNC_STATUS + " != ?",
-                new String[] { String.valueOf(SyncStatus.NONE) }, null);
+                null, null, null, null);
 
         if (cursor != null) {
 
@@ -187,9 +178,7 @@ public class CollectionModel {
     public static List<Collection> getCollections(Context context) {
         List<Collection> collections = new ArrayList<>();
         Cursor cursor = context.getContentResolver().query(PremoContract.CollectionEntry.CONTENT_URI,
-                null, PremoContract.CollectionEntry.SYNC_STATUS + " != ?",
-                new String[]{ String.valueOf(SyncStatus.PENDING_DELETE) },
-                PremoContract.CollectionEntry.NAME + " ASC");
+                null, null, null, PremoContract.CollectionEntry.NAME + " ASC");
 
         try {
 
@@ -224,7 +213,6 @@ public class CollectionModel {
 
     public static void markCollectionToDelete(Context context, int collectionId) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(PremoContract.CollectionEntry.SYNC_STATUS, SyncStatus.PENDING_DELETE);
         context.getContentResolver().update(PremoContract.CollectionEntry.CONTENT_URI,
                 contentValues,
                 PremoContract.CollectionEntry._ID + " = ?",
@@ -264,28 +252,11 @@ public class CollectionModel {
 
         // this is an existing collection
         if (collection.getId() > -1) {
-
-            // no server id, this is a create
-            if (TextUtils.isEmpty(collection.getServerId()) && pushToServer) {
-                syncStatus = SyncStatus.PENDING_CREATE;
-            }
-
-            // we have a server id, update it
-            else if (pushToServer) {
-                syncStatus = SyncStatus.PENDING_UPDATE;
-            }
-            values.put(PremoContract.CollectionEntry.SYNC_STATUS, syncStatus);
             context.getContentResolver().update(PremoContract.CollectionEntry.CONTENT_URI,
                     values,
                     PremoContract.CollectionEntry._ID + " = ?",
                     new String[]{String.valueOf(collection.getId())});
         } else {
-
-            // sync to server, it must be created, set appropriate status
-            if (pushToServer) {
-                syncStatus = SyncStatus.PENDING_CREATE;
-            }
-            values.put(PremoContract.CollectionEntry.SYNC_STATUS, syncStatus);
             Uri uri = context.getContentResolver().insert(
                     PremoContract.CollectionEntry.CONTENT_URI,
                     values);

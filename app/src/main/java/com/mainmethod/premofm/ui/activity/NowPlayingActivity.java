@@ -27,7 +27,6 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiHelper;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
@@ -56,7 +55,7 @@ import java.util.Calendar;
  */
 public class NowPlayingActivity extends PlayableActivity implements
         View.OnClickListener,
-        ApiHelper.OnToggleFavoriteEpisodeListener,
+        EpisodeModel.OnToggleFavoriteEpisodeListener,
         OnSeekBarChangeListener {
 
     public static final String PARAM_EPISODE_ID             = "episodeId";

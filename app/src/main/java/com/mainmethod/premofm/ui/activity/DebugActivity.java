@@ -26,12 +26,8 @@ import com.mainmethod.premofm.helper.billing.IabResult;
 import com.mainmethod.premofm.helper.billing.Purchase;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.User;
-import com.mainmethod.premofm.service.ApiService;
 import com.mainmethod.premofm.service.DownloadService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
-import com.mainmethod.premofm.ui.dialog.ReauthUserDialogFragment;
-
-import org.parceler.Parcels;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,22 +38,6 @@ import java.util.TreeSet;
 public class DebugActivity extends BaseActivity implements View.OnClickListener,
         IabHelper.OnIabSetupFinishedListener, IabHelper.OnIabPurchaseFinishedListener {
     private IabHelper mIabHelper;
-
-    private final BroadcastReceiver mReauthReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // show toast
-            boolean isReauthenticated = intent.getBooleanExtra(
-                    BroadcastHelper.EXTRA_IS_REAUTHENTICATED, false);
-            int toastResId = isReauthenticated ? R.string.toast_login_successful :
-                    R.string.toast_login_not_successful;
-            Toast.makeText(DebugActivity.this, toastResId, Toast.LENGTH_SHORT).show();
-
-            if (!isReauthenticated) {
-                ReauthUserDialogFragment.showReauthNotification(context);
-            }
-        }
-    };
 
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
@@ -106,12 +86,6 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener,
                 User user = User.load(this);
                 mIabHelper.launchPurchaseFlow(this, "premofm_listener.test", 123, this, user.getId());
                 break;
-            case R.id.reauthenticate:
-                ReauthUserDialogFragment.showDialog(this);
-                break;
-            case R.id.notify_to_reauth:
-                ReauthUserDialogFragment.showReauthNotification(this);
-                break;
             case R.id.single_episode_notification:
                 Episode episode = EpisodeModel.getEpisodeById(this, 1);
                 Set<String> episodeIds = new TreeSet<>();
@@ -131,16 +105,10 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener,
                         AppPrefHelper.PROPERTY_EPISODE_NOTIFICATIONS, episodeIds1);
                 NotificationHelper.showNewEpisodeNotification(this);
                 break;
-            case R.id.push_collection_changes:
-                ApiService.start(this, ApiService.ACTION_PUSH_COLLECTION_CHANGES);
-                break;
             case R.id.insufficient_space_notification:
                 NotificationHelper.showErrorNotification(this,
                         R.string.notification_title_insufficient_space,
                         R.string.notification_content_insufficient_space);
-                break;
-            case R.id.push_episode_changes:
-                ApiService.start(this, ApiService.ACTION_PUSH_LOCAL_CHANGES);
                 break;
         }
     }
@@ -152,12 +120,6 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onIabPurchaseFinished(IabResult result, Purchase info) {
-
-        if (info != null && result.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-            Bundle args = new Bundle();
-            args.putParcelable(ApiService.PARAM_PURCHASE, Parcels.wrap(info));
-            ApiService.start(this, ApiService.ACTION_ADD_PURCHASE, args);
-        }
     }
 
     @Override
@@ -179,13 +141,10 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-                mReauthReceiver, new IntentFilter(BroadcastHelper.INTENT_REAUTHENTICATION));
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mReauthReceiver);
     }
 }

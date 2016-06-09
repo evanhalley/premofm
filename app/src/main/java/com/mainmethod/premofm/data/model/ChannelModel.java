@@ -56,7 +56,7 @@ public class ChannelModel {
         }
         Channel channel = new Channel();
         channel.setId(cursor.getInt(cursor.getColumnIndex(PremoContract.ChannelEntry._ID)));
-        channel.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.SERVER_ID)));
+        channel.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.GENERATED_ID)));
         channel.setTitle(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.TITLE)));
         channel.setAuthor(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.AUTHOR)));
         channel.setDescription(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.DESCRIPTION)));
@@ -74,7 +74,7 @@ public class ChannelModel {
      */
     public static ContentValues fromChannel(Channel channel) {
         ContentValues record = new ContentValues();
-        record.put(PremoContract.ChannelEntry.SERVER_ID, channel.getServerId());
+        record.put(PremoContract.ChannelEntry.GENERATED_ID, channel.getServerId());
         record.put(PremoContract.ChannelEntry.TITLE, channel.getTitle());
         record.put(PremoContract.ChannelEntry.DESCRIPTION, channel.getDescription());
         record.put(PremoContract.ChannelEntry.AUTHOR, channel.getAuthor());
@@ -94,7 +94,7 @@ public class ChannelModel {
         Channel channel = null;
         Cursor cursor = context.getContentResolver().query(PremoContract.ChannelEntry.CONTENT_URI,
                 null,
-                PremoContract.ChannelEntry.SERVER_ID + " = '" + serverId + "'",
+                PremoContract.ChannelEntry.GENERATED_ID + " = '" + serverId + "'",
                 null,
                 null);
 
@@ -169,7 +169,7 @@ public class ChannelModel {
             cursor = context.getContentResolver().query(
                     PremoContract.ChannelEntry.CONTENT_URI,
                     null,
-                    PremoContract.ChannelEntry.SERVER_ID + " = ?",
+                    PremoContract.ChannelEntry.GENERATED_ID + " = ?",
                     new String[]{ serverId },
                     null);
 

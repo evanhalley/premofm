@@ -20,8 +20,6 @@ import com.mainmethod.premofm.data.model.CollectionModel;
 import com.mainmethod.premofm.data.model.FilterModel;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.User;
-import com.mainmethod.premofm.service.ApiService;
-import com.mainmethod.premofm.service.job.SyncEpisodesJobService;
 
 import java.util.List;
 
@@ -95,9 +93,6 @@ public class UpdateHelper {
 
             if (registrationId == null) {
                 Log.d(TAG, "Registration ID is null, retrieving a new one");
-
-                // start the process to retrieve a GCM registration ID
-                ApiService.start(context, ApiService.ACTION_REGISTER_GCM);
             }
 
             // create a couple filters
@@ -106,18 +101,9 @@ public class UpdateHelper {
 
         if (oldVersionCode != -1) {
 
-            // update registration ID
-            ApiService.start(context, ApiService.ACTION_REGISTER_GCM);
-
-            // anytime we do any upgrade, resync the user profile?
-            ApiService.start(context, ApiService.ACTION_SYNC_USER_PROFILE);
-
             // anytime we do any upgrade, remove cached episode notifications
             AppPrefHelper.getInstance(context).remove(AppPrefHelper.PROPERTY_EPISODE_NOTIFICATIONS);
             AppPrefHelper.getInstance(context).remove(AppPrefHelper.PROPERTY_DOWNLOAD_NOTIFICATIONS);
-
-            // schedule an episode update
-            SyncEpisodesJobService.schedule(context);
 
             // more updates here
             if (oldVersionCode <= 100001 && newVersionCode >= 100002) {

@@ -16,7 +16,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiHelper;
 import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.data.model.PlaylistModel;
@@ -159,13 +158,6 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
                                 channel, channelArt, false);
                     } else {
 
-                        ApiHelper.getChannelAsync(v.getContext(), channelServerId, channel1 -> {
-
-                            if (channel1 != null) {
-                                ChannelProfileActivity.openChannelProfile((BaseActivity) v.getContext(),
-                                        channel1, channelArt, true);
-                            }
-                        });
                     }
                 }
                 break;
@@ -204,7 +196,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
                         EpisodeModel.getEpisodeById(itemView.getContext(), episodeId));
                 return true;
             case R.id.action_favorite:
-                ApiHelper.toggleFavoriteAsync(itemView.getContext(), episodeId, null);
+                EpisodeModel.toggleFavoriteAsync(itemView.getContext(), episodeId, null);
                 return true;
             case R.id.action_add_to_queue:
                 PlaylistModel.addEpisodeToPlaylist(itemView.getContext(),

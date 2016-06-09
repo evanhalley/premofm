@@ -24,14 +24,12 @@ import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
-import com.mainmethod.premofm.ui.view.AuthenticationWidget;
 
 public class OnboardingActivity extends BaseActivity implements View.OnClickListener,
         ViewPager.OnPageChangeListener {
 
     private ViewPager mViewPager;
     private OnboardingViewPagerAdapter mPagerAdapter;
-    private AuthenticationWidget mAuthenticationWidget;
     private boolean mAuthFormIsShowing = false;
 
     private BroadcastReceiver mAuthenticationReceiver = new BroadcastReceiver() {
@@ -62,7 +60,6 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
         mViewPager.addOnPageChangeListener(this);
         findViewById(R.id.sign_in).setOnClickListener(this);
         findViewById(R.id.try_now).setOnClickListener(this);
-        mAuthenticationWidget = new AuthenticationWidget(findViewById(R.id.onboarding_activity));
         ((TextView) findViewById(R.id.privacy_and_tos)).setMovementMethod(new LinkMovementMethod());
     }
 
@@ -97,7 +94,6 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
                 if (mAuthFormIsShowing) {
                     showProgressDialog(R.string.progress_authenticate_title,
                             R.string.progress_authenticate_message);
-                    mAuthenticationWidget.startAuthentication(false);
                 } else {
                     mAuthFormIsShowing = true;
                     final View form = findViewById(R.id.auth_form);
@@ -131,7 +127,6 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
                         AnalyticsHelper.ACTION_CLICK, "");
                 showProgressDialog(R.string.progress_authenticate_title,
                         R.string.progress_authenticate_message);
-                mAuthenticationWidget.startNewTempUser();
                 break;
         }
     }

@@ -24,7 +24,7 @@ import com.mainmethod.premofm.service.DownloadService;
 public class DownloadJobService extends PremoJobService {
 
     private static final String TAG = DownloadJobService.class.getSimpleName();
-    public static final int JOB_ID = SyncEpisodesJobService.class.hashCode();
+    public static final int JOB_ID = DownloadJobService.class.hashCode();
     private static final int LATER = 120_000;
     @Override
     public boolean onStartJob(JobParameters params) {

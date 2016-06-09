@@ -69,7 +69,7 @@ public class EpisodeModel {
     public static final int ADD    = 1;
 
     private static final String CHANNEL_EPISODE_QUERY =
-            PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " = ?";
+            PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ?";
 
     private static final String DOWNLOAD_QUEUE_EPISODE_QUERY =
             PremoContract.EpisodeEntry.DOWNLOAD_STATUS_ID + " = " + DownloadStatus.QUEUED;
@@ -80,10 +80,10 @@ public class EpisodeModel {
     private static final String EPISODE_ID_QUERY = PremoContract.EpisodeEntry._ID + " = ?";
 
     private static final String EPISODE_SERVER_ID_QUERY =
-            PremoContract.EpisodeEntry.SERVER_ID + " = ?";
+            PremoContract.EpisodeEntry.GENERATED_ID + " = ?";
 
     private static final String EPISODE_SERVER_ID_MANUAL_DOWNLOAD_QUERY =
-            PremoContract.EpisodeEntry.SERVER_ID + " = ? " +
+            PremoContract.EpisodeEntry.GENERATED_ID + " = ? " +
                     "AND " + PremoContract.EpisodeEntry.CHANNEL_IS_SUBSCRIBED + " = 0 " +
                     "AND " + PremoContract.EpisodeEntry.MANUALLY_ADDED + " = 1 ";
 
@@ -312,7 +312,7 @@ public class EpisodeModel {
      */
     public static ContentValues fromEpisode(Episode episode) {
         ContentValues record = new ContentValues();
-        record.put(PremoContract.EpisodeEntry.SERVER_ID, episode.getServerId());
+        record.put(PremoContract.EpisodeEntry.GENERATED_ID, episode.getServerId());
         record.put(PremoContract.EpisodeEntry.GUID, episode.getGuid());
         record.put(PremoContract.EpisodeEntry.TITLE, episode.getTitle());
         record.put(PremoContract.EpisodeEntry.DESCRIPTION, episode.getDescription());
@@ -332,7 +332,7 @@ public class EpisodeModel {
         record.put(PremoContract.EpisodeEntry.EPISODE_STATUS_ID, episode.getEpisodeStatus());
         record.put(PremoContract.EpisodeEntry.DOWNLOAD_STATUS_ID, episode.getDownloadStatus());
         record.put(PremoContract.EpisodeEntry.MANUAL_DOWNLOAD, episode.isManualDownload() ? 1 : 0);
-        record.put(PremoContract.EpisodeEntry.CHANNEL_SERVER_ID, episode.getChannelServerId());
+        record.put(PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID, episode.getChannelServerId());
         record.put(PremoContract.EpisodeEntry.CHANNEL_TITLE, episode.getChannelTitle());
         record.put(PremoContract.EpisodeEntry.CHANNEL_AUTHOR, episode.getChannelAuthor());
         record.put(PremoContract.EpisodeEntry.CHANNEL_ARTWORK_URL, episode.getChannelArtworkUrl());
@@ -354,8 +354,8 @@ public class EpisodeModel {
         Episode episode = new Episode();
         episode.setId(cursor.getInt(cursor.getColumnIndex(PremoContract.EpisodeEntry._ID)));
         episode.setChannelServerId(cursor.getString(cursor.getColumnIndex(
-                PremoContract.EpisodeEntry.CHANNEL_SERVER_ID)));
-        episode.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.SERVER_ID)));
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID)));
+        episode.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.GENERATED_ID)));
         episode.setGuid(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.GUID)));
         episode.setTitle(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.TITLE)));
         episode.setDescription(cursor.getString(cursor.getColumnIndex(PremoContract.EpisodeEntry.DESCRIPTION)), false);
@@ -410,9 +410,9 @@ public class EpisodeModel {
         }
         Episode episode = new Episode();
         episode.setChannelServerId(cursor.getString(cursor.getColumnIndex(
-                PremoContract.EpisodeEntry.CHANNEL_SERVER_ID)));
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID)));
         episode.setServerId(cursor.getString(cursor.getColumnIndex(
-                PremoContract.EpisodeEntry.SERVER_ID)));
+                PremoContract.EpisodeEntry.GENERATED_ID)));
         episode.setProgress(cursor.getLong(cursor.getColumnIndex(
                 PremoContract.EpisodeEntry.PROGRESS)));
         episode.setEpisodeStatus(cursor.getInt(cursor.getColumnIndex(
@@ -427,25 +427,25 @@ public class EpisodeModel {
     }
 
     public static List<Episode> getEpisodesByChannel(Context context, Channel channel) {
-        return getEpisodes(context, PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " = ?",
+        return getEpisodes(context, PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ?",
                 new String[] { channel.getServerId() },
                 PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS + " DESC");
     }
 
     public static Episode getEpisodeByServerId(Context context, String episodeServerId) {
-        return getEpisode(context, PremoContract.EpisodeEntry.SERVER_ID + " = '" + episodeServerId + "'");
+        return getEpisode(context, PremoContract.EpisodeEntry.GENERATED_ID + " = '" + episodeServerId + "'");
     }
 
     public static List<Episode> getEpisodesByServerId(Context context, Set<String> episodeServerId) {
         String[] episodeServerIdsArr = new String[episodeServerId.size()];
         return getEpisodes(context,
-                PremoContract.EpisodeEntry.SERVER_ID +
+                PremoContract.EpisodeEntry.GENERATED_ID +
                         " IN (" + TextHelper.joinStrings(episodeServerId.toArray(episodeServerIdsArr), true) + ")", null);
     }
 
     public static Episode getLatestEpisodeByChannelServerId(Context context, String channelServerId) {
         List<Episode> episodes = getEpisodes(context,
-                PremoContract.EpisodeEntry.CHANNEL_SERVER_ID +
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID +
                         " = '" + channelServerId + "'",
                 PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS + " DESC LIMIT 1");
 
@@ -472,7 +472,7 @@ public class EpisodeModel {
 
             List<Episode> collectionEpisodes = getEpisodes(context,
                     new StringBuilder(64)
-                            .append(PremoContract.EpisodeEntry.SERVER_ID)
+                            .append(PremoContract.EpisodeEntry.GENERATED_ID)
                             .append(" IN (")
                             .append(inClause.toString())
                             .append(")").toString(),
@@ -695,7 +695,7 @@ public class EpisodeModel {
         context.getContentResolver().update(
                 PremoContract.EpisodeEntry.CONTENT_URI,
                 values,
-                PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " = ? ",
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ? ",
                 new String[]{channelServerId});
     }
 
@@ -710,7 +710,7 @@ public class EpisodeModel {
         context.getContentResolver().update(
                 PremoContract.EpisodeEntry.CONTENT_URI,
                 values,
-                PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " = ? ",
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ? ",
                 new String[]{ channelServerId} );
     }
 
@@ -952,7 +952,7 @@ public class EpisodeModel {
         ContentValues record = new ContentValues();
         record.put(PremoContract.EpisodeEntry.EPISODE_STATUS_ID, EpisodeStatus.COMPLETED);
         int updated = context.getContentResolver().update(PremoContract.EpisodeEntry.CONTENT_URI, record,
-                PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " = ?",
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ?",
                 new String[] { channelServerId });
         return updated == 1;
     }
@@ -1076,7 +1076,61 @@ public class EpisodeModel {
         return contentResolver.bulkInsert(PremoContract.EpisodeEntry.CONTENT_URI, records) > 0;
     }
 
+    private static boolean toggleFavorite(Context context, int episodeId) {
+        boolean favorite = false;
+        Cursor cursor = null;
+
+        try {
+            // get the favorite status from the DB
+            cursor = context.getContentResolver().query(PremoContract.EpisodeEntry.CONTENT_URI,
+                    new String[]{PremoContract.EpisodeEntry.FAVORITE}, PremoContract.EpisodeEntry._ID + " = ?",
+                    new String[]{String.valueOf(episodeId)}, null);
+
+            if (cursor == null) {
+                return false;
+            }
+
+            cursor.moveToFirst();
+            favorite = cursor.getInt(cursor.getColumnIndex(PremoContract.EpisodeEntry.FAVORITE)) == 1;
+
+            // toggle the status
+            favorite = !favorite;
+            ContentValues record = new ContentValues();
+            record.put(PremoContract.EpisodeEntry.FAVORITE, favorite ? 1 : 0);
+            context.getContentResolver().update(PremoContract.EpisodeEntry.CONTENT_URI, record,
+                    "_id = ?", new String[]{String.valueOf(episodeId)});
+        } finally {
+            ResourceHelper.closeResource(cursor);
+        }
+
+        return favorite;
+    }
+
+    public static void toggleFavoriteAsync(final Context context, final int episodeId,
+                                           final OnToggleFavoriteEpisodeListener listener) {
+
+        new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                return toggleFavorite(context, episodeId);
+            }
+
+            @Override
+            protected void onPostExecute(Boolean isFavorite) {
+
+                if (listener != null) {
+                    listener.onFavoriteToggled(isFavorite);
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
     public interface EpisodeUpdateFinishedListener {
         void onUpdateFinished();
+    }
+
+    public interface OnToggleFavoriteEpisodeListener {
+        void onFavoriteToggled(boolean isFavorite);
     }
 }

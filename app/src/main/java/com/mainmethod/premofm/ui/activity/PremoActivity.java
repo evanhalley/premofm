@@ -39,12 +39,10 @@ import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.User;
 import com.mainmethod.premofm.service.job.DownloadJobService;
-import com.mainmethod.premofm.ui.dialog.SetupAccountDialog;
 import com.mainmethod.premofm.ui.fragment.BaseFragment;
 import com.mainmethod.premofm.ui.fragment.ChannelsFragment;
 import com.mainmethod.premofm.ui.fragment.CollectionsFragment;
 import com.mainmethod.premofm.ui.fragment.EpisodesFragment;
-import com.mainmethod.premofm.ui.fragment.ExploreFragment;
 
 /**
  * Frame of the basic application
@@ -163,13 +161,6 @@ public class PremoActivity
 
         switch (v.getId()) {
             case R.id.navigation_header:
-
-                if (User.load(this).isTempUser()) {
-                    SetupAccountDialog dialog = new SetupAccountDialog();
-                    dialog.show(getFragmentManager(), "SetupAccount");
-                } else {
-                    startPremoActivity(UserProfileActivity.class, -1, null);
-                }
                 mDrawerLayout.closeDrawers();
                 break;
         }
@@ -387,7 +378,6 @@ public class PremoActivity
                     fragment = CollectionsFragment.newInstance();
                     break;
                 case R.id.action_explore:
-                    fragment = ExploreFragment.newInstance();
                     break;
                 default:
                     throw new IllegalArgumentException(
