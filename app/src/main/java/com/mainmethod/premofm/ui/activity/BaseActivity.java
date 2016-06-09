@@ -27,6 +27,8 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
     private static final String TAG = "BaseActivity";
 
+    private static final String PARAM_USER_ONBOARDING = "userOnboarding";
+
     protected abstract void onCreateBase(Bundle savedInstanceState);
 
     protected abstract int getLayoutResourceId();
@@ -45,36 +47,26 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
     private Menu mMenu;
 
-    private boolean userIsOnboarding() {
-        return this instanceof OnboardingActivity;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((PremoApp) getApplication()).getTracker();
         ConfigurationManager.getInstance(this);
 
-        /**
-         * How this works, we always want to check to see if the user has signed in,
-         *  if not show the intro screen
-         *
-         * If they are on the intro, sign in, or sign up screen continue that workflow
-         *
-         * If the user has signed in, we want to check to see if the app was updated,
-         *  if it was, run any needed migrate
-         */
+        boolean userIsOnboarding = getIntent().getBooleanExtra(PARAM_USER_ONBOARDING, false);
 
         // user hasn't signed in and isnt' in the process, redirect them to sign in/up
-        if (!AppPrefHelper.getInstance(this).hasUserOnboarded()) {
+        if (!AppPrefHelper.getInstance(this).hasUserOnboarded() && !userIsOnboarding) {
             // user has not signed in and isn't onboarding, let's onboard them
             Log.i(TAG, "User has not logged in, proceeding to intro screen");
             Intent activityIntent = new Intent(this, OnboardingActivity.class);
+            activityIntent.putExtra(PARAM_USER_ONBOARDING, true);
             activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(activityIntent);
             finish();
+        } else if (userIsOnboarding) {
+            startBaseActivity(savedInstanceState, false);
         } else {
-
             // app was updated, execute the update
             if (UpdateHelper.wasUpdated(this)) {
                 Log.d(TAG, "App was updated, executing update");

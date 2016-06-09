@@ -20,9 +20,6 @@ public class PackageHelper {
 
     private static final String TAG = PackageHelper.class.getSimpleName();
 
-    public static final int ENV_PROD = 0;
-    public static final int ENV_QA = 1;
-
     public static int getVersionCode(Context context) {
         int versionCode = -1;
         try {
@@ -32,22 +29,6 @@ public class PackageHelper {
             Log.w(TAG, "Error getting version code", e);
         }
         return versionCode;
-    }
-
-    /**
-     * Returns an integer representing the currently configured environment
-     * @return
-     */
-    public static int getEnvironment() {
-
-        switch (BuildConfig.API_ENV) {
-            case "prod":
-                return ENV_PROD;
-            case "qa":
-                return ENV_QA;
-            default:
-                return -1;
-        }
     }
 
     /**
