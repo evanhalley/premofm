@@ -68,7 +68,7 @@ public class PlaylistModel {
         List<String> episodeServerIds = new ArrayList<>();
 
         for (String serverId : collection.getCollectedServerIds()) {
-            Episode episode = EpisodeModel.getLatestEpisodeByChannelServerId(context, serverId);
+            Episode episode = EpisodeModel.getLatestEpisodeByChannelGeneratedId(context, serverId);
 
             if (episode == null) {
                 continue;
@@ -86,7 +86,7 @@ public class PlaylistModel {
             episodeList = new ArrayList<>(episodeIds.size());
 
             for (int i = 0; i < episodeIds.size(); i++) {
-                Episode episode = EpisodeModel.getEpisodeByServerId(context, episodeIds.get(i));
+                Episode episode = EpisodeModel.getEpisodeByGeneratedId(context, episodeIds.get(i));
 
                 if (episode != null) {
                     episodeList.add(episode);

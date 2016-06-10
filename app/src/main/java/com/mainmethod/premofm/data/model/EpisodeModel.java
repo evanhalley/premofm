@@ -37,6 +37,7 @@ import com.mainmethod.premofm.object.DownloadStatus;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
 import com.mainmethod.premofm.object.Filter;
+import com.mainmethod.premofm.parse.Feed;
 import com.mainmethod.premofm.service.DeleteEpisodeService;
 
 import java.text.ParseException;
@@ -428,21 +429,21 @@ public class EpisodeModel {
                 PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS + " DESC");
     }
 
-    public static Episode getEpisodeByServerId(Context context, String episodeServerId) {
-        return getEpisode(context, PremoContract.EpisodeEntry.GENERATED_ID + " = '" + episodeServerId + "'");
+    public static Episode getEpisodeByGeneratedId(Context context, String episodeGeneratedId) {
+        return getEpisode(context, PremoContract.EpisodeEntry.GENERATED_ID + " = '" + episodeGeneratedId + "'");
     }
 
-    public static List<Episode> getEpisodesByServerId(Context context, Set<String> episodeServerId) {
-        String[] episodeServerIdsArr = new String[episodeServerId.size()];
+    public static List<Episode> getEpisodesByGeneratedId(Context context, Set<String> episodeGeneratedId) {
+        String[] episodeServerIdsArr = new String[episodeGeneratedId.size()];
         return getEpisodes(context,
                 PremoContract.EpisodeEntry.GENERATED_ID +
-                        " IN (" + TextHelper.joinStrings(episodeServerId.toArray(episodeServerIdsArr), true) + ")", null);
+                        " IN (" + TextHelper.joinStrings(episodeGeneratedId.toArray(episodeServerIdsArr), true) + ")", null);
     }
 
-    public static Episode getLatestEpisodeByChannelServerId(Context context, String channelServerId) {
+    public static Episode getLatestEpisodeByChannelGeneratedId(Context context, String channelGeneratedId) {
         List<Episode> episodes = getEpisodes(context,
                 PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID +
-                        " = '" + channelServerId + "'",
+                        " = '" + channelGeneratedId + "'",
                 PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS + " DESC LIMIT 1");
 
         if (episodes == null || episodes.size() == 0) {
@@ -1070,6 +1071,26 @@ public class EpisodeModel {
             records[i] = EpisodeModel.fromEpisode(episodeList.get(i));
         }
         return contentResolver.bulkInsert(PremoContract.EpisodeEntry.CONTENT_URI, records) > 0;
+    }
+
+    public static List<Episode> getNewEpisodesFromFeed(Context context, Feed feed) {
+        List<Episode> newEpisodes = new ArrayList<>();
+        Map<String, Episode> storedEpisodes = EpisodeModel.convertListToMap(
+                EpisodeModel.getEpisodesByChannel(context, feed.getChannel()));
+
+        for (int j = 0; j < feed.getEpisodeList().size(); j++) {
+            Episode episode = feed.getEpisodeList().get(j);
+
+            if (!storedEpisodes.containsKey(episode.getGeneratedId())) {
+                episode.setChannelTitle(feed.getChannel().getTitle());
+                episode.setChannelAuthor(feed.getChannel().getAuthor());
+                episode.setChannelArtworkUrl(feed.getChannel().getArtworkUrl());
+                episode.setChannelGeneratedId(feed.getChannel().getGeneratedId());
+                episode.setChannelIsSubscribed(feed.getChannel().isSubscribed());
+                newEpisodes.add(episode);
+            }
+        }
+        return newEpisodes;
     }
 
     private static boolean toggleFavorite(Context context, int episodeId) {

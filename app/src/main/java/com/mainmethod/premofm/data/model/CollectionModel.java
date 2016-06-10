@@ -77,7 +77,7 @@ public class CollectionModel {
         return collection;
     }
 
-    public static List<String> getCollectableServerIds(List collectables) {
+    public static List<String> getCollectableGeneratedIds(List collectables) {
         List<String> serverIds = new ArrayList<>(collectables.size());
 
         for (int i = 0; i < collectables.size(); i++) {
@@ -89,16 +89,16 @@ public class CollectionModel {
     /**
      * Finds channel collections containing the channel and removes it
      * @param context
-     * @param channelServerId
+     * @param channelGeneratedId
      */
-    public static void removeChannelFromCollections(Context context, String channelServerId) {
+    public static void removeChannelFromCollections(Context context, String channelGeneratedId) {
         Cursor cursor = null;
 
         try {
             cursor = context.getContentResolver().query(PremoContract.CollectionEntry.CONTENT_URI,
                     null,
                     PremoContract.CollectionEntry.COLLECTION_TYPE + " == ? AND " +
-                        PremoContract.CollectionEntry.COLLECTED_GENERATED_IDS + " LIKE '%" + channelServerId +  "%'",
+                        PremoContract.CollectionEntry.COLLECTED_GENERATED_IDS + " LIKE '%" + channelGeneratedId +  "%'",
                     new String[]{String.valueOf(Collection.COLLECTION_TYPE_CHANNEL)},
                     null);
 
@@ -116,7 +116,7 @@ public class CollectionModel {
 
                 for (int j = 0; j < collections.get(i).getCollectedServerIds().size(); j++) {
 
-                    if (collections.get(i).getCollectedServerIds().get(j).contentEquals(channelServerId)) {
+                    if (collections.get(i).getCollectedServerIds().get(j).contentEquals(channelGeneratedId)) {
                         foundChannelIdx = j;
                         break;
                     }
@@ -124,7 +124,7 @@ public class CollectionModel {
 
                 if (foundChannelIdx > -1) {
                     collections.get(i).getCollectedServerIds().remove(foundChannelIdx);
-                    saveCollection(context, collections.get(i), true);
+                    saveCollection(context, collections.get(i));
                 }
             }
         } finally {
@@ -244,7 +244,7 @@ public class CollectionModel {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static int saveCollection(Context context, Collection collection, boolean pushToServer) {
+    public static int saveCollection(Context context, Collection collection) {
         ContentValues values = fromCollection(collection);
         int collectionId = -1;
 

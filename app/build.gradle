@@ -36,11 +36,6 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "API_ENV", "\"qa\""
-            buildConfigField "String", "API_PROTOCOL", "\"https\""
-            buildConfigField "String", "API_HOSTNAME", "\"\""
-            buildConfigField "String", "API_PORT", "\"443\""
-            buildConfigField "String", "API_PASSKEY", "\"\""
-            buildConfigField "String", "GCM_SENDER_ID", "\"\""
             buildConfigField "String", "CAST_APP_ID", "\"\""
             versionNameSuffix "-DEBUG"
             //signingConfig signingConfigs.release
@@ -49,11 +44,6 @@ android {
         }
         release {
             buildConfigField "String", "API_ENV", "\"prod\""
-            buildConfigField "String", "API_PROTOCOL", "\"https\""
-            buildConfigField "String", "API_HOSTNAME", "\"\""
-            buildConfigField "String", "API_PORT", "\"443\""
-            buildConfigField "String", "API_PASSKEY", "\"\""
-            buildConfigField "String", "GCM_SENDER_ID", "\"\""
             buildConfigField "String", "CAST_APP_ID", "\"\""
             minifyEnabled true
             shrinkResources true

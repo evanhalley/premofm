@@ -65,6 +65,11 @@ public class ChannelModel {
         channel.setArtworkUrl(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.ARTWORK_URL)));
         channel.setNetwork(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.NETWORK)));
         channel.setTags(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.TAGS)));
+        channel.setETag(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.ETAG)));
+        channel.setLastModified(cursor.getLong(cursor.getColumnIndex(PremoContract.ChannelEntry.LAST_MODIFIED)));
+        channel.setDataMd5(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.MD5)));
+        channel.setLastSyncTime(cursor.getLong(cursor.getColumnIndex(PremoContract.ChannelEntry.LAST_SYNC_TIME)));
+        channel.setLastSyncSuccessful(cursor.getInt(cursor.getColumnIndex(PremoContract.ChannelEntry.LAST_SYNC_SUCCESSFUL)) == 1);
         return channel;
     }
 
@@ -83,10 +88,15 @@ public class ChannelModel {
         record.put(PremoContract.ChannelEntry.ARTWORK_URL, channel.getArtworkUrl());
         record.put(PremoContract.ChannelEntry.NETWORK, channel.getNetwork());
         record.put(PremoContract.ChannelEntry.TAGS, channel.getTags());
+        record.put(PremoContract.ChannelEntry.ETAG, channel.getETag());
+        record.put(PremoContract.ChannelEntry.LAST_MODIFIED, channel.getLastModified());
+        record.put(PremoContract.ChannelEntry.MD5, channel.getDataMd5());
+        record.put(PremoContract.ChannelEntry.LAST_SYNC_TIME, channel.getLastSyncTime());
+        record.put(PremoContract.ChannelEntry.LAST_SYNC_SUCCESSFUL, channel.isLastSyncSuccessful() ? 1 : 0);
         return record;
     }
 
-    public static Channel getChannelByServerId(Context context, String serverId) {
+    public static Channel getChannelByGeneratedId(Context context, String serverId) {
 
         if (TextUtils.isEmpty(serverId)) {
             return null;

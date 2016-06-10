@@ -260,9 +260,9 @@ public class CollectionsFragment extends BaseFragment implements LoaderManager.L
                 Collectable collectable;
 
                 if (collection.getType() == Collection.COLLECTION_TYPE_CHANNEL) {
-                    collectable = ChannelModel.getChannelByServerId(mContext, serverIds.get(i));
+                    collectable = ChannelModel.getChannelByGeneratedId(mContext, serverIds.get(i));
                 } else {
-                    collectable = EpisodeModel.getEpisodeByServerId(mContext, serverIds.get(i));
+                    collectable = EpisodeModel.getEpisodeByGeneratedId(mContext, serverIds.get(i));
                 }
 
                 if (collectable != null) {

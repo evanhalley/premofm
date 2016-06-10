@@ -249,7 +249,7 @@ public class NowPlayingActivity extends PlayableActivity implements
             case R.id.action_share_episode:
 
                 if (mEpisode != null) {
-                    IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByServerId(this,
+                    IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByGeneratedId(this,
                             mEpisode.getGeneratedId()));
                 }
                 return true;

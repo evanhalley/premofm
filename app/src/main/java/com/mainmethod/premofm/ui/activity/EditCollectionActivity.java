@@ -377,7 +377,7 @@ public class EditCollectionActivity
             serverIds.add(collectable.getGeneratedId());
         }
         mCollection.setCollectedServerIds(serverIds);
-        int collectionId = CollectionModel.saveCollection(this, mCollection, true);
+        int collectionId = CollectionModel.saveCollection(this, mCollection);
 
         if (mCreateFilter && collectionId > -1) {
             List<Filter> filters = FilterModel.getFilters(this);

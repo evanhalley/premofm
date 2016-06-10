@@ -151,7 +151,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
             case R.id.channel_art:
             case R.id.published_data:
                 if (channelServerId != null) {
-                    Channel channel = ChannelModel.getChannelByServerId(v.getContext(), channelServerId);
+                    Channel channel = ChannelModel.getChannelByGeneratedId(v.getContext(), channelServerId);
 
                     if (channel != null) {
                         ChannelProfileActivity.openChannelProfile((BaseActivity) v.getContext(),

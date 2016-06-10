@@ -123,6 +123,11 @@ public class PremoContract {
         public static final String ARTWORK_URL = "artworkUrl";
         public static final String NETWORK = "network";
         public static final String TAGS = "tags";
+        public static final String ETAG = "eTag";
+        public static final String LAST_MODIFIED = "lastModified";
+        public static final String MD5 = "md5";
+        public static final String LAST_SYNC_TIME = "lastSyncTime";
+        public static final String LAST_SYNC_SUCCESSFUL = "lastSyncSuccessful";
 
         public static final String CREATE_SQL = "" +
                 "CREATE TABLE " + TABLE_NAME + " (" +
@@ -135,7 +140,12 @@ public class PremoContract {
                 FEED_URL + " TEXT NOT NULL," +
                 ARTWORK_URL + " TEXT," +
                 NETWORK + " TEXT," +
-                TAGS + " TEXT);";
+                TAGS + " TEXT, " +
+                ETAG + " TEXT," +
+                LAST_MODIFIED + " TEXT," +
+                MD5 + " TEXT," +
+                LAST_SYNC_TIME + " INTEGER," +
+                LAST_SYNC_SUCCESSFUL + " INTEGER)";
 
         public static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

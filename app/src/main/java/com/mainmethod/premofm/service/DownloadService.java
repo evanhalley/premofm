@@ -15,7 +15,6 @@ import android.os.AsyncTask;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
@@ -23,6 +22,8 @@ import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.object.DownloadStatus;
 import com.mainmethod.premofm.task.DownloadEpisodesTask;
+
+import timber.log.Timber;
 
 /**
  * Downloads episodes in the background
@@ -32,7 +33,6 @@ import com.mainmethod.premofm.task.DownloadEpisodesTask;
 public class DownloadService extends Service implements
         DownloadEpisodesTask.OnDownloadEpisodesTaskListener {
 
-    private static final String TAG = DownloadService.class.getSimpleName();
     public static final String ACTION_MANUAL_DOWNLOAD   = "com.mainmethod.premofm.manualDownload";
     public static final String ACTION_AUTO_DOWNLOAD     = "com.mainmethod.premofm.autoDownload";
     public static final String ACTION_CANCEL_SERVICE    = "com.mainmethod.premofm.cancelService";
@@ -61,7 +61,7 @@ public class DownloadService extends Service implements
 
         if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
-            Log.d(TAG, "Handling action " + action);
+            Timber.d("Handling action %s", action);
 
             switch (action) {
                 case ACTION_MANUAL_DOWNLOAD:
@@ -142,7 +142,7 @@ public class DownloadService extends Service implements
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "Unbinded from service");
+        Timber.d("Unbinded from service");
         return super.onUnbind(intent);
     }
 
@@ -202,7 +202,7 @@ public class DownloadService extends Service implements
         }
         boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                 status == BatteryManager.BATTERY_STATUS_FULL;
-        Log.d(TAG, "Device is charging: " + isCharging);
+        Timber.d("Device is charging: " + isCharging);
 
         // get connectivity status
         ConnectivityManager connManager = (ConnectivityManager) context
@@ -212,8 +212,8 @@ public class DownloadService extends Service implements
         boolean wifiConnected = wifiInfo != null && wifiInfo.isConnected();
         boolean mobileConnected = mobileInfo != null && mobileInfo.isConnected();
 
-        Log.d(TAG, "WiFi connected: " + wifiConnected);
-        Log.d(TAG, "Mobile connected: " + mobileConnected);
+        Timber.d("WiFi connected: " + wifiConnected);
+        Timber.d("Mobile connected: " + mobileConnected);
 
         // we are charging and charging is required or charging is not required
         if ((isCharging && requiresCharging) || !requiresCharging)  {
@@ -224,15 +224,15 @@ public class DownloadService extends Service implements
                 if (wifiConnected || mobileConnected) {
                     downloadPermitted = true;
                 } else {
-                    Log.d(TAG, "No mobile or wifi connection");
+                    Timber.d("No mobile or wifi connection");
                 }
             } else {
-                Log.d(TAG, "Connectivity state prevents download");
+                Timber.d("Connectivity state prevents download");
             }
         } else {
-            Log.d(TAG, "Charge state prevents download");
+            Timber.d("Charge state prevents download");
         }
-        Log.d(TAG, "Download permitted: " + downloadPermitted);
+        Timber.d("Download permitted: %s", downloadPermitted);
         return downloadPermitted;
     }
 }

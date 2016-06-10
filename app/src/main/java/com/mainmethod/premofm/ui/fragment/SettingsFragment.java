@@ -529,7 +529,7 @@ public class SettingsFragment extends PreferenceFragment implements
 
         try {
             Credential credential = User.load(getActivity()).getCredential();
-            List<String> serverIds = CollectionModel.getCollectableServerIds(channels);
+            List<String> serverIds = CollectionModel.getCollectableGeneratedIds(channels);
             episodes = ApiManager.getInstance(getActivity()).getEpisodes(credential, serverIds);
         } catch (ApiException e) {
             Log.e(TAG, "Error retrieving channel episodes", e);
@@ -541,7 +541,7 @@ public class SettingsFragment extends PreferenceFragment implements
     private List<Channel> storeChannels(List<Channel> channels) {
         try {
             ChannelModel.storeChannels(getActivity(), ChannelModel.ADD, channels);
-            List<String> serverIds = CollectionModel.getCollectableServerIds(channels);
+            List<String> serverIds = CollectionModel.getCollectableGeneratedIds(channels);
 
             for (int i = 0; i < serverIds.size(); i++) {
                 UserPrefHelper.get(getActivity()).addServerId(R.string.pref_key_notification_channels, serverIds.get(i));

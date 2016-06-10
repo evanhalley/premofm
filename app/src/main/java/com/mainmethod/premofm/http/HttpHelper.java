@@ -1,5 +1,8 @@
 package com.mainmethod.premofm.http;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.mainmethod.premofm.helper.ResourceHelper;
@@ -28,6 +31,12 @@ public class HttpHelper {
     private static final String TAG = HttpHelper.class.getSimpleName();
     private static final int CONNECTION_TIMEOUT = 10_000;
     private static final int BUFFER_SIZE = 8_192;
+
+    public static boolean hasInternetConnection(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
 
     /**
      * Returns a HTTPS URL connection object for consumption

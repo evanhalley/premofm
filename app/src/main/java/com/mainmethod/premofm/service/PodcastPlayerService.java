@@ -199,7 +199,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                     break;
                 case ACTION_PLAY_PLAYLIST:
                     Playlist playlist = Parcels.unwrap(intent.getParcelableExtra(PARAM_PLAYLIST));
-                    Episode episode = EpisodeModel.getEpisodeByServerId(this,
+                    Episode episode = EpisodeModel.getEpisodeByGeneratedId(this,
                             playlist.getCurrentEpisodeServerId());
                     PlaylistModel.savePlaylist(this, playlist);
                     play(episode, true);
@@ -499,7 +499,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
         if (playlist.next()) {
             PlaylistModel.savePlaylist(this, playlist);
-            Episode episode = EpisodeModel.getEpisodeByServerId(this,
+            Episode episode = EpisodeModel.getEpisodeByGeneratedId(this,
                     playlist.getCurrentEpisodeServerId());
             play(episode, true);
         } else {

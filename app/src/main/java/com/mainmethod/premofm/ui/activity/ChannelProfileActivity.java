@@ -331,7 +331,7 @@ public class ChannelProfileActivity
             boolean isSubscribed = intent.getBooleanExtra(BroadcastHelper.EXTRA_IS_SUBSCRIBED, false);
 
             if (isSubscribed) {
-                activity.mChannel = ChannelModel.getChannelByServerId(activity,
+                activity.mChannel = ChannelModel.getChannelByGeneratedId(activity,
                         activity.mChannel.getGeneratedId());
             } else {
                 activity.mChannel.setId(-1);

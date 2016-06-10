@@ -24,6 +24,8 @@ public class Channel implements Collectable {
     private String mNetwork;
     private String mTags;
 
+    private long mLastSyncTime;
+    private boolean mLastSyncSuccessful;
     private long mLastModified;
     private String mETag;
     private String mDataMd5;
@@ -139,6 +141,22 @@ public class Channel implements Collectable {
 
     public void setDataMd5(String dataMd5) {
         this.mDataMd5 = dataMd5;
+    }
+
+    public boolean isLastSyncSuccessful() {
+        return mLastSyncSuccessful;
+    }
+
+    public void setLastSyncSuccessful(boolean lastSyncSuccessful) {
+        this.mLastSyncSuccessful = lastSyncSuccessful;
+    }
+
+    public long getLastSyncTime() {
+        return mLastSyncTime;
+    }
+
+    public void setLastSyncTime(long lastSyncTime) {
+        this.mLastSyncTime = lastSyncTime;
     }
 
     @Override

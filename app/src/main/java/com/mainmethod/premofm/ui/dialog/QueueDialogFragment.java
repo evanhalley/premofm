@@ -61,7 +61,7 @@ public class QueueDialogFragment
             String episodeServerId = intent.getStringExtra(BroadcastHelper.EXTRA_EPISODE_SERVER_ID);
 
             if (state == PlaybackState.STATE_PLAYING || state == PlaybackState.STATE_PAUSED) {
-                mEpisode = EpisodeModel.getEpisodeByServerId(context, episodeServerId);
+                mEpisode = EpisodeModel.getEpisodeByGeneratedId(context, episodeServerId);
                 mAdapter.notifyDataSetChanged();
             }
         }
