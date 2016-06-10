@@ -3,6 +3,8 @@ package com.mainmethod.premofm.http;
 import android.util.Log;
 
 import com.mainmethod.premofm.helper.ResourceHelper;
+import com.mainmethod.premofm.helper.TextHelper;
+import com.mainmethod.premofm.object.Channel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -15,6 +17,8 @@ import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import timber.log.Timber;
 
 /**
  * Created by evan on 12/1/14.
@@ -35,7 +39,7 @@ public class HttpHelper {
         HttpURLConnection connection = null;
         Log.d(TAG, "Creating a new connection for " + urlStr);
 
-        if(urlStr != null && urlStr.trim().length() > 0) {
+        if (urlStr != null && urlStr.trim().length() > 0) {
             URL url = new URL(urlStr.trim());
 
             if(url.getProtocol().toLowerCase().contentEquals("https")) {
@@ -43,7 +47,7 @@ public class HttpHelper {
             } else {
                 connection = (HttpURLConnection) url.openConnection();
             }
-            connection.setUseCaches(false);
+            connection.setUseCaches(true);
             connection.setInstanceFollowRedirects(true);
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
         }
@@ -81,7 +85,7 @@ public class HttpHelper {
      * @return
      * @throws IOException
      */
-    private static String readString(InputStream inputStream) throws IOException {
+    private static String readData(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = null;
 
         try {
@@ -96,68 +100,105 @@ public class HttpHelper {
         } finally {
             ResourceHelper.closeResource(buffer);
         }
-        return buffer.toString("UTF-8");
+        return buffer.toString("UTF-8").trim();
     }
 
     /**
-     * Gets data from a URL with optional headers, returns a response with a status code, headers, and body
-     * @param connection
+     * Gets the channels XML data
      * @return
      */
-    public static Response getData(HttpURLConnection connection) {
-        return getData(connection, null);
-    }
-
-    /**
-     * Gets data from a URL with optional headers, returns a response with a status code, headers, and body
-     * @param connection
-     * @param header
-     * @return
-     */
-    public static Response getData(HttpURLConnection connection, Map<String, String> header) {
-        Response response = null;
+    public static String getXmlData(Channel channel) throws XmlDataException {
+        String channelData = null;
         InputStream inputStream = null;
-
-        if (connection == null) {
-            return null;
-        }
-        Log.d(TAG, "Getting data from " + connection.getURL().toString());
+        HttpURLConnection connection = null;
 
         try {
-            // configure the connection
-            connection.setRequestMethod("GET");
-            connection.setDoInput(true);
-            connection.addRequestProperty("Accept-Encoding", "gzip,deflate");
+            connection = getConnection(channel.getFeedUrl());
 
-            // configure the header
-            if (header != null) {
-                Log.d(TAG, "Adding header information to connection");
-
-                for (String key : header.keySet()) {
-                    connection.setRequestProperty(key, header.get(key));
-                }
+            // only add the http caching functions if we aren't forcing an update and they are present
+            if (channel.getLastModified() > -1) {
+                connection.addRequestProperty("Last-Modified", String.valueOf(channel.getLastModified()));
             }
 
-            // check the response
+            if (channel.getETag() != null && channel.getETag().trim().length() > 0) {
+                connection.addRequestProperty("If-None-Match", channel.getETag());
+            }
             int responseCode = connection.getResponseCode();
-            Log.d(TAG, "Response code: " + responseCode);
-            response = new Response();
-            response.setResponseCode(responseCode);
-            response.setHeaderFields(connection.getHeaderFields());
+            Timber.d("Response code: %d", responseCode);
+            Timber.d("Content-Length: %d", connection.getContentLength());
+            Timber.d("Content-Encoding: %s", connection.getContentEncoding());
 
-            // if the response is good, check for a response body
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
+            if (responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
+                Timber.w("Podcast URL moved permanently: %s", channel.getTitle());
+                channel.setFeedUrl(connection.getHeaderField("Location"));
+                throw new XmlDataException(XmlDataException.ERROR_PERM_REDIRECT);
+            }
+
+            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                 inputStream = getInputStream(connection);
-                response.setResponseBody(readString(inputStream));
-                Log.d(TAG, "Received " + response.getResponseBody().getBytes("UTF-8").length +
-                        " bytes");
+                channelData = readData(inputStream);
+
+                // remove UTF-16 BOM character '\uFEFF
+                if (channelData.startsWith("\uFEFF")) {
+                    channelData = channelData.replace("\uFEFF", "");
+                }
+
+                if (!channelData.startsWith("<?xml") && !channelData.startsWith("<rss")) {
+                    throw new XmlDataException(XmlDataException.ERROR_MALFORMED_RSS);
+                }
+
+                updateHttpCacheHeaderValues(connection, channel);
+                String newMd5 = TextHelper.generateMD5(channelData);
+                String oldMd5 = channel.getDataMd5();
+
+                if (oldMd5 == null || oldMd5.length() == 0 || !oldMd5.contentEquals(newMd5)) {
+                    channel.setDataMd5(newMd5);
+                } else {
+                    channelData = null;
+                }
+            } else if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                Timber.d("Update not needed for retrievedChannel: ");
+            } else if (responseCode >= 400 && responseCode <= 500) {
+                throw new XmlDataException(XmlDataException.ERROR_HTTP);
             }
         } catch (IOException e) {
-            Log.e(TAG, "Error occurred while getting data");
-            Log.e(TAG, e.toString());
+            Timber.w(e, "Error in parseChannel");
         } finally {
-            ResourceHelper.closeResources(new Object[]{ inputStream, connection });
+            ResourceHelper.closeResources(new Object[] { inputStream, connection });
         }
-        return response;
+        return channelData;
+    }
+
+    /**
+     * Determines, based on HTTP header values, if a channel needs to be updated
+     * @param connection
+     */
+    private static void updateHttpCacheHeaderValues(HttpURLConnection connection, Channel channel) {
+        long lastModified = connection.getLastModified();
+        String eTag = connection.getHeaderField("ETag");
+
+        if (lastModified > 0) {
+            channel.setLastModified(lastModified);
+        }
+
+        if (eTag != null) {
+            channel.setETag(eTag);
+        }
+    }
+
+    public static class XmlDataException extends Exception {
+        public static final int ERROR_HTTP = 0;
+        public static final int ERROR_MALFORMED_RSS = 1;
+        public static final int ERROR_PERM_REDIRECT = 2;
+
+        private final int error;
+
+        public XmlDataException(int error) {
+            this.error = error;
+        }
+
+        public int getError() {
+            return error;
+        }
     }
 }

@@ -6,7 +6,7 @@ import com.mainmethod.premofm.object.Episode;
 import java.util.List;
 
 /**
- * Created by WillowTree, Inc on 6/9/16.
+ * Created by evanhalley on 6/9/16.
  */
 
 public class Feed {

@@ -1,7 +1,7 @@
 package com.mainmethod.premofm.parse;
 
 /**
- * Created by WillowTree, Inc on 6/9/16.
+ * Created by evanhalley on 6/9/16.
  */
 
 public interface FeedHandler {

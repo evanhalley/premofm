@@ -22,7 +22,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 /**
- * Created by WillowTree, Inc on 6/9/16.
+ * Created by evanhalley on 6/9/16.
  */
 
 public class SAXFeedHandler extends DefaultHandler implements FeedHandler {

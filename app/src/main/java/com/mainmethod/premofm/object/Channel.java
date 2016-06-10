@@ -24,6 +24,10 @@ public class Channel implements Collectable {
     private String mNetwork;
     private String mTags;
 
+    private long mLastModified;
+    private String mETag;
+    private String mDataMd5;
+
     public Channel() {
 
     }
@@ -111,6 +115,30 @@ public class Channel implements Collectable {
 
     public boolean isSubscribed() {
         return mId > -1;
+    }
+
+    public String getETag() {
+        return mETag;
+    }
+
+    public void setETag(String eTag) {
+        this.mETag = eTag;
+    }
+
+    public long getLastModified() {
+        return mLastModified;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.mLastModified = lastModified;
+    }
+
+    public String getDataMd5() {
+        return mDataMd5;
+    }
+
+    public void setDataMd5(String dataMd5) {
+        this.mDataMd5 = dataMd5;
     }
 
     @Override
