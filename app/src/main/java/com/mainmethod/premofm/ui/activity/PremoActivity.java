@@ -66,8 +66,6 @@ public class PremoActivity
     private CoordinatorLayout mCoordinatorLayout;
     private View mNavHeader;
 
-    private boolean mInExploreExperience;
-
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
         super.onCreateBase(savedInstanceState);
@@ -198,16 +196,10 @@ public class PremoActivity
     @Override
     public void onDrawerOpened(View drawerView) {
 
-        if (mInExploreExperience) {
-            startFragment(R.id.action_explore);
-            mInExploreExperience = false;
-            mDrawerLayout.closeDrawer(Gravity.LEFT);
-        }
     }
 
     public void startExploreExperience() {
-        mInExploreExperience = true;
-        mDrawerLayout.openDrawer(Gravity.LEFT);
+        //mDrawerLayout.openDrawer(Gravity.LEFT);
     }
 
     @Override
@@ -269,7 +261,6 @@ public class PremoActivity
             case R.id.action_home:
             case R.id.action_channels:
             case R.id.action_collections:
-            case R.id.action_explore:
                 startFragment(itemId);
                 menuItem.setChecked(true);
                 break;
@@ -319,8 +310,6 @@ public class PremoActivity
                     break;
                 case R.id.action_collections:
                     fragment = CollectionsFragment.newInstance();
-                    break;
-                case R.id.action_explore:
                     break;
                 default:
                     throw new IllegalArgumentException(

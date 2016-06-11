@@ -6,7 +6,9 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/main_actions"
+        android:checkableBehavior="single">
 
         <item android:id="@+id/action_home"
             android:title="@string/drawer_action_home"
@@ -18,45 +20,35 @@
             android:icon="@drawable/ic_drawer_action_channel"
             android:orderInCategory="2"/>
 
-        <item android:id="@+id/action_explore"
-            android:title="@string/drawer_action_explore"
-            android:icon="@drawable/ic_drawer_action_explore"
-            android:orderInCategory="3"/>
-
         <item android:id="@+id/action_collections"
             android:title="@string/drawer_action_collections"
             android:icon="@drawable/ic_drawer_action_collection"
-            android:orderInCategory="4"/>
+            android:orderInCategory="3"/>
 
     </group>
 
-    <item android:title="@string/drawer_action_subheader"
-        android:orderInCategory="5">
+    <group android:id="@+id/secondary_actions">
 
-        <menu>
+        <item
+            android:id="@+id/action_settings"
+            android:title="@string/drawer_action_settings"
+            android:orderInCategory="4"/>
 
-            <item
-                android:id="@+id/action_settings"
-                android:title="@string/drawer_action_settings"
-                android:orderInCategory="1"/>
+        <item
+            android:id="@+id/action_feedback"
+            android:title="@string/drawer_action_feedback"
+            android:orderInCategory="5"/>
 
-            <item
-                android:id="@+id/action_feedback"
-                android:title="@string/drawer_action_feedback"
-                android:orderInCategory="2"/>
+        <item
+            android:id="@+id/action_about"
+            android:title="@string/drawer_action_about"
+            android:orderInCategory="6"/>
 
-            <item
-                android:id="@+id/action_about"
-                android:title="@string/drawer_action_about"
-                android:orderInCategory="3"/>
+        <item
+            android:id="@+id/action_debug"
+            android:title="@string/drawer_action_debug"
+            android:visible="false"
+            android:orderInCategory="99"/>
 
-            <item
-                android:id="@+id/action_debug"
-                android:title="@string/drawer_action_debug"
-                android:visible="false"
-                android:orderInCategory="99"/>
-        </menu>
-
-    </item>
-
+    </group>
 </menu>
