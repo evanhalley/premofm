@@ -28,6 +28,7 @@ public class BroadcastHelper {
     public static final String INTENT_PURCHASE_STORED  = "com.mainmethod.premofm.purchaseStored";
     public static final String INTENT_PLAYER_STATE_CHANGE = "com.mainmethod.premofm.playerStateChange";
     public static final String INTENT_PROGRESS_UPDATE = "com.mainmethod.premofm.progressUpdate";
+    public static final String INTENT_CHANNEL_PROCESSED = "com.mainmethod.premofm.channelProcessed";
 
     public static final String EXTRA_IS_SUCCESSFUL = "isSuccessfull";
     public static final String EXTRA_IS_SUBSCRIBED = "isSubscribed";
@@ -125,6 +126,12 @@ public class BroadcastHelper {
         intent.putExtra(EXTRA_PROGRESS, progress);
         intent.putExtra(EXTRA_BUFFERED_PROGRESS, bufferedProgress);
         intent.putExtra(EXTRA_DURATION, duration);
+        sendBroadcast(context, intent);
+    }
+
+    public static void broadcastChannelAdded(Context context, int channelId) {
+        Intent intent = new Intent(INTENT_CHANNEL_PROCESSED);
+        intent.putExtra(EXTRA_CHANNEL_ID, channelId);
         sendBroadcast(context, intent);
     }
 

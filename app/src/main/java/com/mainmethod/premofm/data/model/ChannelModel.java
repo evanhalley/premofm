@@ -327,4 +327,12 @@ public class ChannelModel {
         }
         return channels;
     }
+
+    public static void updateChannel(Context context, Channel channel) {
+        ContentValues record = ChannelModel.fromChannel(channel);
+        context.getContentResolver().update(PremoContract.ChannelEntry.CONTENT_URI,
+                record,
+                PremoContract.ChannelEntry._ID + " = '?'",
+                new String[] { String.valueOf(channel.getId())});
+    }
 }
