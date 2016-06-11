@@ -45,27 +45,4 @@ public class SyncService extends Service {
         }
         return START_STICKY;
     }
-
-    private void refreshFeeds(List<Channel> channelList) {
-        Observable.just(channelList)
-                .flatMap(this::createNotification)
-                .flatMapIterable(channels -> channelList)
-                .flatMap(this::updateNotification)
-                .flatMap(SyncHelper::getXmlData)
-                .flatMap(SyncHelper::processXmlData)
-                .flatMap(SyncHelper::processFeed)
-                .flatMap(this::showNewEpisodesNotification);
-    }
-
-    private Observable<List<Channel>> createNotification(List<Channel> channelList) {
-        return Observable.just(channelList);
-    }
-
-    private Observable<Channel> updateNotification(Channel channel) {
-        return Observable.just(channel);
-    }
-
-    private Observable<Void> showNewEpisodesNotification(List<Episode> episodeList) {
-        return null;
-    }
 }

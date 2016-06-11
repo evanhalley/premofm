@@ -165,16 +165,11 @@ public class TextHelper {
      * @throws NoSuchAlgorithmException
      * @throws UnsupportedEncodingException
      */
-    public static String generateMD5(String data) {
-
-        try {
-            byte[] bytes = data.getBytes("UTF-8");
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] digest = md.digest(bytes);
-            BigInteger bigInt = new BigInteger(1, digest);
-            return bigInt.toString(16);
-        } catch (Exception e) {
-            return null;
-        }
+    public static String generateMD5(String data) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        byte[] bytes = data.getBytes("UTF-8");
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] digest = md.digest(bytes);
+        BigInteger bigInt = new BigInteger(1, digest);
+        return bigInt.toString(16);
     }
 }

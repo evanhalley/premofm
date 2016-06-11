@@ -27,11 +27,11 @@ import timber.log.Timber;
 /**
  * Created by evan on 6/10/16.
  */
-public class SyncTask extends AsyncTask<List<String>, Integer, Void> {
+public class SyncFeedTask extends AsyncTask<List<String>, Integer, Void> {
 
     private final Context context;
 
-    public SyncTask(Context context) {
+    public SyncFeedTask(Context context) {
         this.context = context;
     }
 
@@ -42,7 +42,8 @@ public class SyncTask extends AsyncTask<List<String>, Integer, Void> {
 
         for (int i = 0; i < channelGeneratedIds.size(); i++) {
             // get channel from the database
-            Channel channel = ChannelModel.getChannelByGeneratedId(context, channelGeneratedIds.get(i));
+            Channel channel = ChannelModel.getChannelByGeneratedId(context,
+                    channelGeneratedIds.get(i));
 
             if (channel == null) {
                 continue;
@@ -54,7 +55,6 @@ public class SyncTask extends AsyncTask<List<String>, Integer, Void> {
                 if (!HttpHelper.hasInternetConnection(context)) {
                     continue;
                 }
-
                 String xmlData = HttpHelper.getXmlData(channel);
 
                 if (xmlData != null) {
@@ -72,7 +72,6 @@ public class SyncTask extends AsyncTask<List<String>, Integer, Void> {
                         showNewEpisodesNotification(newEpisodes);
                     }
                 }
-
             } catch (HttpHelper.XmlDataException e) {
                 Timber.e(e, "Error in doInBackground");
                 channel.setLastSyncSuccessful(false);

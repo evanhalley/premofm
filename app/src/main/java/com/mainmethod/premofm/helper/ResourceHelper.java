@@ -52,7 +52,7 @@ public class ResourceHelper {
      * Closes or disconnects closable and disconnectable resources
      * @param resources resource to close
      */
-    public static void closeResources(Object[] resources) {
+    public static void closeResources(Object... resources) {
 
         if (resources != null) {
 

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
@@ -147,6 +148,10 @@ public class HttpHelper {
                 inputStream = getInputStream(connection);
                 channelData = readData(inputStream);
 
+                if (channelData.length() == 0) {
+                    throw new XmlDataException(XmlDataException.ERROR_NO_DATA);
+                }
+
                 // remove UTF-16 BOM character '\uFEFF
                 if (channelData.startsWith("\uFEFF")) {
                     channelData = channelData.replace("\uFEFF", "");
@@ -155,7 +160,6 @@ public class HttpHelper {
                 if (!channelData.startsWith("<?xml") && !channelData.startsWith("<rss")) {
                     throw new XmlDataException(XmlDataException.ERROR_MALFORMED_RSS);
                 }
-
                 updateHttpCacheHeaderValues(connection, channel);
                 String newMd5 = TextHelper.generateMD5(channelData);
                 String oldMd5 = channel.getDataMd5();
@@ -170,10 +174,11 @@ public class HttpHelper {
             } else if (responseCode >= 400 && responseCode <= 500) {
                 throw new XmlDataException(XmlDataException.ERROR_HTTP);
             }
-        } catch (IOException e) {
+        } catch (IOException | NoSuchAlgorithmException e) {
             Timber.w(e, "Error in parseChannel");
+            throw new XmlDataException(XmlDataException.ERROR_OTHER);
         } finally {
-            ResourceHelper.closeResources(new Object[] { inputStream, connection });
+            ResourceHelper.closeResources(inputStream, connection);
         }
         return channelData;
     }
@@ -199,6 +204,9 @@ public class HttpHelper {
         public static final int ERROR_HTTP = 0;
         public static final int ERROR_MALFORMED_RSS = 1;
         public static final int ERROR_PERM_REDIRECT = 2;
+        public static final int ERROR_NO_DATA = 3;
+        public static final int ERROR_OTHER = 4;
+        public static final int ERROR_PARSE = 5;
 
         private final int error;
 

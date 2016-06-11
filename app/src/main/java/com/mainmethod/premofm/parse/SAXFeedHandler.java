@@ -4,6 +4,7 @@ import android.webkit.URLUtil;
 
 import com.mainmethod.premofm.helper.ResourceHelper;
 import com.mainmethod.premofm.helper.TextHelper;
+import com.mainmethod.premofm.http.HttpHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.Episode;
 
@@ -13,13 +14,16 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import timber.log.Timber;
 
 /**
  * Created by evanhalley on 6/9/16.
@@ -34,15 +38,15 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
     private boolean isParsingEpisode;
     private boolean doReadCharacters;
     private DateParser dateParser;
-    private StringBuilder tagContent;
+    private StringBuilder characters;
 
     public SAXFeedHandler() {
-        tagContent = new StringBuilder();
+        characters = new StringBuilder();
         episodeList = new ArrayList<>();
     }
 
     @Override
-    public Feed processXml(String xmlData) {
+    public Feed processXml(String xmlData) throws HttpHelper.XmlDataException {
         InputStream reader = null;
 
         try {
@@ -52,10 +56,9 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
             SAXParser saxParser = saxParserFactory.newSAXParser();
             reader = new ByteArrayInputStream(xmlData.getBytes("UTF-8"));
             saxParser.parse(reader, this);
-        } catch (ParserConfigurationException | SAXException | NumberFormatException e) {
-            // TODO
         } catch (Exception e) {
-            // TODO
+            Timber.e(e, "Error in processXml");
+            throw new HttpHelper.XmlDataException(HttpHelper.XmlDataException.ERROR_PARSE);
         } finally {
             ResourceHelper.closeResource(reader);
         }
@@ -76,42 +79,11 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
         }
 
         if (isParsingEpisode) {
-
-            switch (qName) {
-                case "title":
-                case "link":
-                case "pubDate":
-                case "description":
-                case "content:encoded":
-                case "guid":
-                case "itunes:duration":
-                    doReadCharacters = true;
-                    tagContent.setLength(0);
-                    break;
-                case "enclosure":
-                    loadMediaAttributes(attributes);
-                    break;
-                default:
-                    break;
-            }
+            handleEpisodeData(qName, attributes);
         }
 
         if (isParsingChannel) {
-
-            switch (qName) {
-                case "title":
-                case "link":
-                case "description":
-                case "itunes:author":
-                    doReadCharacters = true;
-                    tagContent.setLength(0);
-                    break;
-                case "itunes:image":
-                    loadImageAttributes(attributes);
-                    break;
-                default:
-                    break;
-            }
+            handleChannelData(qName, attributes);
         }
     }
 
@@ -129,59 +101,11 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
         }
 
         if (isParsingEpisode) {
-
-            switch (qName) {
-                case "title":
-                    episode.setTitle(getCharacters());
-                    break;
-                case "link":
-                    String url = getCharacters();
-
-                    if (URLUtil.isValidUrl(url)) {
-                        episode.setUrl(url);
-                    }
-                    break;
-                case "pubDate":
-                    episode.setPublishedAt(parseDate(getCharacters()));
-                    break;
-                case "description":
-                    if (episode.getDescription() == null || episode.getDescription().length() == 0) {
-                        String description = getCharacters();
-                        episode.setDescription(description, true);
-                        episode.setDescriptionHtml(description);
-                    }
-                    break;
-                case "content:encoded":
-                    String description = getCharacters();
-                    episode.setDescription(description, true);
-                    episode.setDescriptionHtml(description);
-                    break;
-                case "itunes:duration":
-                    episode.setDuration(parseDuration(getCharacters()));
-                    break;
-            }
+            writeEpisodeData(qName);
         }
 
         if (isParsingChannel) {
-
-            switch (qName) {
-                case "title":
-                    channel.setTitle(getCharacters());
-                    break;
-                case "link":
-                    String url = getCharacters();
-
-                    if (URLUtil.isValidUrl(url)) {
-                        channel.setSiteUrl(url);
-                    }
-                    break;
-                case "description":
-                    channel.setDescription(getCharacters());
-                    break;
-                case "itunes:author":
-                    channel.setAuthor(getCharacters());
-                    break;
-            }
+            writeChannelData(qName);
         }
     }
 
@@ -190,7 +114,101 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
             throws SAXException {
 
         if (doReadCharacters) {
-            tagContent.append(new String(ch, start, length));
+            characters.append(new String(ch, start, length));
+        }
+    }
+
+    private void handleEpisodeData(String qName, Attributes attributes) {
+
+        switch (qName) {
+            case "title":
+            case "link":
+            case "pubDate":
+            case "description":
+            case "content:encoded":
+            case "guid":
+            case "itunes:duration":
+                doReadCharacters = true;
+                characters.setLength(0);
+                break;
+            case "enclosure":
+                loadMediaAttributes(attributes);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void writeEpisodeData(String qName) {
+        switch (qName) {
+            case "title":
+                episode.setTitle(getCharacters());
+                break;
+            case "link":
+                String url = getCharacters();
+
+                if (URLUtil.isValidUrl(url)) {
+                    episode.setUrl(url);
+                }
+                break;
+            case "pubDate":
+                episode.setPublishedAt(parseDate(getCharacters()));
+                break;
+            case "description":
+                if (episode.getDescription() == null || episode.getDescription().length() == 0) {
+                    String description = getCharacters();
+                    episode.setDescription(description, true);
+                    episode.setDescriptionHtml(description);
+                }
+                break;
+            case "content:encoded":
+                String description = getCharacters();
+                episode.setDescription(description, true);
+                episode.setDescriptionHtml(description);
+                break;
+            case "itunes:duration":
+                episode.setDuration(parseDuration(getCharacters()));
+                break;
+        }
+    }
+
+    private void handleChannelData(String qName, Attributes attributes) {
+
+        switch (qName) {
+            case "title":
+            case "link":
+            case "description":
+            case "itunes:author":
+                doReadCharacters = true;
+                characters.setLength(0);
+                break;
+            case "itunes:image":
+                loadImageAttributes(attributes);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void writeChannelData(String qName) {
+
+        switch (qName) {
+            case "title":
+                channel.setTitle(getCharacters());
+                break;
+            case "link":
+                String url = getCharacters();
+
+                if (URLUtil.isValidUrl(url)) {
+                    channel.setSiteUrl(url);
+                }
+                break;
+            case "description":
+                channel.setDescription(getCharacters());
+                break;
+            case "itunes:author":
+                channel.setAuthor(getCharacters());
+                break;
         }
     }
 
@@ -199,10 +217,10 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
      * @return
      */
     private String getCharacters() {
-        String val = tagContent.toString().trim();
+        String val = characters.toString().trim();
         val = TextHelper.sanitizeString(val);
         doReadCharacters = false;
-        tagContent.setLength(0);
+        characters.setLength(0);
         return val;
     }
 
@@ -240,8 +258,13 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
         String mimeType = attributes.getValue("type");
 
         if (url != null && url.trim().length() > 0 && URLUtil.isValidUrl(url)) {
-            episode.setRemoteMediaUrl(url.trim());
-            episode.setGeneratedId(TextHelper.generateMD5(url));
+            try {
+                episode.setRemoteMediaUrl(url.trim());
+                episode.setGeneratedId(TextHelper.generateMD5(url));
+            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+                Timber.w("Error in loadMediaAttributes");
+                episode.setRemoteMediaUrl(null);
+            }
         }
 
         if (mimeType != null && mimeType.trim().length() > 0) {
