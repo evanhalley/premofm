@@ -21,8 +21,7 @@ public class Channel implements Collectable {
     private String mSiteUrl;
     private String mFeedUrl;
     private String mArtworkUrl;
-    private String mNetwork;
-    private String mTags;
+    private boolean isSubscribed;
 
     private long mLastSyncTime;
     private boolean mLastSyncSuccessful;
@@ -99,24 +98,12 @@ public class Channel implements Collectable {
         mArtworkUrl = artworkUrl;
     }
 
-    public String getNetwork() {
-        return mNetwork;
-    }
-
-    public void setNetwork(String network) {
-        mNetwork = network;
-    }
-
-    public String getTags() {
-        return mTags;
-    }
-
-    public void setTags(String tags) {
-        mTags = tags;
-    }
-
     public boolean isSubscribed() {
-        return mId > -1;
+        return isSubscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        isSubscribed = subscribed;
     }
 
     public String getETag() {
@@ -170,8 +157,6 @@ public class Channel implements Collectable {
                 ", mSiteUrl='" + mSiteUrl + '\'' +
                 ", mFeedUrl='" + mFeedUrl + '\'' +
                 ", mArtworkUrl='" + mArtworkUrl + '\'' +
-                ", mNetwork='" + mNetwork + '\'' +
-                ", mTags='" + mTags + '\'' +
                 '}';
     }
 
@@ -185,9 +170,7 @@ public class Channel implements Collectable {
         if (!mAuthor.equals(channel.mAuthor)) return false;
         if (!mDescription.equals(channel.mDescription)) return false;
         if (!mFeedUrl.equals(channel.mFeedUrl)) return false;
-        if (!mNetwork.equals(channel.mNetwork)) return false;
         if (!mSiteUrl.equals(channel.mSiteUrl)) return false;
-        if (!mTags.equals(channel.mTags)) return false;
         if (!mTitle.equals(channel.mTitle)) return false;
 
         return true;
@@ -204,10 +187,8 @@ public class Channel implements Collectable {
         if (!mAuthor.equals(channel.mAuthor)) return false;
         if (!mDescription.equals(channel.mDescription)) return false;
         if (!mFeedUrl.equals(channel.mFeedUrl)) return false;
-        if (!mNetwork.equals(channel.mNetwork)) return false;
         if (!mGeneratedId.equals(channel.mGeneratedId)) return false;
         if (!mSiteUrl.equals(channel.mSiteUrl)) return false;
-        if (!mTags.equals(channel.mTags)) return false;
         if (!mTitle.equals(channel.mTitle)) return false;
 
         return true;

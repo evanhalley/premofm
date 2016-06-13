@@ -1002,6 +1002,13 @@ public class EpisodeModel {
                 new String[]{String.valueOf(episodeId)});
     }
 
+    public static void deleteEpisodes(Context context, String channelGeneratedId) {
+        context.getContentResolver().delete(
+                PremoContract.EpisodeEntry.CONTENT_URI,
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ?",
+                new String[]{channelGeneratedId});
+    }
+
         /**
          * Marks episods with the IDs as queued in the database
          * @param context

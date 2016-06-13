@@ -95,6 +95,7 @@ public class PremoContract {
                 LOCAL_MEDIA_URL + " TEXT," +
                 SIZE + " INTEGER," +
                 DOWNLOADED_SIZE + " INTEGER," +
+                MIME_TYPE + " TEXT," +
                 UPDATED_AT + " INTEGER);";
 
         public static Uri buildUri(long id) {
@@ -121,8 +122,7 @@ public class PremoContract {
         public static final String SITE_URL = "siteUrl";
         public static final String FEED_URL = "feedUrl";
         public static final String ARTWORK_URL = "artworkUrl";
-        public static final String NETWORK = "network";
-        public static final String TAGS = "tags";
+        public static final String IS_SUBSCRIBED = "isSubscribed";
         public static final String ETAG = "eTag";
         public static final String LAST_MODIFIED = "lastModified";
         public static final String MD5 = "md5";
@@ -139,8 +139,7 @@ public class PremoContract {
                 SITE_URL + " TEXT," +
                 FEED_URL + " TEXT NOT NULL," +
                 ARTWORK_URL + " TEXT," +
-                NETWORK + " TEXT," +
-                TAGS + " TEXT, " +
+                IS_SUBSCRIBED + " INTEGER DEFAULT 0," +
                 ETAG + " TEXT," +
                 LAST_MODIFIED + " TEXT," +
                 MD5 + " TEXT," +

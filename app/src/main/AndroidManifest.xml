@@ -9,19 +9,11 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <uses-permission android:name="com.android.vending.BILLING" />
-
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-
-    <permission
-        android:name="com.mainmethod.premofm.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.mainmethod.premofm.permission.C2D_MESSAGE" />
-
 
     <application
         android:name="com.mainmethod.premofm.PremoApp"
@@ -99,6 +91,16 @@
         <service
             android:name="com.mainmethod.premofm.service.DeleteEpisodeService"
             android:label="@string/title_service_delete_episodes"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.SyncFeedService"
+            android:label="@string/title_service_sync_feed"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.AsyncJobService"
+            android:label="@string/title_service_async_job_service"
             android:exported="false" />
 
         <service

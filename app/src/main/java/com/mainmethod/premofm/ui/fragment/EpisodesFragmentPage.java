@@ -10,6 +10,7 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.object.Filter;
 import com.mainmethod.premofm.ui.activity.PremoActivity;
 import com.mainmethod.premofm.ui.adapter.EpisodeAdapter;
+import com.mainmethod.premofm.ui.dialog.AddFeedDialog;
 
 import org.parceler.Parcels;
 
@@ -72,7 +74,7 @@ public class EpisodesFragmentPage extends Fragment implements LoaderManager.Load
 
         switch (v.getId()) {
             case R.id.button_empty_list:
-                ((PremoActivity) getActivity()).startExploreExperience();
+                AddFeedDialog.show((AppCompatActivity) getActivity());
                 break;
         }
     }
@@ -104,7 +106,7 @@ public class EpisodesFragmentPage extends Fragment implements LoaderManager.Load
             ((TextView) mEmptyListView.findViewById(R.id.empty_list_message)).setText(
                     R.string.no_episodes_message);
             ((Button) mEmptyListView.findViewById(R.id.button_empty_list)).setText(
-                    R.string.button_start_exploring);
+                    R.string.button_add_feed);
         }
     }
 

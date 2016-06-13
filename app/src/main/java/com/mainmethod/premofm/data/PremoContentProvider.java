@@ -17,6 +17,8 @@ import android.text.TextUtils;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.util.StringUtil;
 
+import timber.log.Timber;
+
 /**
  * Provides are application with data
  * Created by evan on 3/4/15.
@@ -258,6 +260,7 @@ public class PremoContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        Timber.d("Rows deleted: %d", rowsDeleted);
 
         if (rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
@@ -291,6 +294,7 @@ public class PremoContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        Timber.d("Rows updated: %d", rowsUpdated);
 
         if (rowsUpdated != 0) {
             getContext().getContentResolver().notifyChange(uri, null, false);

@@ -1,5 +1,7 @@
 package com.mainmethod.premofm.parse;
 
+import com.mainmethod.premofm.object.Channel;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -44,7 +46,7 @@ public class SAXFeedHandlerTest {
     @Test
     public void parseValidXml() throws Exception {
         String data = getTestData("atp_rss.xml");
-        SAXFeedHandler feedHandler = new SAXFeedHandler();
+        SAXFeedHandler feedHandler = new SAXFeedHandler(new Channel());
         Feed feed = feedHandler.processXml(data);
         Assert.assertNotNull(feed);
         Assert.assertEquals(100, feed.getEpisodeList().size());

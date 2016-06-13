@@ -31,18 +31,19 @@ import timber.log.Timber;
 
 public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
 
-    private Channel channel;
+    private final Channel channel;
     private Episode episode;
-    private List<Episode> episodeList;
+    private final List<Episode> episodeList;
     private boolean isParsingChannel;
     private boolean isParsingEpisode;
     private boolean doReadCharacters;
     private DateParser dateParser;
-    private StringBuilder characters;
+    private final StringBuilder characters;
 
-    public SAXFeedHandler() {
+    public SAXFeedHandler(Channel channel) {
         characters = new StringBuilder();
         episodeList = new ArrayList<>();
+        this.channel = channel;
     }
 
     @Override
@@ -51,7 +52,7 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
 
         try {
             SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-            saxParserFactory.setValidating(true);
+            saxParserFactory.setValidating(false);
             saxParserFactory.setNamespaceAware(true);
             SAXParser saxParser = saxParserFactory.newSAXParser();
             reader = new ByteArrayInputStream(xmlData.getBytes("UTF-8"));
@@ -71,7 +72,6 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
 
         if (qName.contentEquals("channel")) {
             isParsingChannel = true;
-            channel = new Channel();
         } else if (qName.contentEquals("item")) {
             isParsingChannel = false;
             isParsingEpisode = true;

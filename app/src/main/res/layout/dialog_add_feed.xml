@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  ~ Copyright (c) 2014.
-  ~ Main Method Incorporated.
-  -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:paddingTop="@dimen/triple_margin"
     android:paddingLeft="@dimen/triple_margin"
@@ -24,12 +20,20 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textFilter"
+        android:inputType="textUri"
         android:hint="@string/enter_url"
         android:ems="10"
-        android:maxLength="32"
         android:id="@+id/url"
-        android:singleLine="true"
+        android:maxLines="1"
         android:layout_gravity="center_horizontal"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:indeterminate="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progress" />
 
 </LinearLayout>

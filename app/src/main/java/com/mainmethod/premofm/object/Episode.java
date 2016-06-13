@@ -17,7 +17,7 @@ import java.util.Date;
 @Parcel(Parcel.Serialization.BEAN)
 public class Episode implements Collectable {
 
-    private int     mId;
+    private int     mId = -1;
     private String  mGeneratedId;
     private String  mTitle;
     private String  mDescriptionHtml;
@@ -42,7 +42,7 @@ public class Episode implements Collectable {
     private String mChannelAuthor;
     private boolean mChannelIsSubscribed;
 
-    private int     mEpisodeStatus;
+    private int     mEpisodeStatus = EpisodeStatus.NEW;
     private int     mDownloadStatus = DownloadStatus.NOT_DOWNLOADED;
     private boolean mManualDownload = false;
 

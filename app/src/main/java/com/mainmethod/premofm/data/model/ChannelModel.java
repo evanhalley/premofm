@@ -63,8 +63,7 @@ public class ChannelModel {
         channel.setSiteUrl(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.SITE_URL)));
         channel.setFeedUrl(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.FEED_URL)));
         channel.setArtworkUrl(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.ARTWORK_URL)));
-        channel.setNetwork(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.NETWORK)));
-        channel.setTags(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.TAGS)));
+        channel.setSubscribed(cursor.getInt(cursor.getColumnIndex(PremoContract.ChannelEntry.IS_SUBSCRIBED)) == 1);
         channel.setETag(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.ETAG)));
         channel.setLastModified(cursor.getLong(cursor.getColumnIndex(PremoContract.ChannelEntry.LAST_MODIFIED)));
         channel.setDataMd5(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.MD5)));
@@ -86,8 +85,7 @@ public class ChannelModel {
         record.put(PremoContract.ChannelEntry.SITE_URL, channel.getSiteUrl());
         record.put(PremoContract.ChannelEntry.FEED_URL, channel.getFeedUrl());
         record.put(PremoContract.ChannelEntry.ARTWORK_URL, channel.getArtworkUrl());
-        record.put(PremoContract.ChannelEntry.NETWORK, channel.getNetwork());
-        record.put(PremoContract.ChannelEntry.TAGS, channel.getTags());
+        record.put(PremoContract.ChannelEntry.IS_SUBSCRIBED, channel.isSubscribed() ? 1 : 0);
         record.put(PremoContract.ChannelEntry.ETAG, channel.getETag());
         record.put(PremoContract.ChannelEntry.LAST_MODIFIED, channel.getLastModified());
         record.put(PremoContract.ChannelEntry.MD5, channel.getDataMd5());
@@ -328,11 +326,51 @@ public class ChannelModel {
         return channels;
     }
 
+    public static List<String> getChannelGeneratedIds(Context context) {
+        List<String> generatedIds = null;
+        Cursor cursor = null;
+
+        ContentResolver resolver = context.getContentResolver();
+
+        try {
+            cursor = resolver.query(PremoContract.ChannelEntry.CONTENT_URI,
+                    new String[] { PremoContract.ChannelEntry.GENERATED_ID },
+                    null, null, PremoContract.ChannelEntry.TITLE + " ASC");
+
+            if (cursor != null) {
+                generatedIds = new ArrayList<>();
+
+                while (cursor.moveToNext()) {
+                    generatedIds.add(cursor.getString(cursor.getColumnIndex(
+                            PremoContract.ChannelEntry.GENERATED_ID)));
+                }
+            }
+        } finally {
+            ResourceHelper.closeResource(cursor);
+        }
+        return generatedIds;
+    }
+
     public static void updateChannel(Context context, Channel channel) {
         ContentValues record = ChannelModel.fromChannel(channel);
         context.getContentResolver().update(PremoContract.ChannelEntry.CONTENT_URI,
                 record,
-                PremoContract.ChannelEntry._ID + " = '?'",
+                PremoContract.ChannelEntry._ID + " = ?",
                 new String[] { String.valueOf(channel.getId())});
+    }
+
+    public static void deleteChannel(Context context, String channelGeneratedId) {
+        context.getContentResolver().delete(PremoContract.ChannelEntry.CONTENT_URI,
+                PremoContract.ChannelEntry.GENERATED_ID + " = ?",
+                new String[] { channelGeneratedId });
+    }
+
+    public static void changeSubscription(Context context, String channelGeneratedId, boolean doSubscribe) {
+        ContentValues record = new ContentValues();
+        record.put(PremoContract.ChannelEntry.IS_SUBSCRIBED, doSubscribe ? 1 : 0);
+        context.getContentResolver().update(PremoContract.ChannelEntry.CONTENT_URI,
+                record,
+                PremoContract.ChannelEntry.GENERATED_ID + " = ?",
+                new String[] { channelGeneratedId });
     }
 }

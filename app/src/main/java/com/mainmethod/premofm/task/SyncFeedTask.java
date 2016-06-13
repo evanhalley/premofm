@@ -11,6 +11,7 @@ import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
+import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.http.HttpHelper;
 import com.mainmethod.premofm.object.Channel;
@@ -20,6 +21,8 @@ import com.mainmethod.premofm.parse.FeedHandler;
 import com.mainmethod.premofm.parse.SAXFeedHandler;
 import com.mainmethod.premofm.service.job.DownloadJobService;
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -46,22 +49,37 @@ public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
     protected final Void doInBackground(Bundle... bundles) {
         Bundle params = bundles[0];
 
-        switch (params.getInt(PARAM_MODE)) {
-            case MODE_ADD_FEED:
-                String feedUrl = params.getString(PARAM_FEED_URL);
-                Channel channel = new Channel();
-                channel.setFeedUrl(feedUrl);
-                processChannel(channel, false);
-                break;
-            case MODE_SYNC_FEED:
-                syncFeed(params.getStringArrayList(PARAM_GENERATED_IDS));
-                break;
+        try {
+            switch (params.getInt(PARAM_MODE)) {
+                case MODE_ADD_FEED:
+                    String feedUrl = params.getString(PARAM_FEED_URL);
+                    Channel channel = new Channel();
+                    channel.setFeedUrl(feedUrl);
+                    channel.setGeneratedId(TextHelper.generateMD5(feedUrl));
+                    channel.isSubscribed();
+                    processChannel(channel, false);
+                    break;
+                case MODE_SYNC_FEED:
+
+                    if (params.containsKey(PARAM_GENERATED_IDS)) {
+                        syncFeed(params.getStringArrayList(PARAM_GENERATED_IDS));
+                    } else {
+                        List<String> ids = ChannelModel.getChannelGeneratedIds(context);
+
+                        if (ids != null && ids.size() > 0) {
+                            syncFeed(ids);
+                        }
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error in SyncFeedTask.doInBackground");
         }
 
         return null;
     }
 
-    private void syncFeed(List<String> generatedIds) {
+    private void syncFeed(List<String> generatedIds) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         for (int i = 0; i < generatedIds.size(); i++) {
             // get channel from the database
             Channel channel = ChannelModel.getChannelByGeneratedId(context, generatedIds.get(i));
@@ -73,7 +91,7 @@ public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
         }
     }
 
-    private void processChannel(Channel channel, boolean doNotify) {
+    private void processChannel(Channel channel, boolean doNotify) throws UnsupportedEncodingException, NoSuchAlgorithmException {
 
         // get the xml data and process it into a Feed object
         try {
@@ -84,7 +102,7 @@ public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
             String xmlData = HttpHelper.getXmlData(channel);
 
             if (xmlData != null) {
-                FeedHandler feedHandler = new SAXFeedHandler();
+                FeedHandler feedHandler = new SAXFeedHandler(channel);
                 Feed feed = feedHandler.processXml(xmlData);
 
                 if (feed != null && feed.getEpisodeList() != null && feed.getEpisodeList().size() > 0) {
@@ -109,8 +127,8 @@ public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
         channel.setLastSyncTime(DatetimeHelper.getTimestamp());
 
         if (channel.getId() == -1) {
-            int id = ChannelModel.insertChannel(context, channel);
-            BroadcastHelper.broadcastChannelAdded(context, id);
+            ChannelModel.insertChannel(context, channel);
+            BroadcastHelper.broadcastChannelAdded(context, channel);
         } else {
             ChannelModel.updateChannel(context, channel);
         }
@@ -120,7 +138,6 @@ public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
             DownloadJobService.scheduleEpisodeDownloadNow(context);
         }
     }
-
 
     private void showNewEpisodesNotification(List<Episode> newEpisodes) {
 

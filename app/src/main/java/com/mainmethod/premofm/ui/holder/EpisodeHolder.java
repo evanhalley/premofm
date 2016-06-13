@@ -43,6 +43,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
     public int episodeId = -1;
     public int downloadStatusId = -1;
     public String episodeServerId;
+    public View publishedData;
     public TextView episodeTitle;
     public TextView channelTitle;
     public TextView description;
@@ -90,11 +91,10 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
         downloaded = (ImageView) view.findViewById(R.id.downloaded);
         pinned = (ImageView) view.findViewById(R.id.pinned);
         downloadProgress = (ProgressBar) view.findViewById(R.id.download_progress);
-
-        View publishedData = view.findViewById(R.id.published_data);
+        publishedData = view.findViewById(R.id.published_data);
 
         if (publishedData != null) {
-            view.findViewById(R.id.published_data).setOnClickListener(this);
+            publishedData.setOnClickListener(this);
             channelArt.setOnClickListener(this);
         }
         // our action buttons
@@ -151,13 +151,13 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
             case R.id.channel_art:
             case R.id.published_data:
                 if (channelServerId != null) {
-                    Channel channel = ChannelModel.getChannelByGeneratedId(v.getContext(), channelServerId);
+                    Channel channel = ChannelModel.getChannelByGeneratedId(publishedData.getContext(),
+                            channelServerId);
 
                     if (channel != null) {
-                        ChannelProfileActivity.openChannelProfile((BaseActivity) v.getContext(),
+                        ChannelProfileActivity.openChannelProfile(
+                                (BaseActivity) publishedData.getContext(),
                                 channel, channelArt, false);
-                    } else {
-
                     }
                 }
                 break;

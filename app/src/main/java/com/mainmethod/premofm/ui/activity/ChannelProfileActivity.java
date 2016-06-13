@@ -39,6 +39,7 @@ import com.mainmethod.premofm.helper.PaletteHelper.OnPaletteLoaded;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.Episode;
+import com.mainmethod.premofm.service.AsyncJobService;
 import com.mainmethod.premofm.ui.adapter.EpisodeAdapter;
 
 import org.parceler.Parcels;
@@ -59,7 +60,6 @@ public class ChannelProfileActivity
     public static final String PARAM_VISITING_FROM_EXPLORE = "visitingFromExplore";
 
     private static final int LOADER_ID = ChannelProfileActivity.class.hashCode();
-    private static final int VISIBLE_THRESHOLD = 1;
 
     private Channel mChannel;
     private RecyclerView mRecyclerView;
@@ -153,6 +153,16 @@ public class ChannelProfileActivity
         super.onBackPressed();
         overrideTransition();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (!mChannel.isSubscribed()) {
+            AsyncJobService.deleteChannel(this, mChannel.getGeneratedId());
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -335,6 +345,7 @@ public class ChannelProfileActivity
                         activity.mChannel.getGeneratedId());
             } else {
                 activity.mChannel.setId(-1);
+                activity.mChannel.setSubscribed(false);
             }
             activity.mAdapter.setChannel(activity.mChannel);
             activity.mAdapter.notifyDataSetChanged();

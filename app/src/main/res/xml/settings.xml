@@ -38,8 +38,21 @@
         android:title="@string/pref_title_notifications" >
 
         <SwitchPreference
+            android:key="@string/pref_key_enable_syncing"
+            android:title="@string/pref_title_enable_syncing"
+            android:summary="@string/pref_summary_enable_syncing"
+            android:defaultValue="true" />
+
+        <Preference
+            android:dependency="@string/pref_key_syncing_period"
+            android:key="@string/pref_key_syncing_period"
+            android:title="@string/pref_title_syncing_period"
+            android:defaultValue="" />
+
+        <SwitchPreference
             android:key="@string/pref_key_enable_notifications"
             android:title="@string/pref_title_enable_notifications"
+            android:dependency="@string/pref_key_enable_syncing"
             android:summary="@string/pref_summary_enable_notifications_checked"
             android:defaultValue="true" />
 

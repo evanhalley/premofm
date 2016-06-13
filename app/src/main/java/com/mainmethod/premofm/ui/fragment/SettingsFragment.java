@@ -72,12 +72,14 @@ public class SettingsFragment extends PreferenceFragment implements
         mNotificationChannels = findPreference(getString(R.string.pref_key_notification_channels));
         mAutoDownloadChannels = findPreference(getString(R.string.pref_key_auto_download_channels));
         Preference episodeCacheLimit = findPreference(getString(R.string.pref_key_episode_cache_limit));
+        Preference syncPeriod = findPreference(getString(R.string.pref_key_syncing_period));
 
         refreshPreferenceSummary(skipBackward);
         refreshPreferenceSummary(skipForward);
         refreshPreferenceSummary(mAutoDownloadChannels);
         refreshPreferenceSummary(episodeCacheLimit);
         refreshPreferenceSummary(mNotificationChannels);
+        refreshPreferenceSummary(syncPeriod);
 
         skipForward.setOnPreferenceChangeListener(this);
         skipBackward.setOnPreferenceChangeListener(this);
@@ -207,6 +209,10 @@ public class SettingsFragment extends PreferenceFragment implements
                 stringResId = R.string.pref_summary_episode_cache_limit;
             }
             preference.setSummary(String.format(getString(stringResId), numberOfEpisodes));
+        }
+
+        else if (key.contentEquals(getString(R.string.pref_key_syncing_period))) {
+
         }
 
     }

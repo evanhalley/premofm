@@ -421,4 +421,7 @@
     <string name="url_to_rss_feed">Podcast URL</string>
     <string name="enter_url">Enter URL</string>
     <string name="dialog_add">Add</string>
+    <string name="button_add_feed">Add a Podcast</string>
+    <string name="title_service_sync_feed">SyncFeedService</string>
+    <string name="title_service_async_job_service">Async Job Service</string>
 </resources>
