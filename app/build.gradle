@@ -5,9 +5,6 @@ def versionMajor = 1
 def versionMinor = 3
 def versionPatch = 0
 
-// Hat tip to Jake Wharton for this - found it in the u2020 app
-def gitSha = 'git rev-parse --short HEAD'.execute([], project.rootDir).text.trim()
-
 android {
 
     compileSdkVersion 23

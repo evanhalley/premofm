@@ -48,8 +48,6 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
 
         switch (v.getId()) {
             case R.id.get_started:
-                showProgressDialog(R.string.progress_authenticate_title,
-                        R.string.progress_authenticate_message);
                 AppPrefHelper.getInstance(this).setUserHasOnboarded();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(PremoApp.FLAG_IS_FIRST_SIGN_IN, true);

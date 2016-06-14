@@ -10,6 +10,7 @@ import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.object.Channel;
+import com.mainmethod.premofm.service.job.SyncFeedJobService;
 import com.mainmethod.premofm.util.IOUtil;
 
 import java.util.List;
@@ -111,6 +112,7 @@ public class AsyncTaskService extends IntentService {
                         importSuccess = true;
                     }
                     BroadcastHelper.broadcastOpmlProcessFinish(this, importSuccess);
+                    SyncFeedService.syncAllFeeds(this);
                     break;
                 case ACTION_OPML_EXPORT:
                     ChannelModel.exportChannelsToOpml(this, intent.getParcelableExtra(PARAM_OPML_URI));

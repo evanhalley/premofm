@@ -18,23 +18,22 @@ import java.util.List;
 public abstract class PremoJobService extends JobService {
 
     public static boolean isJobScheduled(Context context, int jobId) {
-        boolean isScheduled = false;
-        JobScheduler scheduler = (JobScheduler) context.getSystemService(
-                Context.JOB_SCHEDULER_SERVICE);
+        return getJobInfo(context, jobId) != null;
+    }
 
-        // only schedule the job if it hasn't already been scheduled
-        List<JobInfo> jobs = scheduler.getAllPendingJobs();
+    public static JobInfo getJobInfo(Context context, int jobId) {
+        List<JobInfo> jobs = ((JobScheduler) context.getSystemService(
+                Context.JOB_SCHEDULER_SERVICE)).getAllPendingJobs();
 
         if (jobs != null) {
 
-            for (JobInfo job : jobs) {
+            for (int i = 0; i < jobs.size(); i++) {
 
-                if (job.getId() == jobId) {
-                    isScheduled = true;
-                    break;
+                if (jobs.get(i).getId() == jobId) {
+                    return jobs.get(i);
                 }
             }
         }
-        return isScheduled;
+        return null;
     }
 }

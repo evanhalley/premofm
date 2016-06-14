@@ -59,6 +59,8 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private ProgressDialog dialog;
 
+    private boolean syncValChanged;
+
     private BroadcastReceiver opmlProcessFinished = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -120,7 +122,10 @@ public class SettingsFragment extends PreferenceFragment implements
         //   auto download or change the parameters in which we can download
         DownloadJobService.cancelScheduledEpisodeDownload(getActivity());
         DownloadJobService.scheduleEpisodeDownload(getActivity());
-        SyncFeedJobService.schedule(getActivity());
+
+        if (syncValChanged) {
+            SyncFeedJobService.schedule(getActivity());
+        }
     }
 
     @Override
@@ -185,6 +190,7 @@ public class SettingsFragment extends PreferenceFragment implements
         }
 
         else if (key.contentEquals(getString(R.string.pref_key_syncing_period))) {
+            syncValChanged = true;
             int minutes = Integer.parseInt((String) newValue);
 
             if (minutes < 60) {
