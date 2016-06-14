@@ -8,23 +8,32 @@ package com.mainmethod.premofm.ui.fragment;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
+import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.object.Channel;
+import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.service.DeleteEpisodeService;
 import com.mainmethod.premofm.service.job.DownloadJobService;
+import com.mainmethod.premofm.service.job.SyncFeedJobService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +47,6 @@ public class SettingsFragment extends PreferenceFragment implements
         DialogInterface.OnMultiChoiceClickListener, DialogInterface.OnClickListener,
         Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
-    private static final String TAG = "SettingsFragment";
     private UserPrefHelper mUserPrefHelper;
     private List<Channel> mChannels;
     private boolean[] mSelectedItems;
@@ -49,6 +57,19 @@ public class SettingsFragment extends PreferenceFragment implements
 
     private Preference mNotificationChannels;
     private Preference mAutoDownloadChannels;
+
+    private ProgressDialog dialog;
+
+    private BroadcastReceiver opmlProcessFinished = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (dialog != null && dialog.isShowing()) {
+                dialog.dismiss();
+                dialog = null;
+            }
+        }
+    };
 
     public SettingsFragment() {
 
@@ -81,6 +102,7 @@ public class SettingsFragment extends PreferenceFragment implements
         refreshPreferenceSummary(mNotificationChannels);
         refreshPreferenceSummary(syncPeriod);
 
+        syncPeriod.setOnPreferenceChangeListener(this);
         skipForward.setOnPreferenceChangeListener(this);
         skipBackward.setOnPreferenceChangeListener(this);
         mNotificationChannels.setOnPreferenceClickListener(this);
@@ -99,6 +121,20 @@ public class SettingsFragment extends PreferenceFragment implements
         //   auto download or change the parameters in which we can download
         DownloadJobService.cancelScheduledEpisodeDownload(getActivity());
         DownloadJobService.scheduleEpisodeDownload(getActivity());
+        SyncFeedJobService.schedule(getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(opmlProcessFinished,
+                new IntentFilter(BroadcastHelper.INTENT_OPML_PROCESS_FINISH));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(opmlProcessFinished);
     }
 
     @Override
@@ -107,10 +143,10 @@ public class SettingsFragment extends PreferenceFragment implements
 
         if (key.contentEquals(getString(R.string.pref_key_skip_backward))) {
             preference.setSummary(String.format(getString(R.string.pref_summary_skip_backward),
-                    (String) newValue));
+                    Integer.parseInt((String) newValue)));
         } else if (key.contentEquals(getString(R.string.pref_key_skip_forward))) {
             preference.setSummary(String.format(getString(R.string.pref_summary_skip_forward),
-                    (String) newValue));
+                    Integer.parseInt((String) newValue)));
         }
 
         else if (key.contentEquals(getString(R.string.pref_key_notification_channels))) {
@@ -147,6 +183,20 @@ public class SettingsFragment extends PreferenceFragment implements
                 stringResId = R.string.pref_summary_episode_cache_limit;
             }
             preference.setSummary(String.format(getString(stringResId), numberOfEpisodes));
+        }
+
+        else if (key.contentEquals(getString(R.string.pref_key_syncing_period))) {
+            int minutes = Integer.parseInt((String) newValue);
+
+            if (minutes < 60) {
+                preference.setSummary(getString(R.string.pref_minutes, minutes));
+            } else if (minutes == 60) {
+                preference.setSummary(getString(R.string.pref_hour));
+            } else if (minutes > 60 && minutes < 1440) {
+                preference.setSummary(getString(R.string.pref_hours, minutes / 60));
+            } else {
+                preference.setSummary(getString(R.string.pref_day));
+            }
         }
 
         return true;
@@ -212,9 +262,18 @@ public class SettingsFragment extends PreferenceFragment implements
         }
 
         else if (key.contentEquals(getString(R.string.pref_key_syncing_period))) {
+            int minutes = mUserPrefHelper.getStringAsInt(getString(R.string.pref_key_syncing_period));
 
+            if (minutes < 60) {
+                preference.setSummary(getString(R.string.pref_minutes, minutes));
+            } else if (minutes == 60) {
+                preference.setSummary(getString(R.string.pref_hour));
+            } else if (minutes > 60 && minutes < 1440) {
+                preference.setSummary(getString(R.string.pref_hours, minutes / 60));
+            } else {
+                preference.setSummary(getString(R.string.pref_day));
+            }
         }
-
     }
 
     @Override
@@ -238,19 +297,11 @@ public class SettingsFragment extends PreferenceFragment implements
 
         else if (key.contentEquals(getString(R.string.pref_key_import_opml))) {
             IntentHelper.openOpmlFileChooser(this);
-            AnalyticsHelper.sendEvent(getActivity(),
-                    AnalyticsHelper.CATEGORY_OPML_IMPORT,
-                    AnalyticsHelper.ACTION_CLICK,
-                    null);
             return true;
         }
 
         else if (key.contentEquals(getString(R.string.pref_key_export_opml))) {
             IntentHelper.openOpmlFileExporter(this);
-            AnalyticsHelper.sendEvent(getActivity(),
-                    AnalyticsHelper.CATEGORY_OPML_EXPORT,
-                    AnalyticsHelper.ACTION_CLICK,
-                    null);
             return true;
         }
 
@@ -409,191 +460,25 @@ public class SettingsFragment extends PreferenceFragment implements
         }
 
         if (requestCode == IntentHelper.REQUEST_CODE_OPEN_OPML_FILE) {
-            //executeOpmlImport(intent.getData());
+            executeOpmlImport(intent.getData());
         } else if (requestCode == IntentHelper.REQUEST_CODE_SAVE_OPML_FILE) {
-            //executeOpmlExport(intent.getData());
+            executeOpmlExport(intent.getData());
         }
     }
 
-    /*
     private void executeOpmlImport(Uri uri) {
-        ProgressDialog dialog = ProgressDialog.show(getActivity(),
+        dialog = ProgressDialog.show(getActivity(),
                 getString(R.string.dialog_please_wait),
                 getString(R.string.importing_opml),
                 true);
-
-        Observable.just(IOUtil.readTextFromUri(getActivity(), uri))
-                .map(this::getChannelsFromOpml)
-                .map(this::getFeedUrls)
-                .map(this::executeBulkSubscribe)
-                .map(ApiManager::getChannelsFromJsonArray)
-                .map(this::storeChannels)
-                .map(this::getChannelEpisodes)
-                .map(this::storeEpisodes)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Episode>>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "Error while processing OPML", e);
-                        dialog.dismiss();
-                        Toast.makeText(getActivity(), R.string.error_importing_opml, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(List<Episode> episodes) {
-                        dialog.dismiss();
-
-                        if (episodes != null && episodes.size() > 0) {
-                            Toast.makeText(getActivity(), R.string.opml_import_successful, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getActivity(), R.string.error_no_new_imports, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        AsyncTaskService.opmlImport(getActivity(), uri);
     }
 
     private void executeOpmlExport(Uri uri) {
-        ProgressDialog dialog = ProgressDialog.show(getActivity(),
+        dialog = ProgressDialog.show(getActivity(),
                 getString(R.string.dialog_please_wait),
                 getString(R.string.exporting_opml),
                 true);
-
-        Observable.just(uri)
-                .map(this::writeOpmlFile)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Uri>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "Error while processing OPML", e);
-                        dialog.dismiss();
-                        Toast.makeText(getActivity(), R.string.error_exporting_opml, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onNext(Uri uri) {
-                        dialog.dismiss();
-                        Toast.makeText(getActivity(), R.string.opml_export_successful, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
+        AsyncTaskService.opmlExport(getActivity(), uri);
     }
-
-    private Uri writeOpmlFile(Uri uri) {
-        ParcelFileDescriptor pfd = null;
-        FileOutputStream outputStream = null;
-        OutputStreamWriter writer = null;
-
-        try {
-            List<Channel> channels = ChannelModel.getChannels(getActivity());
-            pfd = getActivity().getContentResolver().openFileDescriptor(uri, "w");
-
-            if (pfd == null) {
-                throw new IllegalStateException("ParcelFileDescriptor is null");
-            }
-            outputStream = new FileOutputStream(pfd.getFileDescriptor());
-            writer = new OutputStreamWriter(outputStream);
-            OpmlWriter opmlWriter = new OpmlWriter();
-            opmlWriter.writeDocument(channels, writer);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            ResourceHelper.closeResources(new Object[]{ pfd, outputStream, writer });
-        }
-        return uri;
-    }
-
-    private List<Episode> storeEpisodes(List<Episode> episodes) {
-
-        try {
-            EpisodeModel.storeEpisodes(getActivity(), EpisodeModel.ADD, episodes);
-        } catch (Exception e) {
-            Log.e(TAG, "Error storing episodes", e);
-            throw new RuntimeException(e);
-        }
-        return episodes;
-    }
-
-    private List<Episode> getChannelEpisodes(List<Channel> channels) {
-        List<Episode> episodes;
-
-        if (channels == null || channels.size() == 0) {
-            episodes = new ArrayList<>(0);
-            return episodes;
-        }
-
-        try {
-            Credential credential = User.load(getActivity()).getCredential();
-            List<String> serverIds = CollectionModel.getCollectableGeneratedIds(channels);
-            episodes = ApiManager.getInstance(getActivity()).getEpisodes(credential, serverIds);
-        } catch (ApiException e) {
-            Log.e(TAG, "Error retrieving channel episodes", e);
-            throw new RuntimeException(e);
-        }
-        return episodes;
-    }
-
-    private List<Channel> storeChannels(List<Channel> channels) {
-        try {
-            ChannelModel.storeChannels(getActivity(), ChannelModel.ADD, channels);
-            List<String> serverIds = CollectionModel.getCollectableGeneratedIds(channels);
-
-            for (int i = 0; i < serverIds.size(); i++) {
-                UserPrefHelper.get(getActivity()).addServerId(R.string.pref_key_notification_channels, serverIds.get(i));
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "Error storing channels", e);
-            throw new RuntimeException(e);
-        }
-        return channels;
-    }
-
-    private JSONArray executeBulkSubscribe(List<String> feedUrls) {
-
-        try {
-            PostApiResponse response = ApiManager.getInstance(getActivity()).bulkSubscribe(
-                    User.load(getActivity()).getCredential(), feedUrls);
-            return response.getArray(ApiManager.CHANNELS);
-        } catch (ApiException e) {
-            Log.e(TAG, "Error bulk subscribing", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    private ArrayList<String> getFeedUrls(ArrayList<Channel> channels) {
-        ArrayList<String> feedUrls = new ArrayList<>(channels.size());
-
-        for (int i = 0; i < channels.size(); i++) {
-            feedUrls.add(channels.get(i).getFeedUrl());
-        }
-        return feedUrls;
-    }
-
-    private ArrayList<Channel> getChannelsFromOpml(String opmlData) {
-        StringReader reader = null;
-        ArrayList<Channel> channel = new ArrayList<>();
-
-        try {
-            reader = new StringReader(opmlData);
-            OpmlReader opmlReader = new OpmlReader();
-            channel = opmlReader.readDocument(reader);
-        } catch (Exception e) {
-            Log.e(TAG, "Error reading OPML", e);
-            throw new RuntimeException(e);
-        } finally {
-            ResourceHelper.closeResource(reader);
-        }
-        return channel;
-    }*/
 }

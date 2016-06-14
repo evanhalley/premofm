@@ -39,7 +39,7 @@ import com.mainmethod.premofm.helper.PaletteHelper.OnPaletteLoaded;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.service.AsyncJobService;
+import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.ui.adapter.EpisodeAdapter;
 
 import org.parceler.Parcels;
@@ -159,7 +159,7 @@ public class ChannelProfileActivity
         super.onStop();
 
         if (!mChannel.isSubscribed()) {
-            AsyncJobService.deleteChannel(this, mChannel.getGeneratedId());
+            AsyncTaskService.deleteChannel(this, mChannel.getGeneratedId());
         }
     }
 

@@ -60,6 +60,10 @@
 
     <string name="pref_key_syncing_period" translatable="false">syncing_period</string>
     <string name="pref_title_syncing_period">Sync podcasts</string>
+    <string name="pref_minutes">Every %d minutes</string>
+    <string name="pref_hour">Every hour</string>
+    <string name="pref_hours">Every %d hours</string>
+    <string name="pref_day">Once per day</string>
 
     <string name="pref_key_enable_notifications" translatable="false">notifications</string>
     <string name="pref_title_enable_notifications">Notifications</string>c
@@ -96,11 +100,11 @@
 
     <string name="pref_key_skip_forward" translatable="false">skip_forward</string>
     <string name="pref_title_skip_forward">Fast forward duration</string>
-    <string name="pref_summary_skip_forward">Fast forward podcasts %s seconds at a time</string>
+    <string name="pref_summary_skip_forward">Fast forward podcasts %d seconds at a time</string>
 
     <string name="pref_key_skip_backward" translatable="false">skip_backward</string>
     <string name="pref_title_skip_backward">Rewind duration</string>
-    <string name="pref_summary_skip_backward">Rewind podcasts %s seconds at a time</string>
+    <string name="pref_summary_skip_backward">Rewind podcasts %d seconds at a time</string>
 
     <string name="pref_key_continuous_playback" translatable="false">continuous_playback</string>
     <string name="pref_title_continuous_playback">Play next episode when current has completed</string>

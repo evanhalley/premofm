@@ -17,11 +17,6 @@
             android:key="@string/pref_key_rate"
             android:title="@string/pref_title_rate" />
 
-        <Preference
-            android:key="@string/pref_key_donate"
-            android:title="@string/pref_title_donate"
-            android:summary="@string/pref_summary_donate"/>
-
     </PreferenceCategory>
 
     <PreferenceCategory

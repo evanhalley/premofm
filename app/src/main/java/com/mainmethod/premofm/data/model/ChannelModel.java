@@ -16,18 +16,28 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 
+import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.LoadMapCallback;
 import com.mainmethod.premofm.data.PremoContract;
 import com.mainmethod.premofm.helper.ResourceHelper;
+import com.mainmethod.premofm.helper.UserPrefHelper;
+import com.mainmethod.premofm.helper.opml.OpmlReader;
+import com.mainmethod.premofm.helper.opml.OpmlWriter;
 import com.mainmethod.premofm.object.Channel;
 
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 /**
  * Created by evan on 4/15/15.
@@ -264,7 +274,7 @@ public class ChannelModel {
      * @throws android.os.RemoteException
      * @throws android.content.OperationApplicationException
      */
-    public static void storeChannels(Context context, int operationType, List<Channel> channelList)
+    public static void storeImportedChannels(Context context, int operationType, List<Channel> channelList)
             throws RemoteException, OperationApplicationException {
 
         if (channelList != null && channelList.size() > 0) {
@@ -372,5 +382,63 @@ public class ChannelModel {
                 record,
                 PremoContract.ChannelEntry.GENERATED_ID + " = ?",
                 new String[] { channelGeneratedId });
+    }
+
+    public static List<Channel> getChannelsFromOpml(String opmlData) {
+        StringReader reader = null;
+        List<Channel> channel = new ArrayList<>();
+
+        try {
+            reader = new StringReader(opmlData);
+            OpmlReader opmlReader = new OpmlReader();
+            channel = opmlReader.readDocument(reader);
+        } catch (Exception e) {
+            Timber.e(e, "Error reading OPML");
+            throw new RuntimeException(e);
+        } finally {
+            ResourceHelper.closeResource(reader);
+        }
+        return channel;
+    }
+
+    public static void storeImportedChannels(Context context, List<Channel> channels) {
+
+        try {
+            ChannelModel.storeImportedChannels(context, ChannelModel.ADD, channels);
+            List<String> generatedIds = CollectionModel.getCollectableGeneratedIds(channels);
+
+            for (int i = 0; i < generatedIds.size(); i++) {
+                UserPrefHelper.get(context).addServerId(R.string.pref_key_notification_channels,
+                        generatedIds.get(i));
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error storing channels");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Uri exportChannelsToOpml(Context context, Uri uri) {
+        ParcelFileDescriptor pfd = null;
+        FileOutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+
+        try {
+            List<Channel> channels = ChannelModel.getChannels(context);
+            pfd = context.getContentResolver().openFileDescriptor(uri, "w");
+
+            if (pfd == null) {
+                throw new IllegalStateException("ParcelFileDescriptor is null");
+            }
+            outputStream = new FileOutputStream(pfd.getFileDescriptor());
+            writer = new OutputStreamWriter(outputStream);
+            OpmlWriter opmlWriter = new OpmlWriter();
+            opmlWriter.writeDocument(channels, writer);
+        } catch (Exception e) {
+            Timber.e(e, "Error in exportChannelsToOpml");
+            throw new RuntimeException(e);
+        } finally {
+            ResourceHelper.closeResources(pfd, outputStream, writer);
+        }
+        return uri;
     }
 }

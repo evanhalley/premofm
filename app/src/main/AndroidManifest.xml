@@ -99,13 +99,19 @@
             android:exported="false" />
 
         <service
-            android:name="com.mainmethod.premofm.service.AsyncJobService"
+            android:name="com.mainmethod.premofm.service.AsyncTaskService"
             android:label="@string/title_service_async_job_service"
             android:exported="false" />
 
         <service
             android:name="com.mainmethod.premofm.service.job.DownloadJobService"
             android:label="@string/title_service_download_job"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:exported="false" />
+
+        <service
+            android:name="com.mainmethod.premofm.service.job.SyncFeedJobService"
+            android:label="@string/title_service_sync_job"
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 

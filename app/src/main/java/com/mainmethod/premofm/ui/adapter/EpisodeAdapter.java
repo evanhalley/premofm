@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.PremoContract;
-import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.data.model.FilterModel;
 import com.mainmethod.premofm.helper.AnalyticsHelper;
@@ -31,7 +30,7 @@ import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
 import com.mainmethod.premofm.object.Filter;
 import com.mainmethod.premofm.object.Playlist;
-import com.mainmethod.premofm.service.AsyncJobService;
+import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
 import com.mainmethod.premofm.ui.holder.ChannelInfoHolder;
 import com.mainmethod.premofm.ui.holder.EpisodeHolder;
@@ -157,9 +156,9 @@ public class EpisodeAdapter extends
             case R.id.subscribe:
 
                 if (mChannel.isSubscribed()) {
-                    AsyncJobService.unsubscribeFromChannel(v.getContext(), mChannel.getGeneratedId());
+                    AsyncTaskService.unsubscribeFromChannel(v.getContext(), mChannel.getGeneratedId());
                 } else {
-                    AsyncJobService.subscribeToChannel(v.getContext(), mChannel.getGeneratedId());
+                    AsyncTaskService.subscribeToChannel(v.getContext(), mChannel.getGeneratedId());
                 }
                 break;
             case R.id.website:

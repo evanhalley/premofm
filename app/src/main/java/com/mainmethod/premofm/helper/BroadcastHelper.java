@@ -26,6 +26,7 @@ public class BroadcastHelper {
     public static final String INTENT_PLAYER_STATE_CHANGE = "com.mainmethod.premofm.playerStateChange";
     public static final String INTENT_PROGRESS_UPDATE = "com.mainmethod.premofm.progressUpdate";
     public static final String INTENT_CHANNEL_PROCESSED = "com.mainmethod.premofm.channelProcessed";
+    public static final String INTENT_OPML_PROCESS_FINISH = "com.mainmethod.premofm.opmlProcessFinish";
 
     public static final String EXTRA_IS_SUBSCRIBED = "isSubscribed";
     public static final String EXTRA_CHANNEL_SERVER_ID = "channelServerId";
@@ -36,6 +37,7 @@ public class BroadcastHelper {
     public static final String EXTRA_BUFFERED_PROGRESS = "bufferedProgress";
     public static final String EXTRA_DURATION = "duration";
     public static final String EXTRA_CHANNEL = "channel";
+    public static final String EXTRA_SUCCESS = "success";
 
     public static void broadcastPlayerStateChange(Context context, int playerStateId,
                                                   String episodeServerId) {
@@ -75,6 +77,12 @@ public class BroadcastHelper {
     public static void broadcastChannelAdded(Context context, Channel channel) {
         Intent intent = new Intent(INTENT_CHANNEL_PROCESSED);
         intent.putExtra(EXTRA_CHANNEL, Parcels.wrap(channel));
+        sendBroadcast(context, intent);
+    }
+
+    public static void broadcastOpmlProcessFinish(Context context, boolean success) {
+        Intent intent = new Intent(INTENT_OPML_PROCESS_FINISH);
+        intent.putExtra(EXTRA_SUCCESS, success);
         sendBroadcast(context, intent);
     }
 

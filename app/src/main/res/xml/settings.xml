@@ -43,11 +43,13 @@
             android:summary="@string/pref_summary_enable_syncing"
             android:defaultValue="true" />
 
-        <Preference
+        <ListPreference
             android:dependency="@string/pref_key_syncing_period"
             android:key="@string/pref_key_syncing_period"
             android:title="@string/pref_title_syncing_period"
-            android:defaultValue="" />
+            android:entries="@array/sync_period_entries"
+            android:entryValues="@array/sync_period_values"
+            android:defaultValue="720" />
 
         <SwitchPreference
             android:key="@string/pref_key_enable_notifications"

@@ -424,4 +424,5 @@
     <string name="button_add_feed">Add a Podcast</string>
     <string name="title_service_sync_feed">SyncFeedService</string>
     <string name="title_service_async_job_service">Async Job Service</string>
+    <string name="title_service_sync_job">SyncJobService</string>
 </resources>
