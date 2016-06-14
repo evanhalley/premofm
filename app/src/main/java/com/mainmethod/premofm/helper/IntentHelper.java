@@ -114,11 +114,6 @@ public class IntentHelper {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(chooser);
         }
-
-        AnalyticsHelper.sendEvent(context,
-                AnalyticsHelper.CATEGORY_CHANNEL_ACTION,
-                AnalyticsHelper.ACTION_CLICK,
-                "share");
     }
 
     /**
@@ -147,11 +142,6 @@ public class IntentHelper {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivity(chooser);
         }
-
-        AnalyticsHelper.sendEvent(context,
-                AnalyticsHelper.CATEGORY_EPISODE_ACTION,
-                AnalyticsHelper.ACTION_CLICK,
-                "share");
     }
 
     public static void openOpmlFileExporter(Fragment fragment) {

@@ -115,11 +115,6 @@
             android:permission="android.permission.BIND_JOB_SERVICE"
             android:exported="false" />
 
-        <service
-            android:name="com.google.android.gms.analytics.AnalyticsService"
-            android:enabled="true"
-            android:exported="false"/>
-
         <!-- Content Provider -->
         <provider
             android:name="com.mainmethod.premofm.data.PremoContentProvider"
@@ -127,16 +122,6 @@
             android:exported="false" />
 
         <!-- Broadcast Receivers -->
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.mainmethod.premofm" />
-            </intent-filter>
-        </receiver>
-
         <receiver android:name="com.mainmethod.premofm.receiver.DeviceStatusReceiver">
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE" />
@@ -172,16 +157,6 @@
         <receiver android:name="com.mainmethod.premofm.receiver.RemoteControlReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
-            </intent-filter>
-        </receiver>
-
-        <!-- Optionally, register AnalyticsReceiver and AnalyticsService to support background
-         dispatching on non-Google Play devices -->
-        <receiver
-            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
             </intent-filter>
         </receiver>
     </application>

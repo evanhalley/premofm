@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.FilterModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.ShowcaseHelper;
 import com.mainmethod.premofm.object.Filter;
 import com.mainmethod.premofm.ui.activity.EditFilterActivity;
@@ -96,10 +95,6 @@ public class EpisodesFragment extends BaseFragment implements
         switch (item.getItemId()) {
             case R.id.action_filter:
                 showFilterDialog(null);
-                AnalyticsHelper.sendEvent(getActivity(),
-                        AnalyticsHelper.CATEGORY_CREATE_FILTER,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
                 return true;
         }
 
@@ -134,10 +129,6 @@ public class EpisodesFragment extends BaseFragment implements
     @Override
     public void onPageSelected(int position) {
 
-        AnalyticsHelper.sendEvent(getActivity(),
-                AnalyticsHelper.CATEGORY_FILTER,
-                AnalyticsHelper.ACTION_CLICK,
-                AnalyticsHelper.CATEGORY_FILTER);
     }
 
     @Override

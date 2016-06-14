@@ -19,7 +19,6 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.data.model.PlaylistModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.DownloadStatus;
@@ -179,10 +178,6 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
                 return true;
             case R.id.action_download:
                 DownloadService.downloadEpisode(itemView.getContext(), episodeId);
-                AnalyticsHelper.sendEvent(itemView.getContext(),
-                        AnalyticsHelper.CATEGORY_EPISODE_DOWNLOAD,
-                        AnalyticsHelper.ACTION_CLICK,
-                        "");
 
                 if (!isChannelSubscribed) {
                     EpisodeModel.manuallyAddEpisode(itemView.getContext(), episodeId);

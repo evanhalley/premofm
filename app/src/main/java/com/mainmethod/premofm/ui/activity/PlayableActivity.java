@@ -24,11 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.cast.CastDevice;
-import com.google.android.gms.cast.CastMediaControlIntent;
-import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.DialogHelper;
 import com.mainmethod.premofm.object.Episode;
@@ -286,10 +283,6 @@ public abstract class PlayableActivity extends BaseActivity {
         public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo route) {
             CastDevice castDevice = CastDevice.getFromBundle(route.getExtras());
             PodcastPlayerService.startCast(mContext.get(), castDevice);
-            AnalyticsHelper.sendEvent(mContext.get(),
-                    AnalyticsHelper.CATEGORY_CAST,
-                    AnalyticsHelper.ACTION_CLICK,
-                    null);
         }
 
         @Override

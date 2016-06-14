@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.ColorHelper;
@@ -240,10 +239,6 @@ public class NowPlayingActivity extends PlayableActivity implements
                 endTimer();
                 return true;
             case R.id.action_sleep:
-                AnalyticsHelper.sendEvent(this,
-                        AnalyticsHelper.CATEGORY_SLEEP_TIMER,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
                 showSleepTimerDialog();
                 return true;
             case R.id.action_share_episode:
@@ -254,19 +249,11 @@ public class NowPlayingActivity extends PlayableActivity implements
                 }
                 return true;
             case R.id.action_play_queue:
-                AnalyticsHelper.sendEvent(this,
-                        AnalyticsHelper.CATEGORY_VIEW_PLAYLIST,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
                 showPlayQueue();
                 return true;
             case R.id.action_playback_speed:
 
                 if (mEpisode != null) {
-                    AnalyticsHelper.sendEvent(this,
-                            AnalyticsHelper.CATEGORY_PLAYBACK_SPEED,
-                            AnalyticsHelper.ACTION_CLICK,
-                            null);
                     PlaybackSpeedDialog.show(this, mEpisode.getChannelGeneratedId());
                 }
                 return true;
@@ -321,7 +308,7 @@ public class NowPlayingActivity extends PlayableActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if (!menu.findItem(R.string.action_cast).isVisible()) {
+        if (menu.findItem(R.string.action_cast).isVisible()) {
             ShowcaseHelper.showNowPlayingShowcase(this);
         }
         return super.onPrepareOptionsMenu(menu);

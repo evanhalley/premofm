@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.ChannelModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;

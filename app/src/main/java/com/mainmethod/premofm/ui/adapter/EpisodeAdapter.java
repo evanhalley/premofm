@@ -19,7 +19,6 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.PremoContract;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.data.model.FilterModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.ImageLoadHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
@@ -209,10 +208,6 @@ public class EpisodeAdapter extends
                 Toast.makeText(context, R.string.episode_not_pinned, Toast.LENGTH_SHORT).show();
             }
             Toast.makeText(context, R.string.episode_pinned, Toast.LENGTH_SHORT).show();
-            AnalyticsHelper.sendEvent(context,
-                    AnalyticsHelper.CATEGORY_PIN,
-                    AnalyticsHelper.ACTION_CLICK,
-                    null);
         } else {
             Toast.makeText(context, R.string.episode_already_pinned, Toast.LENGTH_SHORT).show();
         }

@@ -25,7 +25,6 @@ import android.view.View;
 import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
@@ -286,11 +285,6 @@ public class PremoActivity
             default:
                 break;
         }
-
-        AnalyticsHelper.sendEvent(this,
-                AnalyticsHelper.CATEGORY_DRAWER,
-                AnalyticsHelper.ACTION_CLICK,
-                menuItem.getTitle().toString());
     }
 
     private void startFragment(int itemId) {
@@ -364,10 +358,6 @@ public class PremoActivity
                 IntentHelper.sendIdeaEmail(this);
                 break;
             case FEEDBACK_RATE_APP:
-                AnalyticsHelper.sendEvent(this,
-                        AnalyticsHelper.CATEGORY_RATE_PREMOFM,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
                 IntentHelper.openAppListing(this);
                 break;
         }

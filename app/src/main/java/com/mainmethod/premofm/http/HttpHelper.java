@@ -10,13 +10,11 @@ import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.object.Channel;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.Map;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 

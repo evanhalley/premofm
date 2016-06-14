@@ -23,7 +23,6 @@ import android.widget.TextView;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.object.Filter;
-import com.mainmethod.premofm.ui.activity.PremoActivity;
 import com.mainmethod.premofm.ui.adapter.EpisodeAdapter;
 import com.mainmethod.premofm.ui.dialog.AddFeedDialog;
 

@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
 import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.config.ConfigurationManager;
@@ -50,7 +49,6 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((PremoApp) getApplication()).getTracker();
         ConfigurationManager.getInstance(this);
 
         boolean userIsOnboarding = getIntent().getBooleanExtra(PARAM_USER_ONBOARDING, false);
@@ -135,13 +133,11 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
     @Override
     protected void onStart() {
         super.onStart();
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override

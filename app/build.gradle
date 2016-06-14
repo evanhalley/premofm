@@ -26,7 +26,6 @@ android {
         versionCode 100036
         versionName "${versionMajor}.${versionMinor}.${versionPatch}.${versionCode}"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "GIT_SHA", "\"${gitSha}\""
         setProperty("archivesBaseName", "PremoFM-$versionName")
     }
     compileOptions {
@@ -75,15 +74,13 @@ dependencies {
     compile 'com.android.support:mediarouter-v7:23.4.0'
 
     // Google Play Services
-    compile 'com.google.android.gms:play-services-gcm:9.0.1'
-    compile 'com.google.android.gms:play-services-analytics:9.0.1'
-    compile 'com.google.android.gms:play-services-cast:9.0.1'
+    compile 'com.google.android.gms:play-services-cast:9.0.2'
 
     // 3rd party imports
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'com.jakewharton.timber:timber:4.1.0'
-    compile 'com.google.android.exoplayer:exoplayer:r1.5.5'
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.8'
     compile 'com.github.amlcurran.showcaseview:library:5.3.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'org.apache.commons:commons-lang3:3.0'

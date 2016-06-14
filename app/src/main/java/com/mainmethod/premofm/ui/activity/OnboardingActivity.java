@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 
 public class OnboardingActivity extends BaseActivity implements View.OnClickListener,
@@ -49,8 +48,6 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
 
         switch (v.getId()) {
             case R.id.get_started:
-                AnalyticsHelper.sendEvent(OnboardingActivity.this, AnalyticsHelper.CATEGORY_TRY_IT,
-                        AnalyticsHelper.ACTION_CLICK, "");
                 showProgressDialog(R.string.progress_authenticate_title,
                         R.string.progress_authenticate_message);
                 AppPrefHelper.getInstance(this).setUserHasOnboarded();
@@ -70,10 +67,7 @@ public class OnboardingActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onPageSelected(int position) {
-        AnalyticsHelper.sendEvent(this,
-                AnalyticsHelper.CATEGORY_ONBOARDING,
-                AnalyticsHelper.ACTION_CLICK,
-                String.valueOf(position));
+
     }
 
     @Override
