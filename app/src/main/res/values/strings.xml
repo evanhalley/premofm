@@ -425,4 +425,5 @@
     <string name="title_service_sync_feed">SyncFeedService</string>
     <string name="title_service_async_job_service">Async Job Service</string>
     <string name="title_service_sync_job">SyncJobService</string>
+    <string name="last_sync_label">Last synced %s</string>
 </resources>

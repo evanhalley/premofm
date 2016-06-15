@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.mainmethod.premofm.data.model.ChannelModel;
+import com.mainmethod.premofm.helper.AppPrefHelper;
+import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.sync.SyncManager;
@@ -80,6 +82,10 @@ public class SyncFeedService extends IntentService {
                     Thread thread = new Thread(syncManager);
                     thread.start();
                     thread.join();
+
+                    if (action.contentEquals(ACTION_REFRESH_ALL_FEEDS)) {
+                        AppPrefHelper.getInstance(this).setLastEpisodeSync(DatetimeHelper.getTimestamp());
+                    }
                 }
             } catch (Exception e) {
                 Timber.e(e, "Error in onHandleIntent");

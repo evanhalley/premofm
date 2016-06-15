@@ -11,10 +11,10 @@
               android:gravity="bottom">
 
     <TextView
-        android:id="@+id/username"
+        android:id="@+id/last_sync_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Username"
+        tools:text="Last sync was 5 minutes ago"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </LinearLayout>

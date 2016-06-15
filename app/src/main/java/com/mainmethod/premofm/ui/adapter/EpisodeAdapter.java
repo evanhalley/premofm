@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -279,8 +280,8 @@ public class EpisodeAdapter extends
             episodeHolder.description.setVisibility(View.VISIBLE);
             episodeHolder.description.setText(episode.getDescription());
         }
-        episodeHolder.publishedAt.setText(DatetimeHelper.dateToShortReadableString(
-                context, episode.getPublishedAt()));
+        episodeHolder.publishedAt.setText(DateUtils.getRelativeTimeSpanString(episode.getPublishedAt().getTime(),
+                DatetimeHelper.getTimestamp(), DateUtils.DAY_IN_MILLIS));
 
         if (mChannel != null && !mChannel.isSubscribed() && !episode.isManuallyAdded()) {
             episodeHolder.pin.setVisibility(View.VISIBLE);

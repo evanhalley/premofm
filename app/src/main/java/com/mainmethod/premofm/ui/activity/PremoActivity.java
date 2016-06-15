@@ -17,17 +17,22 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
+import com.mainmethod.premofm.helper.AppPrefHelper;
+import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
+import com.mainmethod.premofm.service.SyncFeedService;
 import com.mainmethod.premofm.service.job.DownloadJobService;
 import com.mainmethod.premofm.ui.fragment.BaseFragment;
 import com.mainmethod.premofm.ui.fragment.ChannelsFragment;
@@ -124,6 +129,9 @@ public class PremoActivity
             case R.id.navigation_header:
                 mDrawerLayout.closeDrawers();
                 break;
+            case R.id.last_sync_time:
+                SyncFeedService.syncAllFeeds(this, true);
+                break;
         }
     }
 
@@ -173,6 +181,8 @@ public class PremoActivity
         mNavigationView.setNavigationItemSelectedListener(this);
         mNavHeader = mNavigationView.inflateHeaderView(R.layout.nav_header);
         mNavHeader.findViewById(R.id.navigation_header).setOnClickListener(this);
+        mNavHeader.findViewById(R.id.last_sync_time).setOnClickListener(this);
+        updateSyncTime();
 
         if (BuildConfig.DEBUG) {
             mNavigationView.getMenu().findItem(R.id.action_debug).setVisible(true);
@@ -360,6 +370,16 @@ public class PremoActivity
             case FEEDBACK_RATE_APP:
                 IntentHelper.openAppListing(this);
                 break;
+        }
+    }
+
+    private void updateSyncTime() {
+        long lastSyncTime = AppPrefHelper.getInstance(this).getLastEpisodeSync();
+
+        if (lastSyncTime > -1) {
+            ((TextView) mNavHeader.findViewById(R.id.last_sync_time)).setText(getString(R.string.last_sync_label,
+                    DateUtils.getRelativeTimeSpanString(lastSyncTime, DatetimeHelper.getTimestamp(),
+                            DateUtils.MINUTE_IN_MILLIS)));
         }
     }
 

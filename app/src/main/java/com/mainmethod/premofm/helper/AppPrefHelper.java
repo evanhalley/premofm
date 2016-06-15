@@ -21,8 +21,7 @@ public class AppPrefHelper {
     private static final String PROPERTY_REG_ID                  = "RegistrationId";
     private static final String PROPERTY_APP_VERSION             = "AppVersion";
     private static final String PROPERTY_LAST_PLAYED_EPISODE     = "LastPlayedEpisode";
-    private static final String PROPERTY_LAST_EPISODE_SYNC_PUSH  = "LastEpisodeSyncPush";
-    private static final String PROPERTY_LAST_EPISODE_SYNC_PULL  = "LastEpisodeSyncPull";
+    private static final String PROPERTY_LAST_EPISODE_SYNC  = "LastEpisodeSync";
     private static final String PROPERTY_PLAYLIST                = "Playlist2";
     private static final String PROPERTY_SLEEP_TIMER             = "SleepTimer";
     private static final String PROPERTY_ASKED_FOR_RATING       = "AskedForRating";
@@ -139,20 +138,12 @@ public class AppPrefHelper {
         mPreferences.edit().remove(PROPERTY_PLAYLIST).apply();
     }
 
-    public long getLastEpisodeSyncPush() {
-        return mPreferences.getLong(PROPERTY_LAST_EPISODE_SYNC_PUSH, -1);
+    public long getLastEpisodeSync() {
+        return mPreferences.getLong(PROPERTY_LAST_EPISODE_SYNC, -1);
     }
 
-    public void setLastEpisodeSyncPush(long syncTime) {
-        mPreferences.edit().putLong(PROPERTY_LAST_EPISODE_SYNC_PUSH, syncTime).apply();
-    }
-
-    public long getLastEpisodeSyncPull() {
-        return mPreferences.getLong(PROPERTY_LAST_EPISODE_SYNC_PULL, -1);
-    }
-
-    public void setLastEpisodeSyncPull(long syncTime) {
-        mPreferences.edit().putLong(PROPERTY_LAST_EPISODE_SYNC_PULL, syncTime).apply();
+    public void setLastEpisodeSync(long syncTime) {
+        mPreferences.edit().putLong(PROPERTY_LAST_EPISODE_SYNC, syncTime).apply();
     }
 
     public int getLastPlayedEpisodeId() {
