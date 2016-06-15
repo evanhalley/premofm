@@ -27,7 +27,7 @@ public class SyncFeedJobService extends PremoJobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Timber.d("Starting sync feed job service");
-        SyncFeedService.syncAllFeeds(this);
+        SyncFeedService.syncAllFeeds(this, true);
         jobFinished(params, false);
         return false;
     }

@@ -252,9 +252,9 @@ public class FilterModel {
         whatsNewFilter.setDownloadStatusIds(new Integer[0]);
         whatsNewFilter.setEpisodeStatusIds(new Integer[]{EpisodeStatus.NEW, EpisodeStatus.PLAYED});
         whatsNewFilter.setOrder(0);
-        whatsNewFilter.setEpisodesPerChannel(1);
+        whatsNewFilter.setEpisodesPerChannel(DISABLED);
         whatsNewFilter.setEpisodesManuallyAdded(false);
-        whatsNewFilter.setDaysSincePublished(DAYS_SINCE_PUBLISHED_LAST_MONTH);
+        whatsNewFilter.setDaysSincePublished(DAYS_SINCE_PUBLISHED_LAST_WEEK);
 
         Filter downloadedFilter = new Filter();
         downloadedFilter.setName(context.getString(R.string.filter_name_downloaded));

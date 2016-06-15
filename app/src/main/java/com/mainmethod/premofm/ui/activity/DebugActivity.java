@@ -17,6 +17,7 @@ import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.service.DownloadService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
+import com.mainmethod.premofm.service.SyncFeedService;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -42,7 +43,7 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener 
         findViewById(R.id.single_episode_notification).setOnClickListener(this);
         findViewById(R.id.push_collection_changes).setOnClickListener(this);
         findViewById(R.id.insufficient_space_notification).setOnClickListener(this);
-        findViewById(R.id.push_episode_changes).setOnClickListener(this);
+        findViewById(R.id.sync_episode_changes).setOnClickListener(this);
         findViewById(R.id.multiple_episode_notification).setOnClickListener(this);
     }
 
@@ -60,6 +61,9 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener 
     public void onClick(View v) {
 
         switch (v.getId()) {
+            case R.id.sync_episode_changes:
+                SyncFeedService.syncAllFeeds(this, true);
+                break;
             case R.id.trigger_download_service:
                 Intent downloadIntent  = new Intent(this, DownloadService.class);
                 downloadIntent.setAction(DownloadService.ACTION_AUTO_DOWNLOAD);

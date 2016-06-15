@@ -87,8 +87,8 @@
             android:layout_margin="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Push Episode Changes"
-            android:id="@+id/push_episode_changes"
+            android:text="Sync Episodess"
+            android:id="@+id/sync_episode_changes"
             android:layout_gravity="center_horizontal"/>
 
     </LinearLayout>

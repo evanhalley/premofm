@@ -386,19 +386,19 @@ public class ChannelModel {
 
     public static List<Channel> getChannelsFromOpml(String opmlData) {
         StringReader reader = null;
-        List<Channel> channel = new ArrayList<>();
+        List<Channel> channelList = new ArrayList<>();
 
         try {
             reader = new StringReader(opmlData);
             OpmlReader opmlReader = new OpmlReader();
-            channel = opmlReader.readDocument(reader);
+            channelList = opmlReader.readDocument(reader);
         } catch (Exception e) {
             Timber.e(e, "Error reading OPML");
             throw new RuntimeException(e);
         } finally {
             ResourceHelper.closeResource(reader);
         }
-        return channel;
+        return channelList;
     }
 
     public static void storeImportedChannels(Context context, List<Channel> channels) {
@@ -408,7 +408,7 @@ public class ChannelModel {
             List<String> generatedIds = CollectionModel.getCollectableGeneratedIds(channels);
 
             for (int i = 0; i < generatedIds.size(); i++) {
-                UserPrefHelper.get(context).addServerId(R.string.pref_key_notification_channels,
+                UserPrefHelper.get(context).addGeneratedId(R.string.pref_key_notification_channels,
                         generatedIds.get(i));
             }
         } catch (Exception e) {

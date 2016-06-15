@@ -94,7 +94,7 @@ public class DateParser {
             case 2:
             case 3:
                 durationStr = ensureSegmentedDuration(durationStr);
-                duration = parseDurationFromString("HH:mm:ss", durationStr);
+                duration = parseDurationFromString(durationStr);
                 break;
             default:
                 break;
@@ -174,20 +174,19 @@ public class DateParser {
 
     /**
      * Parses the length of the episode in milliseconds from a string resembling HH:mm:ss or mm:ss
-     * @param format
      * @param durationStr
      * @return
      */
-    private static long parseDurationFromString(String format, String durationStr) {
+    private static long parseDurationFromString(String durationStr) {
         long duration = 0;
         durationStr = sanitizeDuration(durationStr);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.getDefault());
+        String[] segments = durationStr.split(":");
 
         try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(dateFormat.parse(durationStr));
-            duration = calendar.getTimeInMillis();
-        } catch (ParseException e) {
+            duration += Integer.parseInt(segments[0]) * 3_600_000 +
+                    Integer.parseInt(segments[1]) * 60_000 +
+                    Integer.parseInt(segments[2]) * 1_000;
+        } catch (Exception e) {
             Timber.e(e, "Unable to parse a duration");
         }
         return duration;

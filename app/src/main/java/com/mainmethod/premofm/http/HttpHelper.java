@@ -115,7 +115,7 @@ public class HttpHelper {
      * Gets the channels XML data
      * @return
      */
-    public static String getXmlData(Channel channel) throws XmlDataException {
+    public static String getXmlData(Channel channel, boolean isRedirect) throws XmlDataException {
         String channelData = null;
         InputStream inputStream = null;
         HttpURLConnection connection = null;
@@ -134,12 +134,16 @@ public class HttpHelper {
             int responseCode = connection.getResponseCode();
             Timber.d("Response code: %d", responseCode);
             Timber.d("Content-Length: %d", connection.getContentLength());
-            Timber.d("Content-Encoding: %s", connection.getContentEncoding());
 
             if (responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
-                Timber.w("Podcast URL moved permanently: %s", channel.getTitle());
+                Timber.w("Podcast URL moved permanently: %s", channel.getFeedUrl());
                 channel.setFeedUrl(connection.getHeaderField("Location"));
-                throw new XmlDataException(XmlDataException.ERROR_PERM_REDIRECT);
+
+                if (!isRedirect) {
+                    return getXmlData(channel, true);
+                } else {
+                    throw new XmlDataException(XmlDataException.ERROR_PERM_REDIRECT);
+                }
             }
 
             if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
@@ -165,10 +169,11 @@ public class HttpHelper {
                 if (oldMd5 == null || oldMd5.length() == 0 || !oldMd5.contentEquals(newMd5)) {
                     channel.setDataMd5(newMd5);
                 } else {
+                    Timber.d("Data MD5 prevents update for channel %s", channel.getFeedUrl());
                     channelData = null;
                 }
             } else if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                Timber.d("Update not needed for retrievedChannel: ");
+                Timber.d("HTTP caching prevents update for channel %s", channel.getFeedUrl());
             } else if (responseCode >= 400 && responseCode <= 500) {
                 throw new XmlDataException(XmlDataException.ERROR_HTTP);
             }

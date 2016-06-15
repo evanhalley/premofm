@@ -107,12 +107,14 @@ public class AsyncTaskService extends IntentService {
                          channels = ChannelModel.getChannelsFromOpml(opmlData);
                     }
 
+                    // TODO filter out possible duplicates
+
                     if (channels != null && channels.size() > 0) {
                         ChannelModel.storeImportedChannels(this, channels);
                         importSuccess = true;
                     }
                     BroadcastHelper.broadcastOpmlProcessFinish(this, importSuccess);
-                    SyncFeedService.syncAllFeeds(this);
+                    SyncFeedService.syncAllFeeds(this, false);
                     break;
                 case ACTION_OPML_EXPORT:
                     ChannelModel.exportChannelsToOpml(this, intent.getParcelableExtra(PARAM_OPML_URI));

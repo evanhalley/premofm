@@ -210,7 +210,7 @@ public class ChannelProfileActivity
                             mChannel.getGeneratedId());
                 } else {
                     item.setChecked(true);
-                    UserPrefHelper.get(this).addServerId(R.string.pref_key_auto_download_channels,
+                    UserPrefHelper.get(this).addGeneratedId(R.string.pref_key_auto_download_channels,
                             mChannel.getGeneratedId());
                 }
                 return true;
@@ -222,7 +222,7 @@ public class ChannelProfileActivity
                             mChannel.getGeneratedId());
                 } else {
                     item.setChecked(true);
-                    UserPrefHelper.get(this).addServerId(R.string.pref_key_notification_channels,
+                    UserPrefHelper.get(this).addGeneratedId(R.string.pref_key_notification_channels,
                             mChannel.getGeneratedId());
                 }
                 return true;

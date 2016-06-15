@@ -43,15 +43,15 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     private void createIndexes(SQLiteDatabase db) {
         // channel indexes
-        db.execSQL("CREATE INDEX IF NOT EXISTS channel_serverId_Idx ON " +
+        db.execSQL("CREATE INDEX IF NOT EXISTS channel_generatedId_Idx ON " +
                 PremoContract.ChannelEntry.TABLE_NAME + " (" +
                 PremoContract.ChannelEntry.GENERATED_ID + ")");
 
         // episode indexes
-        db.execSQL("CREATE INDEX IF NOT EXISTS episode_serverId_Idx ON " +
+        db.execSQL("CREATE INDEX IF NOT EXISTS episode_generatedId_Idx ON " +
                 PremoContract.EpisodeEntry.TABLE_NAME + " (" +
                 PremoContract.EpisodeEntry.GENERATED_ID + ")");
-        db.execSQL("CREATE INDEX IF NOT EXISTS episode_channelServerId_Idx ON " +
+        db.execSQL("CREATE INDEX IF NOT EXISTS episode_channelGeneratedId_Idx ON " +
                 PremoContract.EpisodeEntry.TABLE_NAME + " (" +
                 PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + ")");
         db.execSQL("CREATE INDEX IF NOT EXISTS episode_title_Idx ON " +
@@ -71,10 +71,10 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                 PremoContract.EpisodeEntry.FAVORITE + ")");
 
         // collection indexes
-        db.execSQL("CREATE INDEX IF NOT EXISTS collection_serverId_Idx ON " +
+        db.execSQL("CREATE INDEX IF NOT EXISTS collection_generatedId_Idx ON " +
                 PremoContract.CollectionEntry.TABLE_NAME + " (" +
                 PremoContract.CollectionEntry.COLLECTED_GENERATED_IDS + ")");
-        db.execSQL("CREATE INDEX IF NOT EXISTS collection_collectedServerIds_Idx ON " +
+        db.execSQL("CREATE INDEX IF NOT EXISTS collection_collectedGeneratedIds_Idx ON " +
                 PremoContract.CollectionEntry.TABLE_NAME + " (" +
                 PremoContract.CollectionEntry.COLLECTED_GENERATED_IDS + ")");
     }

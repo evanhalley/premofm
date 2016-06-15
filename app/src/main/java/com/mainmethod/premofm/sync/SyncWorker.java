@@ -1,8 +1,6 @@
-package com.mainmethod.premofm.task;
+package com.mainmethod.premofm.sync;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.Bundle;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.ChannelModel;
@@ -11,7 +9,6 @@ import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
-import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.http.HttpHelper;
 import com.mainmethod.premofm.object.Channel;
@@ -30,68 +27,32 @@ import java.util.TreeSet;
 import timber.log.Timber;
 
 /**
- * Created by evan on 6/10/16.
+ * Created by evanhalley on 6/14/16.
  */
-public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
+public class SyncWorker implements Runnable {
 
-    public static final String PARAM_MODE = "mode";
-    public static final String PARAM_FEED_URL = "feedUrl";
-    public static final String PARAM_GENERATED_IDS = "generatedIds";
-    public static final int MODE_ADD_FEED = 0;
-    public static final int MODE_SYNC_FEED = 1;
     private final Context context;
+    private final Channel channel;
+    private final boolean doNotify;
 
-    public SyncFeedTask(Context context) {
+    public SyncWorker(Context context, Channel channel, boolean doNotify) {
         this.context = context;
+        this.channel = channel;
+        this.doNotify = doNotify;
     }
 
     @Override
-    protected final Void doInBackground(Bundle... bundles) {
-        Bundle params = bundles[0];
+    public void run() {
 
         try {
-            switch (params.getInt(PARAM_MODE)) {
-                case MODE_ADD_FEED:
-                    String feedUrl = params.getString(PARAM_FEED_URL);
-                    Channel channel = new Channel();
-                    channel.setFeedUrl(feedUrl);
-                    channel.setGeneratedId(TextHelper.generateMD5(feedUrl));
-                    channel.isSubscribed();
-                    processChannel(channel, false);
-                    break;
-                case MODE_SYNC_FEED:
-
-                    if (params.containsKey(PARAM_GENERATED_IDS)) {
-                        syncFeed(params.getStringArrayList(PARAM_GENERATED_IDS));
-                    } else {
-                        List<String> ids = ChannelModel.getChannelGeneratedIds(context);
-
-                        if (ids != null && ids.size() > 0) {
-                            syncFeed(ids);
-                        }
-                    }
-                    break;
-            }
+            processChannel();
         } catch (Exception e) {
-            Timber.e(e, "Error in SyncFeedTask.doInBackground");
-        }
-
-        return null;
-    }
-
-    private void syncFeed(List<String> generatedIds) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-        for (int i = 0; i < generatedIds.size(); i++) {
-            // get channel from the database
-            Channel channel = ChannelModel.getChannelByGeneratedId(context, generatedIds.get(i));
-
-            if (channel == null) {
-                continue;
-            }
-            processChannel(channel, true);
+            Timber.e(e, "Error in run");
         }
     }
 
-    private void processChannel(Channel channel, boolean doNotify) throws UnsupportedEncodingException, NoSuchAlgorithmException {
+    private void processChannel() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+        Timber.d("Processing channel %s", channel.getFeedUrl());
 
         // get the xml data and process it into a Feed object
         try {
@@ -99,7 +60,7 @@ public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
             if (!HttpHelper.hasInternetConnection(context)) {
                 return;
             }
-            String xmlData = HttpHelper.getXmlData(channel);
+            String xmlData = HttpHelper.getXmlData(channel, false);
 
             if (xmlData != null) {
                 FeedHandler feedHandler = new SAXFeedHandler(channel);
@@ -128,6 +89,8 @@ public class SyncFeedTask extends AsyncTask<Bundle, Integer, Void> {
 
         if (channel.getId() == -1) {
             ChannelModel.insertChannel(context, channel);
+            UserPrefHelper.get(context).addGeneratedId(R.string.pref_key_notification_channels,
+                    channel.getGeneratedId());
             BroadcastHelper.broadcastChannelAdded(context, channel);
         } else {
             ChannelModel.updateChannel(context, channel);

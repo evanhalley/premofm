@@ -1005,7 +1005,8 @@ public class EpisodeModel {
     public static void deleteEpisodes(Context context, String channelGeneratedId) {
         context.getContentResolver().delete(
                 PremoContract.EpisodeEntry.CONTENT_URI,
-                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ?",
+                PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " = ? AND " +
+                        PremoContract.EpisodeEntry.MANUALLY_ADDED + " = '0'",
                 new String[]{channelGeneratedId});
     }
 
