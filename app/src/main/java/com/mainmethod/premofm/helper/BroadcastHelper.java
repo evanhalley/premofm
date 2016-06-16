@@ -27,6 +27,7 @@ public class BroadcastHelper {
     public static final String INTENT_PROGRESS_UPDATE = "com.mainmethod.premofm.progressUpdate";
     public static final String INTENT_CHANNEL_PROCESSED = "com.mainmethod.premofm.channelProcessed";
     public static final String INTENT_OPML_PROCESS_FINISH = "com.mainmethod.premofm.opmlProcessFinish";
+    public static final String INTENT_RSS_REFRESH_FINISH = "com.mainmethod.premofm.rssRefreshFinish";
 
     public static final String EXTRA_IS_SUBSCRIBED = "isSubscribed";
     public static final String EXTRA_CHANNEL_SERVER_ID = "channelServerId";
@@ -83,6 +84,11 @@ public class BroadcastHelper {
     public static void broadcastOpmlProcessFinish(Context context, boolean success) {
         Intent intent = new Intent(INTENT_OPML_PROCESS_FINISH);
         intent.putExtra(EXTRA_SUCCESS, success);
+        sendBroadcast(context, intent);
+    }
+
+    public static void broadcastRssRefreshFinish(Context context) {
+        Intent intent = new Intent(INTENT_RSS_REFRESH_FINISH);
         sendBroadcast(context, intent);
     }
 

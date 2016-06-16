@@ -6,14 +6,19 @@ package com.mainmethod.premofm.ui.activity;
 
 import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +33,7 @@ import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.AppPrefHelper;
+import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
@@ -70,6 +76,13 @@ public class PremoActivity
     private CoordinatorLayout mCoordinatorLayout;
     private View mNavHeader;
 
+    private BroadcastReceiver rssRefreshFinished = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateSyncTime();
+        }
+    };
+
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
         super.onCreateBase(savedInstanceState);
@@ -98,8 +111,22 @@ public class PremoActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(rssRefreshFinished,
+                new IntentFilter(BroadcastHelper.INTENT_RSS_REFRESH_FINISH));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(rssRefreshFinished);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        mTabs.removeOnTabSelectedListener(this);
         mTabs = null;
     }
 
@@ -137,7 +164,7 @@ public class PremoActivity
 
     public void setViewPager(ViewPager viewPager) {
         mTabs.setupWithViewPager(viewPager);
-        mTabs.setOnTabSelectedListener(new TabViewPagerOnTabSelectedListener(viewPager));
+        mTabs.addOnTabSelectedListener(new TabViewPagerOnTabSelectedListener(viewPager));
     }
 
 
@@ -207,10 +234,6 @@ public class PremoActivity
 
     }
 
-    public void startExploreExperience() {
-        //mDrawerLayout.openDrawer(Gravity.LEFT);
-    }
-
     @Override
     public void onDrawerClosed(View drawerView) {
 
@@ -237,10 +260,10 @@ public class PremoActivity
 
         switch (id) {
             case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    mDrawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                    mDrawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
             default:
