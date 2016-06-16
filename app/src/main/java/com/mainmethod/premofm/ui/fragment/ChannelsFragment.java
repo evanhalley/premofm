@@ -85,7 +85,6 @@ public class ChannelsFragment extends BaseFragment implements LoaderManager.Load
 
         switch (v.getId()) {
             case R.id.button_empty_list:
-                ((PremoActivity) getActivity()).startExploreExperience();
                 break;
         }
     }
