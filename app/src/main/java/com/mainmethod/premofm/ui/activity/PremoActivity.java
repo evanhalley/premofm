@@ -125,8 +125,14 @@ public class PremoActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        tabLayout.removeOnTabSelectedListener(this);
-        drawerLayout.removeDrawerListener(this);
+
+        if (tabLayout != null) {
+            tabLayout.removeOnTabSelectedListener(this);
+        }
+
+        if (drawerLayout != null) {
+            drawerLayout.removeDrawerListener(this);
+        }
         tabLayout = null;
     }
 

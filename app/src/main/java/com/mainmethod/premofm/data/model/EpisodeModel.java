@@ -27,7 +27,6 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.DatabaseOpenHelper;
 import com.mainmethod.premofm.data.LoadListCallback;
 import com.mainmethod.premofm.data.PremoContract;
-import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.ResourceHelper;
 import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;
@@ -37,12 +36,13 @@ import com.mainmethod.premofm.object.DownloadStatus;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
 import com.mainmethod.premofm.object.Filter;
+import com.mainmethod.premofm.parse.DateParser;
 import com.mainmethod.premofm.parse.Feed;
 import com.mainmethod.premofm.service.DeleteEpisodeService;
 
-import java.text.ParseException;
+import org.threeten.bp.LocalDateTime;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -318,9 +318,8 @@ public class EpisodeModel {
         record.put(PremoContract.EpisodeEntry.DESCRIPTION, episode.getDescription());
         record.put(PremoContract.EpisodeEntry.DESCRIPTION_HTML, episode.getDescriptionHtml());
         record.put(PremoContract.EpisodeEntry.FAVORITE, episode.isFavorite() ? 1 : 0);
-        record.put(PremoContract.EpisodeEntry.PUBLISHED_AT, DatetimeHelper.dateToString(
-                episode.getPublishedAt()));
-        record.put(PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS, episode.getPublishedAt().getTime());
+        record.put(PremoContract.EpisodeEntry.PUBLISHED_AT, episode.getPublishedAt().toString());
+        record.put(PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS, DateParser.getTimeInMillis(episode.getPublishedAt()));
         record.put(PremoContract.EpisodeEntry.DURATION, episode.getDuration());
         record.put(PremoContract.EpisodeEntry.PROGRESS, episode.getProgress());
         record.put(PremoContract.EpisodeEntry.URL, episode.getUrl());
@@ -385,13 +384,8 @@ public class EpisodeModel {
                 cursor.getColumnIndex(PremoContract.EpisodeEntry.CHANNEL_IS_SUBSCRIBED)) == 1);
         episode.setManuallyAdded(cursor.getInt(
                 cursor.getColumnIndex(PremoContract.EpisodeEntry.MANUALLY_ADDED)) == 1);
-
-        try {
-            episode.setPublishedAt(DatetimeHelper.stringToDate(cursor.getString(cursor.getColumnIndex(
-                    PremoContract.EpisodeEntry.PUBLISHED_AT))));
-        } catch (ParseException e) {
-            episode.setPublishedAt(new Date());
-        }
+        episode.setPublishedAt(LocalDateTime.parse(cursor.getString(cursor.getColumnIndex(
+                PremoContract.EpisodeEntry.PUBLISHED_AT))));
         return episode;
     }
 

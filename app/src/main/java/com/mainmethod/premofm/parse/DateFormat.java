@@ -29,14 +29,14 @@ class DateFormat {
      * ss - 01
      */
     static final String[] FORMATS = new String[] {
-            "EEE d MM yyyy",
-            "EEE d MM yyyy HH:mm",
-            "EEE d MM yyyy HH:mm:ss",
+            "EEE d MMM yyyy HH:mm:ss 'GMT'Z (z)",
+            "EEE d MMM yyyy HH:mm:ss 'GMT'Z",
+            "EEE d MM yyyy HH:mm:ss zzz",
             "EEE d MM yyyy HH:mm:ss Z",
             "EEE d MM yyyy HH:mm:ss z",
-            "EEE d MM yyyy HH:mm:ss zzz",
-            "EEE d MMM yyyy HH:mm:ss 'GMT'Z",
-            "EEE d MMM yyyy HH:mm:ss 'GMT'Z (z)",
+            "EEE d MM yyyy HH:mm:ss",
+            "EEE d MM yyyy HH:mm",
+            "EEE d MM yyyy",
             "EEE, d MMM yyyy",
             "EEE, d MMM yyyy HH:mm Z",
             "EEE, d MMM yyyy HH:mm z",

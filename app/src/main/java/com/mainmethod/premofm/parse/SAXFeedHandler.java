@@ -8,6 +8,7 @@ import com.mainmethod.premofm.http.HttpHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.Episode;
 
+import org.threeten.bp.LocalDateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -17,7 +18,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;
@@ -228,7 +228,7 @@ public class SAXFeedHandler extends DefaultHandler implements FeedHandler {
         return DateParser.parseDuration(durationStr.trim());
     }
 
-    private Date parseDate(String dateStr) {
+    private LocalDateTime parseDate(String dateStr) {
 
         if (dateParser == null) {
             dateParser = new DateParser();

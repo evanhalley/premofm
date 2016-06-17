@@ -275,7 +275,6 @@ public class PremoContentProvider extends ContentProvider {
 
         switch (match) {
             case EPISODES:
-                Timber.d("Updating episode %s", selectionArgs[0]);
                 values.put(PremoContract.EpisodeEntry.UPDATED_AT, DatetimeHelper.getTimestamp());
                 rowsUpdated = mOpenHelper.getWritableDatabase().update(
                         PremoContract.EpisodeEntry.TABLE_NAME, values, selection, selectionArgs);

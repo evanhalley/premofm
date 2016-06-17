@@ -1,10 +1,10 @@
 package com.mainmethod.premofm.parse;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZoneOffset;
+import org.threeten.bp.format.DateTimeFormatter;
+import org.threeten.bp.format.DateTimeParseException;
 
 import timber.log.Timber;
 
@@ -13,7 +13,8 @@ import timber.log.Timber;
  */
 public class DateParser {
 
-    private SimpleDateFormat dateFormat;
+
+    private DateTimeFormatter mDateTimeFormatter;
 
     public DateParser() {
 
@@ -24,18 +25,17 @@ public class DateParser {
         for (int i = 0; i < DateFormat.FORMATS.length; i++) {
 
             try {
-                dateFormat = new SimpleDateFormat(DateFormat.FORMATS[i], Locale.getDefault());
-                dateFormat.setTimeZone(TimeZone.getDefault());
-                dateFormat.parse(sampleDate);
+                mDateTimeFormatter = DateTimeFormatter.ofPattern(DateFormat.FORMATS[i]);
+                mDateTimeFormatter.parse(sampleDate);
                 break;
             } catch (Exception e) {
-                Timber.d("Pattern doesn't match pattern: %s", DateFormat.FORMATS[i]);
-                dateFormat = null;
+                Timber.d("Pattern doesn't match pattern: " + DateFormat.FORMATS[i]);
+                mDateTimeFormatter = null;
             }
         }
 
-        if (dateFormat == null) {
-            Timber.w("Unable to parse dates that look like: %s", sampleDate);
+        if (mDateTimeFormatter == null) {
+            Timber.w(String.format("Unable to parse dates that look like: %s", sampleDate));
         }
     }
 
@@ -44,7 +44,7 @@ public class DateParser {
      * @param dateStr
      * @return
      */
-    public Date parseDate(String dateStr) {
+    public LocalDateTime parseDate(String dateStr) {
         return parseDate(dateStr, true);
     }
 
@@ -53,23 +53,23 @@ public class DateParser {
      * @param dateStr
      * @return
      */
-    private Date parseDate(String dateStr, boolean tryAgain) {
-        Date date = new Date();
+    private LocalDateTime parseDate(String dateStr, boolean tryAgain) {
+        LocalDateTime date = LocalDateTime.now(ZoneId.of("GMT"));
 
-        if (dateFormat == null) {
+        if (mDateTimeFormatter == null) {
             initFormatter(dateStr);
         }
 
-        if (dateFormat != null) {
+        if (mDateTimeFormatter != null) {
 
             try {
-                date = dateFormat.parse(dateStr);
-            } catch (ParseException e) {
-                Timber.d("ParseException parsing date: %s", dateStr);
+                date = LocalDateTime.parse(dateStr, mDateTimeFormatter);
+            } catch (DateTimeParseException e) {
+                Timber.d(String.format("ParseException parsing date: %s", dateStr));
 
                 if (tryAgain) {
                     Timber.d("ParseException encountered, re-initializing the date parser");
-                    dateFormat = null;
+                    mDateTimeFormatter = null;
                     parseDate(dateStr, false);
                 }
             }
@@ -166,7 +166,8 @@ public class DateParser {
             duration = Long.parseLong(durationSeconds);
             duration = duration * 1_000;
         } catch (NumberFormatException e) {
-            // TODO
+            Timber.w("Error in parseDuration");
+            Timber.w(e.getMessage());
         }
         return duration;
     }
@@ -189,5 +190,9 @@ public class DateParser {
             Timber.e(e, "Unable to parse a duration");
         }
         return duration;
+    }
+
+    public static long getTimeInMillis(LocalDateTime localDateTime) {
+        return localDateTime.toEpochSecond(ZoneOffset.UTC) * 1_000;
     }
 }

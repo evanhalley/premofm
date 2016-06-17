@@ -8,6 +8,7 @@ import android.app.Application;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
+import com.jakewharton.threetenabp.AndroidThreeTen;
 import com.mainmethod.premofm.config.ConfigurationManager;
 
 import timber.log.Timber;
@@ -31,6 +32,7 @@ public class PremoApp extends Application {
         super.onCreate();
         // configuration manager
         ConfigurationManager.getInstance(this);
+        AndroidThreeTen.init(this);
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

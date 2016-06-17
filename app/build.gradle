@@ -94,6 +94,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'io.reactivex:rxjava:1.1.0'
     compile 'com.jakewharton.timber:timber:4.1.0'
+    compile 'com.jakewharton.threetenabp:threetenabp:1.0.3'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.8'
     compile 'com.github.amlcurran.showcaseview:library:5.3.0'
     compile 'com.github.bumptech.glide:glide:3.7.0'

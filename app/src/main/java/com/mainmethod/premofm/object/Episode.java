@@ -8,8 +8,7 @@ package com.mainmethod.premofm.object;
 import com.mainmethod.premofm.helper.TextHelper;
 
 import org.parceler.Parcel;
-
-import java.util.Date;
+import org.threeten.bp.LocalDateTime;
 
 /**
  * Created by evan on 12/3/14.
@@ -22,7 +21,7 @@ public class Episode implements Collectable {
     private String  mTitle;
     private String  mDescriptionHtml;
     private String  mDescription;
-    private Date    mPublishedAt;
+    private LocalDateTime mPublishedAt;
     private long    mDuration;
     private long    mProgress;
     private String  mUrl;
@@ -120,11 +119,11 @@ public class Episode implements Collectable {
         mDescriptionHtml = descriptionHtml;
     }
 
-    public Date getPublishedAt() {
+    public LocalDateTime getPublishedAt() {
         return mPublishedAt;
     }
 
-    public void setPublishedAt(Date publishedAt) {
+    public void setPublishedAt(LocalDateTime publishedAt) {
         mPublishedAt = publishedAt;
     }
 

@@ -30,6 +30,7 @@ import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
 import com.mainmethod.premofm.object.Filter;
 import com.mainmethod.premofm.object.Playlist;
+import com.mainmethod.premofm.parse.DateParser;
 import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
 import com.mainmethod.premofm.ui.holder.ChannelInfoHolder;
@@ -280,7 +281,8 @@ public class EpisodeAdapter extends
             episodeHolder.description.setVisibility(View.VISIBLE);
             episodeHolder.description.setText(episode.getDescription());
         }
-        episodeHolder.publishedAt.setText(DateUtils.getRelativeTimeSpanString(episode.getPublishedAt().getTime(),
+        episodeHolder.publishedAt.setText(DateUtils.getRelativeTimeSpanString(
+                DateParser.getTimeInMillis(episode.getPublishedAt()),
                 DatetimeHelper.getTimestamp(), DateUtils.DAY_IN_MILLIS));
 
         if (mChannel != null && !mChannel.isSubscribed() && !episode.isManuallyAdded()) {
