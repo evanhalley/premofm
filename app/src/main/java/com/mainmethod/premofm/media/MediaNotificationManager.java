@@ -11,7 +11,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
-import android.util.Log;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.helper.NotificationHelper;
@@ -20,22 +19,22 @@ import com.mainmethod.premofm.helper.PlaybackButtonHelper;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.service.PodcastPlayerService;
 
+import timber.log.Timber;
+
 /**
  * Manages the notification used to control podcast playback
  * Created by evan on 3/14/15.
  */
 public class MediaNotificationManager {
 
-    private static final String TAG = MediaNotificationManager.class.getSimpleName();
-
-    private final NotificationManager mNotificationManager;
-    private final PodcastPlayerService mPodcastPlayerService;
+    private final NotificationManager notificationManager;
+    private final PodcastPlayerService podcastPlayerService;
 
     public MediaNotificationManager(PodcastPlayerService playService) {
-        mPodcastPlayerService = playService;
-        mNotificationManager = (NotificationManager) playService.getSystemService(
+        podcastPlayerService = playService;
+        notificationManager = (NotificationManager) playService.getSystemService(
                 Context.NOTIFICATION_SERVICE);
-        mNotificationManager.cancel(NotificationHelper.NOTIFICATION_ID_PLAYER);
+        notificationManager.cancel(NotificationHelper.NOTIFICATION_ID_PLAYER);
     }
 
     /**
@@ -50,12 +49,12 @@ public class MediaNotificationManager {
 
         if (notification != null) {
 
-            if (mPodcastPlayerService.getPlaybackState() == PlaybackState.STATE_PLAYING) {
-                mPodcastPlayerService.startForeground(NotificationHelper.NOTIFICATION_ID_PLAYER,
+            if (podcastPlayerService.getPlaybackState() == PlaybackState.STATE_PLAYING) {
+                podcastPlayerService.startForeground(NotificationHelper.NOTIFICATION_ID_PLAYER,
                         notification);
             } else {
-                mPodcastPlayerService.stopForeground(false);
-                mNotificationManager.notify(NotificationHelper.NOTIFICATION_ID_PLAYER,
+                podcastPlayerService.stopForeground(false);
+                notificationManager.notify(NotificationHelper.NOTIFICATION_ID_PLAYER,
                         notification);
             }
         }
@@ -65,8 +64,8 @@ public class MediaNotificationManager {
      * Stops a notification
      */
     public void stopNotification() {
-        mNotificationManager.cancel(NotificationHelper.NOTIFICATION_ID_PLAYER);
-        mPodcastPlayerService.stopForeground(true);
+        notificationManager.cancel(NotificationHelper.NOTIFICATION_ID_PLAYER);
+        podcastPlayerService.stopForeground(true);
     }
 
     /**
@@ -83,32 +82,32 @@ public class MediaNotificationManager {
             return null;
         }
 
-        int state = mPodcastPlayerService.getPlaybackState();
-        Log.d(TAG, "Creating notification for state: " + state);
+        int state = podcastPlayerService.getPlaybackState();
+        Timber.d("Creating notification for state: %d", state);
         boolean isPlaying = state == PlaybackState.STATE_PLAYING;
 
         // build the notification
-        Notification.Builder builder = new Notification.Builder(mPodcastPlayerService)
+        Notification.Builder builder = new Notification.Builder(podcastPlayerService)
                 .setShowWhen(false)
                 .setPriority(Notification.PRIORITY_DEFAULT)
                 .setLargeIcon(channelArt)
                 .setSmallIcon(R.drawable.ic_stat_playing)
                 .setContentTitle(episode.getTitle())
                 .setContentText(episode.getChannelTitle())
-                .setContentIntent(PendingIntentHelper.getOpenNowPlayingIntent(mPodcastPlayerService, episode))
-                .setDeleteIntent(PendingIntentHelper.getStopServiceIntent(mPodcastPlayerService))
+                .setContentIntent(PendingIntentHelper.getOpenNowPlayingIntent(podcastPlayerService, episode))
+                .setDeleteIntent(PendingIntentHelper.getStopServiceIntent(podcastPlayerService))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setCategory(Notification.CATEGORY_TRANSPORT)
                 .addAction(R.drawable.ic_notification_action_rewind, "Skip Backward",
-                        PendingIntentHelper.getSeekBackwardIntent(mPodcastPlayerService))
+                        PendingIntentHelper.getSeekBackwardIntent(podcastPlayerService))
                 .addAction(PlaybackButtonHelper.getNotificationPlaybackButtonResId(state),
                         isPlaying ? "Pause" : "Play",
-                        PendingIntentHelper.getPlayOrPauseIntent(mPodcastPlayerService, state))
+                        PendingIntentHelper.getPlayOrPauseIntent(podcastPlayerService, state))
                 .addAction(R.drawable.ic_notification_action_forward, "Skip Ahead",
-                        PendingIntentHelper.getSeekForwardIntent(mPodcastPlayerService))
+                        PendingIntentHelper.getSeekForwardIntent(podcastPlayerService))
                 .setStyle(new Notification.MediaStyle()
                         .setMediaSession(session.getSessionToken())
-                        .setShowActionsInCompactView(1, 2))
+                        .setShowActionsInCompactView(0, 1, 2))
                 .setOngoing(isPlaying);
 
         return builder.build();

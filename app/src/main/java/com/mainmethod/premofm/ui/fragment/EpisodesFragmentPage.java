@@ -24,7 +24,7 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.object.Filter;
 import com.mainmethod.premofm.ui.adapter.EpisodeAdapter;
-import com.mainmethod.premofm.ui.dialog.AddFeedDialog;
+import com.mainmethod.premofm.ui.dialog.AddPodcastDialog;
 
 import org.parceler.Parcels;
 
@@ -73,7 +73,7 @@ public class EpisodesFragmentPage extends Fragment implements LoaderManager.Load
 
         switch (v.getId()) {
             case R.id.button_empty_list:
-                AddFeedDialog.show((AppCompatActivity) getActivity());
+                AddPodcastDialog.show((AppCompatActivity) getActivity());
                 break;
         }
     }
@@ -105,7 +105,7 @@ public class EpisodesFragmentPage extends Fragment implements LoaderManager.Load
             ((TextView) mEmptyListView.findViewById(R.id.empty_list_message)).setText(
                     R.string.no_episodes_message);
             ((Button) mEmptyListView.findViewById(R.id.button_empty_list)).setText(
-                    R.string.button_add_feed);
+                    R.string.button_add_podcast);
         }
     }
 

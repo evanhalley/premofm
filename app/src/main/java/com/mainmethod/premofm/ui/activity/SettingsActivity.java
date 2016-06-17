@@ -65,7 +65,7 @@ public class SettingsActivity extends BaseActivity {
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_settings;
+        return R.menu.settings;
     }
 
     @Override

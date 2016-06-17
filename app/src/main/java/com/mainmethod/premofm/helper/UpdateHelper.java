@@ -10,11 +10,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.DatabaseOpenHelper;
 import com.mainmethod.premofm.data.model.FilterModel;
+import com.mainmethod.premofm.service.job.DownloadJobService;
+import com.mainmethod.premofm.service.job.SyncFeedJobService;
+
+import timber.log.Timber;
 
 /**
  * Manages the upgrade process as the device is updated from the Play Store
@@ -22,8 +25,6 @@ import com.mainmethod.premofm.data.model.FilterModel;
  * Created by evan on 4/21/15.
  */
 public class UpdateHelper {
-
-    private static final String TAG = UpdateHelper.class.getSimpleName();
 
     /**
      * Returns true if the app was updated
@@ -69,15 +70,13 @@ public class UpdateHelper {
         int oldVersionCode = AppPrefHelper.getInstance(context).getAppVersion();
         int newVersionCode = PackageHelper.getVersionCode(context);
 
-        Log.d(TAG, String.format("Old version code: %d, New version code: %d", oldVersionCode,
-                newVersionCode));
+        Timber.d("Old version code: %d, New version code: %d", oldVersionCode, newVersionCode);
 
         // force the onUpgrade function to run and return a writable database
         new DatabaseOpenHelper(context).getWritableDatabase();
 
         // probably the first time we've started the app
         if (oldVersionCode == -1) {
-
             // set the default preferences
             // because -> https://code.google.com/p/android/issues/detail?id=6641
             PreferenceManager.setDefaultValues(context, R.xml.settings, false);
@@ -87,15 +86,15 @@ public class UpdateHelper {
         }
 
         if (oldVersionCode != -1) {
-
             // anytime we do any upgrade, remove cached episode notifications
             AppPrefHelper.getInstance(context).remove(AppPrefHelper.PROPERTY_EPISODE_NOTIFICATIONS);
             AppPrefHelper.getInstance(context).remove(AppPrefHelper.PROPERTY_DOWNLOAD_NOTIFICATIONS);
-
         }
 
         // save the new version code
         AppPrefHelper.getInstance(context).setAppVersion(newVersionCode);
+        SyncFeedJobService.schedule(context);
+        DownloadJobService.scheduleEpisodeDownload(context);
     }
 
     public interface OnUpdateCompleteListener {

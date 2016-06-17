@@ -54,7 +54,7 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener 
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_settings;
+        return R.menu.settings;
     }
 
     @Override

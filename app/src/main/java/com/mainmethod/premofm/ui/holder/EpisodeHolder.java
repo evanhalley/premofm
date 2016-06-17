@@ -106,7 +106,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
 
         // configure the item overflow menu
         popupMenu = new PopupMenu(more.getContext(), more);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_home_episode_item, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.episode_item, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(EpisodeHolder.this);
         Menu menu = popupMenu.getMenu();
         queueMenu = menu.findItem(R.id.action_add_to_queue);

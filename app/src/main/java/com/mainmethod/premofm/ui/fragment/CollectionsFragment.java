@@ -211,7 +211,7 @@ public class CollectionsFragment extends BaseFragment implements LoaderManager.L
 
     @Override
     public int getMenuResourceId() {
-        return R.menu.menu_collections_fragment;
+        return R.menu.collections_fragment;
     }
 
     /**
@@ -310,7 +310,7 @@ public class CollectionsFragment extends BaseFragment implements LoaderManager.L
             more.setOnClickListener(this);
 
             popupMenu = new PopupMenu(more.getContext(), more);
-            popupMenu.getMenuInflater().inflate(R.menu.menu_collection_item, popupMenu.getMenu());
+            popupMenu.getMenuInflater().inflate(R.menu.collection_item, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(this);
         }
 

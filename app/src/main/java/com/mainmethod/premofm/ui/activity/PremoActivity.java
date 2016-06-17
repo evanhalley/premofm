@@ -24,7 +24,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -41,9 +40,9 @@ import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.service.SyncFeedService;
 import com.mainmethod.premofm.service.job.DownloadJobService;
 import com.mainmethod.premofm.ui.fragment.BaseFragment;
-import com.mainmethod.premofm.ui.fragment.ChannelsFragment;
 import com.mainmethod.premofm.ui.fragment.CollectionsFragment;
 import com.mainmethod.premofm.ui.fragment.EpisodesFragment;
+import com.mainmethod.premofm.ui.fragment.PodcastsFragment;
 
 /**
  * Frame of the basic application
@@ -66,15 +65,15 @@ public class PremoActivity
     private static final String PARAM_CURRENT_FRAGMENT = "currentFragment";
     public static final String PARAM_EPISODE_ID = "episodeId";
 
-    private Toolbar mToolbar;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
+    private Toolbar toolbar;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private BaseFragment mActiveFragment;
-    private int mSelectedDrawerItem;
-    private TabLayout mTabs;
-    private AppBarLayout mAppBarLayout;
-    private CoordinatorLayout mCoordinatorLayout;
-    private View mNavHeader;
+    private int selectedDrawerItem;
+    private TabLayout tabLayout;
+    private AppBarLayout appBarLayout;
+    private CoordinatorLayout coordinatorLayout;
+    private View navHeader;
 
     private BroadcastReceiver rssRefreshFinished = new BroadcastReceiver() {
         @Override
@@ -86,12 +85,12 @@ public class PremoActivity
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
         super.onCreateBase(savedInstanceState);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mTabs = (TabLayout) findViewById(R.id.tabs);
-        mTabs.setTabMode(TabLayout.MODE_SCROLLABLE);
+        appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         setupNavDrawer();
         loadUI(savedInstanceState);
         DownloadJobService.scheduleEpisodeDownload(this);
@@ -126,8 +125,9 @@ public class PremoActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTabs.removeOnTabSelectedListener(this);
-        mTabs = null;
+        tabLayout.removeOnTabSelectedListener(this);
+        drawerLayout.removeDrawerListener(this);
+        tabLayout = null;
     }
 
     @Override
@@ -154,7 +154,7 @@ public class PremoActivity
 
         switch (v.getId()) {
             case R.id.navigation_header:
-                mDrawerLayout.closeDrawers();
+                drawerLayout.closeDrawers();
                 break;
             case R.id.last_sync_time:
                 SyncFeedService.syncAllFeeds(this, true);
@@ -163,8 +163,8 @@ public class PremoActivity
     }
 
     public void setViewPager(ViewPager viewPager) {
-        mTabs.setupWithViewPager(viewPager);
-        mTabs.addOnTabSelectedListener(new TabViewPagerOnTabSelectedListener(viewPager));
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(new TabViewPagerOnTabSelectedListener(viewPager));
     }
 
 
@@ -180,7 +180,7 @@ public class PremoActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(PARAM_CURRENT_FRAGMENT, mSelectedDrawerItem);
+        outState.putInt(PARAM_CURRENT_FRAGMENT, selectedDrawerItem);
         super.onSaveInstanceState(outState);
     }
 
@@ -201,25 +201,25 @@ public class PremoActivity
 
     private void setupNavDrawer() {
         // configure the action bar and drawer
-        mToolbar.setNavigationIcon(R.drawable.ic_action_drawer);
-        mDrawerLayout.setDrawerListener(this);
+        toolbar.setNavigationIcon(R.drawable.ic_action_drawer);
+        drawerLayout.addDrawerListener(this);
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
-        mNavHeader = mNavigationView.inflateHeaderView(R.layout.nav_header);
-        mNavHeader.findViewById(R.id.navigation_header).setOnClickListener(this);
-        mNavHeader.findViewById(R.id.last_sync_time).setOnClickListener(this);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        navHeader = navigationView.inflateHeaderView(R.layout.nav_header);
+        navHeader.findViewById(R.id.navigation_header).setOnClickListener(this);
+        navHeader.findViewById(R.id.last_sync_time).setOnClickListener(this);
         updateSyncTime();
 
         if (BuildConfig.DEBUG) {
-            mNavigationView.getMenu().findItem(R.id.action_debug).setVisible(true);
+            navigationView.getMenu().findItem(R.id.action_debug).setVisible(true);
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         expandToolbar();
-        mDrawerLayout.closeDrawers();
+        drawerLayout.closeDrawers();
         onDrawerItemSelected(menuItem);
         return true;
     }
@@ -231,7 +231,7 @@ public class PremoActivity
 
     @Override
     public void onDrawerOpened(View drawerView) {
-
+        updateSyncTime();
     }
 
     @Override
@@ -251,7 +251,7 @@ public class PremoActivity
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_premo_activity;
+        return R.menu.premo_activity;
     }
 
     @Override
@@ -260,10 +260,10 @@ public class PremoActivity
 
         switch (id) {
             case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                    mDrawerLayout.closeDrawer(GravityCompat.START);
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    mDrawerLayout.openDrawer(GravityCompat.START);
+                    drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
             default:
@@ -273,17 +273,17 @@ public class PremoActivity
 
     public void expandToolbar(){
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
-                mAppBarLayout.getLayoutParams();
+                appBarLayout.getLayoutParams();
         AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
 
         if (behavior != null) {
             behavior.setTopAndBottomOffset(0);
-            behavior.onNestedPreScroll(mCoordinatorLayout, mAppBarLayout, null, 0, 1, new int[2]);
+            behavior.onNestedPreScroll(coordinatorLayout, appBarLayout, null, 0, 1, new int[2]);
         }
     }
 
     private void onDrawerItemSelected(int itemId) {
-        onDrawerItemSelected(mNavigationView.getMenu().findItem(itemId));
+        onDrawerItemSelected(navigationView.getMenu().findItem(itemId));
     }
 
     private void onDrawerItemSelected(MenuItem menuItem) {
@@ -333,7 +333,7 @@ public class PremoActivity
                     fragment = EpisodesFragment.newInstance(null);
                     break;
                 case R.id.action_channels:
-                    fragment =  ChannelsFragment.newInstance(null);
+                    fragment =  PodcastsFragment.newInstance(null);
                     break;
                 case R.id.action_collections:
                     fragment = CollectionsFragment.newInstance();
@@ -348,13 +348,13 @@ public class PremoActivity
         }
         Log.d(TAG, "Switching to Fragment: " + fragment.getClass().getSimpleName());
 
-        mSelectedDrawerItem = itemId;
+        selectedDrawerItem = itemId;
         mActiveFragment = fragment;
         fragmentManager.beginTransaction().replace(R.id.fragment_container,
                 mActiveFragment, String.valueOf(itemId)).commit();
 
         // configure the tabs
-        mTabs.removeAllTabs();
+        tabLayout.removeAllTabs();
         AppBarLayout.LayoutParams params =
                 (AppBarLayout.LayoutParams) getToolbar().getLayoutParams();
 
@@ -362,11 +362,10 @@ public class PremoActivity
             // only scroll the toolbar if the fragment uses the tab layout
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-            mTabs.setVisibility(View.VISIBLE);
-            mTabs.setOnTabSelectedListener(this);
+            tabLayout.setVisibility(View.VISIBLE);
         } else {
             params.setScrollFlags(-1);
-            mTabs.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.GONE);
         }
     }
 
@@ -400,7 +399,7 @@ public class PremoActivity
         long lastSyncTime = AppPrefHelper.getInstance(this).getLastEpisodeSync();
 
         if (lastSyncTime > -1) {
-            ((TextView) mNavHeader.findViewById(R.id.last_sync_time)).setText(getString(R.string.last_sync_label,
+            ((TextView) navHeader.findViewById(R.id.last_sync_time)).setText(getString(R.string.last_sync_label,
                     DateUtils.getRelativeTimeSpanString(lastSyncTime, DatetimeHelper.getTimestamp(),
                             DateUtils.MINUTE_IN_MILLIS)));
         }

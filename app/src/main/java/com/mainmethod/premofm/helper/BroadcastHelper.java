@@ -25,7 +25,7 @@ public class BroadcastHelper {
     public static final String INTENT_DOWNLOAD_SERVICE_FINISHED = "com.mainmethod.premofm.downloadServiceFinished";
     public static final String INTENT_PLAYER_STATE_CHANGE = "com.mainmethod.premofm.playerStateChange";
     public static final String INTENT_PROGRESS_UPDATE = "com.mainmethod.premofm.progressUpdate";
-    public static final String INTENT_CHANNEL_PROCESSED = "com.mainmethod.premofm.channelProcessed";
+    public static final String INTENT_PODCAST_PROCESSED = "com.mainmethod.premofm.podcastProcessed";
     public static final String INTENT_OPML_PROCESS_FINISH = "com.mainmethod.premofm.opmlProcessFinish";
     public static final String INTENT_RSS_REFRESH_FINISH = "com.mainmethod.premofm.rssRefreshFinish";
 
@@ -75,8 +75,8 @@ public class BroadcastHelper {
         sendBroadcast(context, intent);
     }
 
-    public static void broadcastChannelAdded(Context context, Channel channel) {
-        Intent intent = new Intent(INTENT_CHANNEL_PROCESSED);
+    public static void broadcastPodcastProcessed(Context context, Channel channel) {
+        Intent intent = new Intent(INTENT_PODCAST_PROCESSED);
         intent.putExtra(EXTRA_CHANNEL, Parcels.wrap(channel));
         sendBroadcast(context, intent);
     }

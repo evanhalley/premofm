@@ -3,7 +3,6 @@ package com.mainmethod.premofm.http;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
 import com.mainmethod.premofm.helper.ResourceHelper;
 import com.mainmethod.premofm.helper.TextHelper;
@@ -27,7 +26,6 @@ import timber.log.Timber;
  */
 public class HttpHelper {
 
-    private static final String TAG = HttpHelper.class.getSimpleName();
     private static final int CONNECTION_TIMEOUT = 10_000;
     private static final int BUFFER_SIZE = 8_192;
 
@@ -45,7 +43,7 @@ public class HttpHelper {
      */
     public static HttpURLConnection getConnection(String urlStr) throws IOException {
         HttpURLConnection connection = null;
-        Log.d(TAG, "Creating a new connection for " + urlStr);
+        Timber.d("Creating a new connection for %s", urlStr);
 
         if (urlStr != null && urlStr.trim().length() > 0) {
             URL url = new URL(urlStr.trim());
@@ -136,7 +134,7 @@ public class HttpHelper {
             Timber.d("Content-Length: %d", connection.getContentLength());
 
             if (responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
-                Timber.w("Podcast URL moved permanently: %s", channel.getFeedUrl());
+                Timber.d("Podcast URL moved permanently: %s", channel.getFeedUrl());
                 channel.setFeedUrl(connection.getHeaderField("Location"));
 
                 if (!isRedirect) {

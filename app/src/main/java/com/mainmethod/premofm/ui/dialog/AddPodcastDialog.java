@@ -31,32 +31,32 @@ import org.parceler.Parcels;
  * Created by WillowTree, Inc on 6/10/16.
  */
 
-public class AddFeedDialog extends DialogFragment implements Dialog.OnClickListener {
+public class AddPodcastDialog extends DialogFragment implements Dialog.OnClickListener {
 
     private EditText feedUrl;
     private ProgressBar progress;
 
-    private BroadcastReceiver feedAddedReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver podcastAddedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             progress.setVisibility(View.GONE);
             Channel channel = Parcels.unwrap(intent.getParcelableExtra(BroadcastHelper.EXTRA_CHANNEL));
             ChannelProfileActivity.openChannelProfile((BaseActivity) getActivity(),
                     channel, null, false);
-            AddFeedDialog.this.dismiss();
+            AddPodcastDialog.this.dismiss();
         }
     };
 
     public static void show(AppCompatActivity activity) {
-        AddFeedDialog d = new AddFeedDialog();
-        d.show(activity.getSupportFragmentManager(), "ADD_FEED");
+        AddPodcastDialog d = new AddPodcastDialog();
+        d.show(activity.getSupportFragmentManager(), "ADD_PODCAST");
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
-                .setView(R.layout.dialog_add_feed)
+                .setView(R.layout.dialog_add_podcast)
                 .setPositiveButton(R.string.dialog_add, (dialog, which) -> {
                     // do nothing
                 })
@@ -71,20 +71,20 @@ public class AddFeedDialog extends DialogFragment implements Dialog.OnClickListe
         feedUrl = (EditText) dialog.findViewById(R.id.url);
         progress = (ProgressBar) dialog.findViewById(R.id.progress);
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v ->
-                AddFeedDialog.this.onClick(dialog, AlertDialog.BUTTON_POSITIVE));
+                AddPodcastDialog.this.onClick(dialog, AlertDialog.BUTTON_POSITIVE));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(feedAddedReceiver,
-                new IntentFilter(BroadcastHelper.INTENT_CHANNEL_PROCESSED));
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(podcastAddedReceiver,
+                new IntentFilter(BroadcastHelper.INTENT_PODCAST_PROCESSED));
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(feedAddedReceiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(podcastAddedReceiver);
     }
 
     @Override

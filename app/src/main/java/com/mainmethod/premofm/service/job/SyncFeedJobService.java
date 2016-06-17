@@ -55,17 +55,12 @@ public class SyncFeedJobService extends PremoJobService {
 
         Timber.d("Scheduling");
         UserPrefHelper helper = UserPrefHelper.get(context);
-        boolean onlyDownloadOnWifi = helper.getBoolean(context.getString(
-                R.string.pref_key_auto_download_only_on_wifi));
-        boolean requiresCharging = helper.getBoolean(context.getString(
-                R.string.pref_key_auto_download_charging_only));
         ComponentName comp = new ComponentName(context, SyncFeedJobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, comp)
                 .setPersisted(true)
                 .setRequiresDeviceIdle(false)
-                .setRequiredNetworkType(onlyDownloadOnWifi ? JobInfo.NETWORK_TYPE_UNMETERED :
-                        JobInfo.NETWORK_TYPE_ANY)
-                .setRequiresCharging(requiresCharging)
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setRequiresCharging(false)
                 .setPeriodic(helper.getStringAsInt(R.string.pref_key_syncing_period) * 60_000);
 
         JobInfo job = builder.build();

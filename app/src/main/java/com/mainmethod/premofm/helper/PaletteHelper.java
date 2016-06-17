@@ -71,8 +71,13 @@ public class PaletteHelper {
                     swatch = palette.getDarkVibrantSwatch();
                 }
 
-                if (swatch == null) {
+                if (swatch == null && palette.getSwatches().size() > 0) {
                     swatch = palette.getSwatches().get(0);
+                }
+
+                if (swatch == null) {
+                    onPaletteLoaded.loaded(-1, -1);
+                    return;
                 }
 
                 // store the new colors

@@ -91,7 +91,7 @@ public class SyncWorker implements Runnable {
             ChannelModel.insertChannel(context, channel);
             UserPrefHelper.get(context).addGeneratedId(R.string.pref_key_notification_channels,
                     channel.getGeneratedId());
-            BroadcastHelper.broadcastChannelAdded(context, channel);
+            BroadcastHelper.broadcastPodcastProcessed(context, channel);
         } else {
             ChannelModel.updateChannel(context, channel);
         }

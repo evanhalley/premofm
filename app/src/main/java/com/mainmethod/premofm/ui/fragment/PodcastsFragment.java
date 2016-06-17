@@ -14,6 +14,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,27 +27,27 @@ import com.mainmethod.premofm.helper.ImageLoadHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.ui.activity.BaseActivity;
 import com.mainmethod.premofm.ui.activity.ChannelProfileActivity;
-import com.mainmethod.premofm.ui.activity.PremoActivity;
 import com.mainmethod.premofm.ui.adapter.CursorRecyclerViewAdapter;
+import com.mainmethod.premofm.ui.dialog.AddPodcastDialog;
 
 /**
  * Created by evan on 12/3/14.
  */
-public class ChannelsFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class PodcastsFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor>,
         View.OnClickListener {
 
     private static final int NUMBER_COLUMNS_PORTRAIT = 3;
 
     private RecyclerView mRecyclerView;
-    private ChannelAdapter mAdapter;
+    private PodcastAdapter mAdapter;
     private View mEmptyListView;
 
     /**
      * Creates a new instance of this fragment
      * @return
      */
-    public static ChannelsFragment newInstance(Bundle args) {
-        ChannelsFragment fragment = new ChannelsFragment();
+    public static PodcastsFragment newInstance(Bundle args) {
+        PodcastsFragment fragment = new PodcastsFragment();
 
         if (args != null) {
             fragment.setArguments(args);
@@ -55,8 +56,13 @@ public class ChannelsFragment extends BaseFragment implements LoaderManager.Load
     }
 
     @Override
+    public int getMenuResourceId() {
+        return R.menu.podcasts_fragment;
+    }
+
+    @Override
     protected int getLayoutResourceId() {
-        return R.layout.fragment_channels;
+        return R.layout.fragment_podcasts;
     }
 
     @Override
@@ -75,9 +81,21 @@ public class ChannelsFragment extends BaseFragment implements LoaderManager.Load
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int screenWidth = metrics.widthPixels / NUMBER_COLUMNS_PORTRAIT;
-        mAdapter = new ChannelAdapter(getActivity(), null, screenWidth);
+        mAdapter = new PodcastAdapter(getActivity(), null, screenWidth);
         mRecyclerView.setAdapter(mAdapter);
         return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_add_podcast:
+                AddPodcastDialog.show(getBaseActivity());
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -85,6 +103,7 @@ public class ChannelsFragment extends BaseFragment implements LoaderManager.Load
 
         switch (v.getId()) {
             case R.id.button_empty_list:
+                AddPodcastDialog.show(getBaseActivity());
                 break;
         }
     }
@@ -121,7 +140,7 @@ public class ChannelsFragment extends BaseFragment implements LoaderManager.Load
             ((TextView) mEmptyListView.findViewById(R.id.empty_list_message)).setText(
                     R.string.no_channels_message);
             ((Button) mEmptyListView.findViewById(R.id.button_empty_list)).setText(
-                    R.string.button_start_exploring);
+                    R.string.button_add_podcast);
         }
     }
 
@@ -133,20 +152,20 @@ public class ChannelsFragment extends BaseFragment implements LoaderManager.Load
     /**
      * Created by evan on 12/7/14.
      */
-    private static class ChannelAdapter extends
-            CursorRecyclerViewAdapter<ChannelAdapter.ChannelViewHolder> {
+    private static class PodcastAdapter extends
+            CursorRecyclerViewAdapter<PodcastAdapter.PodcastViewHolder> {
 
         private Context mContext;
         private final int mScreenWidth;
 
-        public ChannelAdapter(Context context, Cursor cursor, int screenWidth) {
+        public PodcastAdapter(Context context, Cursor cursor, int screenWidth) {
             super(cursor);
             mContext = context;
             mScreenWidth = screenWidth;
         }
 
         @Override
-        public void onBindViewHolder(final ChannelViewHolder viewHolder, Cursor cursor, int position) {
+        public void onBindViewHolder(final PodcastViewHolder viewHolder, Cursor cursor, int position) {
             final Channel channel = ChannelModel.toChannel(cursor);
             ImageLoadHelper.loadImageIntoView(mContext, channel.getArtworkUrl(),
                     viewHolder.channelArt, mScreenWidth, mScreenWidth);
@@ -156,22 +175,21 @@ public class ChannelsFragment extends BaseFragment implements LoaderManager.Load
         }
 
         @Override
-        public ChannelViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        public PodcastViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             View itemView = LayoutInflater.from(viewGroup.getContext())
                     .inflate(R.layout.item_channel, viewGroup, false);
-            final ChannelViewHolder viewHolder = new ChannelViewHolder(itemView);
-            return viewHolder;
+            return new PodcastViewHolder(itemView);
         }
 
         /**
          * Created by evan on 1/4/15.
          */
-        public class ChannelViewHolder extends RecyclerView.ViewHolder {
+        public class PodcastViewHolder extends RecyclerView.ViewHolder {
 
             int channelId;
             ImageView channelArt;
 
-            public ChannelViewHolder(View view) {
+            public PodcastViewHolder(View view) {
                 super(view);
                 channelArt = (ImageView) view.findViewById(R.id.channel_art);
                 ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(mScreenWidth, mScreenWidth);

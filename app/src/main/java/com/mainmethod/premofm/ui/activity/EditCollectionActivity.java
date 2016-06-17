@@ -266,7 +266,7 @@ public class EditCollectionActivity
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_edit_collection_activity;
+        return R.menu.edit_collection_activity;
     }
 
     @Override

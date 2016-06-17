@@ -87,7 +87,7 @@ public class EpisodesFragment extends BaseFragment implements
 
     @Override
     public int getMenuResourceId() {
-        return R.menu.menu_home_fragment;
+        return R.menu.episodes_fragment;
     }
 
     @Override

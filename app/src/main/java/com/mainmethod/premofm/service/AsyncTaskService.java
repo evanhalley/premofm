@@ -10,7 +10,6 @@ import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.object.Channel;
-import com.mainmethod.premofm.service.job.SyncFeedJobService;
 import com.mainmethod.premofm.util.IOUtil;
 
 import java.util.List;

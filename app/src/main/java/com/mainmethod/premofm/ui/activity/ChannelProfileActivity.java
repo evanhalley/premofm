@@ -256,7 +256,7 @@ public class ChannelProfileActivity
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_channel_profile_activity;
+        return R.menu.channel_profile_activity;
     }
 
     @Override
@@ -312,6 +312,11 @@ public class ChannelProfileActivity
 
         @Override
         public void loaded(int primaryColor, int textColor) {
+
+            if (primaryColor == -1 || textColor == -1) {
+                return;
+            }
+
             ChannelProfileActivity activity = mActivity.get();
 
             if (activity == null) {

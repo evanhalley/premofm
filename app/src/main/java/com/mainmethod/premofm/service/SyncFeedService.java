@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.helper.AppPrefHelper;
+import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.object.Channel;
@@ -85,6 +86,7 @@ public class SyncFeedService extends IntentService {
 
                     if (action.contentEquals(ACTION_REFRESH_ALL_FEEDS)) {
                         AppPrefHelper.getInstance(this).setLastEpisodeSync(DatetimeHelper.getTimestamp());
+                        BroadcastHelper.broadcastRssRefreshFinish(this);
                     }
                 }
             } catch (Exception e) {

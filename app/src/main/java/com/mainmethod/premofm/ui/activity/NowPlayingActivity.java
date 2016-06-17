@@ -107,7 +107,7 @@ public class NowPlayingActivity extends PlayableActivity implements
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_now_playing_activity;
+        return R.menu.now_playing_activity;
     }
 
     @Override

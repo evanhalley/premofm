@@ -25,7 +25,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.google.android.gms.cast.CastDevice;
@@ -55,14 +54,14 @@ import com.mainmethod.premofm.ui.widget.WidgetProvider;
 
 import org.parceler.Parcels;
 
+import timber.log.Timber;
+
 /**
  * Plays podcasts in the background
  * Created by evan on 12/17/14.
  */
 public class PodcastPlayerService extends Service implements AudioManager.OnAudioFocusChangeListener,
         MediaPlayer.PremoMediaPlayerListener, ProgressUpdateListener {
-
-    private static final String TAG = PodcastPlayerService.class.getSimpleName();
 
     private static final int MS_TO_REVERSE_ON_PAUSE         = 0;
     private static final float AUDIO_DUCK                   = 0.8f;
@@ -144,7 +143,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 .build();
 
         // setup our media session
-        mMediaSession = new MediaSession(this, TAG);
+        mMediaSession = new MediaSession(this, PodcastPlayerService.class.getSimpleName());
         mMediaSession.setMediaButtonReceiver(PendingIntentHelper.getMediaButtonReceiverIntent(this));
         mMediaSession.setCallback(new MediaSessionCallback());
         mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS |
@@ -165,7 +164,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "Destroying media player object");
+        Timber.d("Destroying media player object");
         destroyMediaPlayer();
         mMediaNotificationManager.stopNotification();
         mMediaSession.release();
@@ -184,7 +183,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
         if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
-            Log.d(TAG, "OnStartCommand intent action: " + action);
+            Timber.d("OnStartCommand intent action: %s", action);
 
             switch (action) {
                 case ACTION_PLAY_QUEUE:
@@ -250,7 +249,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                     mMediaPlayer = new CastMediaPlayer(this, this, this, castDevice);
 
                     if (beforeState == MediaPlayerState.STATE_PLAYING || beforeState == MediaPlayerState.STATE_PAUSED) {
-                        Log.d(TAG, "Restarting episode playback");
+                        Timber.d("Restarting episode playback");
                         play(mCurrentEpisode, beforeState == MediaPlayerState.STATE_PLAYING);
                     }
                     break;
@@ -304,7 +303,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
     @Override
     public void onAudioFocusChange(int focusChange) {
-        Log.d(TAG, "AudioFocusChange, result code: " + focusChange);
+        Timber.d("AudioFocusChange, result code: %d", focusChange);
         boolean pauseOnNotification = UserPrefHelper.get(this).getBoolean(
                 R.string.pref_key_pause_playback_during_notification);
 
@@ -375,7 +374,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "Unbinded from service");
+        Timber.d("Unbinded from service");
 
         if (mMediaPlayerState == MediaPlayerState.STATE_IDLE && !(mMediaPlayer instanceof CastMediaPlayer)) {
             stopSelf();
@@ -386,7 +385,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "Binded to service");
+        Timber.d("Binded to service");
         mServiceBound = true;
         return mBinder;
     }
@@ -527,7 +526,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                     AppPrefHelper.getInstance(this).getPlaybackSpeed(
                             mCurrentEpisode.getChannelGeneratedId()));
         } else {
-            Log.d(TAG, "Audiofocus not granted, result code: " + result);
+            Timber.d("Audiofocus not granted, result code: %d", result);
         }
     }
 
@@ -569,8 +568,8 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
         } else if (seekTo > mMediaPlayer.getDuration()) {
             seekTo = mMediaPlayer.getDuration();
         }
-        Log.d(TAG, "Current position: " + currentPosition);
-        Log.d(TAG, "Seek To: " + seekTo);
+        Timber.d("Current position: %d", currentPosition);
+        Timber.d("Seek To: %s", seekTo);
         mMediaPlayer.seekTo(seekTo);
     }
 
@@ -584,8 +583,8 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
         } else if (seekTo > duration) {
             seekTo = duration;
         }
-        Log.d(TAG, "Current position: " + currentPosition);
-        Log.d(TAG, "Seek To: " + seekTo);
+        Timber.d("Current position: %d", currentPosition);
+        Timber.d("Seek To: %s", seekTo);
         mMediaPlayer.seekTo(seekTo);
     }
 
@@ -594,7 +593,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
      ******************************/
 
     private void updateEpisode(int state) {
-        Log.d(TAG, "Updating episode, state: " + state);
+        Timber.d("Updating episode, state: %d", state);
 
         if (mMediaPlayer == null || mCurrentEpisode == null || mCurrentEpisode.getId() == -1) {
             return;
@@ -738,7 +737,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
      * @param episode to play
      */
     private void play(Episode episode, boolean playImmediately) {
-        Log.d(TAG, "Play called");
+        Timber.d("Play called");
 
         if (mMediaPlayer == null) {
             mMediaPlayer = new LocalMediaPlayer(this, this, this);
@@ -757,7 +756,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 } else if (mMediaPlayerState == MediaPlayerState.STATE_PAUSED) {
                     mMediaPlayer.resumePlayback();
                 } else {
-                    Log.w(TAG, "Player is playing, episode cannot be null");
+                    Timber.w("Player is playing, episode cannot be null");
                 }
                 break;
             case MediaPlayerState.STATE_ENDED:
@@ -766,11 +765,11 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 if (episode != null) {
                     startPlayback(episode, playImmediately);
                 } else {
-                    Log.w(TAG, "Player is stopped/uninitialized, episode cannot be null");
+                    Timber.w("Player is stopped/uninitialized, episode cannot be null");
                 }
                 break;
             default:
-                Log.w(TAG, "Trying to play an episode, but player is in state: " + mPlaybackState);
+                Timber.w("Trying to play an episode, but player is in state: %s", mPlaybackState);
                 break;
         }
     }
@@ -786,7 +785,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 pausePlayback();
                 break;
             default:
-                Log.w(TAG, "Trying to pause an episode, but player is in state: " + mPlaybackState);
+                Timber.w("Trying to pause an episode, but player is in state: %s", mPlaybackState);
                 break;
         }
     }
@@ -804,7 +803,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 seekPlayerBy(seekTo);
                 break;
             default:
-                Log.w(TAG, "Trying to play an episode, but player is in state: " + mPlaybackState);
+                Timber.w("Trying to play an episode, but player is in state: %s", mPlaybackState);
                 break;
         }
     }
@@ -822,7 +821,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 seekPlayerBy(-seekTo);
                 break;
             default:
-                Log.w(TAG, "Trying to play an episode, but player is in state: " + mPlaybackState);
+                Timber.w("Trying to play an episode, but player is in state: %s", mPlaybackState);
                 break;
         }
     }
@@ -835,7 +834,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 seekPlayerTo(seekTo);
                 break;
             default:
-                Log.w(TAG, "Trying to play an episode, but player is in state: " + mPlaybackState);
+                Timber.w("Trying to play an episode, but player is in state: %s", mPlaybackState);
                 break;
         }
     }
@@ -1041,7 +1040,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
         @Override
         protected void onCancelled() {
-            Log.d(TAG, "Update task cancelled");
+            Timber.d("Update task cancelled");
         }
 
         @Override
@@ -1050,7 +1049,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
             while (!isCancelled()) {
 
                 try {
-                    Log.d(TAG, "Updating episode");
+                    Timber.d("Updating episode");
                     mCurrentEpisode.setProgress(getProgress());
                     mCurrentEpisode.setDuration(getDuration());
                     mBundle.clear();
@@ -1060,7 +1059,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                             mCurrentEpisode.getId(), mBundle);
                     Thread.sleep(UPDATE_DELAY);
                 } catch (InterruptedException e) {
-                    Log.d(TAG, "Update task interrupted");
+                    Timber.d("Update task interrupted");
                 }
             }
             return null;
@@ -1080,7 +1079,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
             }
 
             String action = intent.getAction();
-            Log.d(TAG, "Action: " + action);
+            Timber.d("Action: %s", action);
 
             // physical headphone events
             switch (action) {
@@ -1091,7 +1090,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                     switch (state) {
                         case 0:
                             pause();
-                            Log.d(TAG, "Headset unplugged");
+                            Timber.d("Headset unplugged");
                             break;
                     }
                     break;
@@ -1118,7 +1117,7 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
                 if (mCurrentEpisode != null && mCurrentEpisode.getId() == episodeId &&
                         mMediaPlayer instanceof LocalMediaPlayer) {
-                    Log.w(TAG, "Streaming episode has downloaded, switching playback to local file");
+                    Timber.w("Streaming episode has downloaded, switching playback to local file");
 
                     boolean restartPlayback = mMediaPlayerState == MediaPlayerState.STATE_PLAYING;
 
