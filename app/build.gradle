@@ -16,7 +16,7 @@ def castId = properties.getProperty('cast.appId')
 android {
 
     compileSdkVersion 24
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "24.0.0"
 
     lintOptions {
         abortOnError false
