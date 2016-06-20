@@ -91,7 +91,7 @@ public class HttpHelper {
      * @return
      * @throws IOException
      */
-    private static String readData(InputStream inputStream) throws IOException {
+    public static String readData(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = null;
 
         try {

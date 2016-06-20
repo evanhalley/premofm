@@ -22,6 +22,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -43,6 +44,8 @@ import com.mainmethod.premofm.ui.fragment.BaseFragment;
 import com.mainmethod.premofm.ui.fragment.CollectionsFragment;
 import com.mainmethod.premofm.ui.fragment.EpisodesFragment;
 import com.mainmethod.premofm.ui.fragment.PodcastsFragment;
+
+import timber.log.Timber;
 
 /**
  * Frame of the basic application
@@ -297,7 +300,7 @@ public class PremoActivity
 
         switch (itemId) {
             case R.id.action_home:
-            case R.id.action_channels:
+            case R.id.action_podcasts:
             case R.id.action_collections:
                 startFragment(itemId);
                 menuItem.setChecked(true);
@@ -338,8 +341,8 @@ public class PremoActivity
                 case R.id.action_home:
                     fragment = EpisodesFragment.newInstance(null);
                     break;
-                case R.id.action_channels:
-                    fragment =  PodcastsFragment.newInstance(null);
+                case R.id.action_podcasts:
+                    fragment = PodcastsFragment.newInstance(null);
                     break;
                 case R.id.action_collections:
                     fragment = CollectionsFragment.newInstance();

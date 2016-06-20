@@ -15,7 +15,7 @@
             android:icon="@drawable/ic_drawer_action_home"
             android:orderInCategory="1" />
 
-        <item android:id="@+id/action_channels"
+        <item android:id="@+id/action_podcasts"
             android:title="@string/drawer_action_subscriptions"
             android:icon="@drawable/ic_drawer_action_channel"
             android:orderInCategory="2"/>

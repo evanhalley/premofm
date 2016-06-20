@@ -19,11 +19,14 @@ import timber.log.Timber;
  */
 public class SyncFeedService extends IntentService {
 
-    private static final String ACTION_ADD_FEED = "com.mainmethod.premofm.addFeed";
+    private static final String ACTION_ADD_FEED_FROM_URL = "com.mainmethod.premofm.addFeedFromUrl";
+    private static final String ACTION_ADD_FEED_FROM_DIRECTORY = "com.mainmethod.premofm.addFeedFromDirectory";
     private static final String ACTION_REFRESH_FEED = "com.mainmethod.premofm.refreshFeed";
     private static final String ACTION_REFRESH_ALL_FEEDS = "com.mainmethod.premofm.refreshAllFeeds";
     private static final String PARAM_CHANNEL_GENERATED_ID = "channelGeneratedId";
     private static final String PARAM_FEED_URL = "feedUrl";
+    private static final String PARAM_DIRECTORY_ID = "directoryId";
+    private static final String PARAM_DIRECTORY_TYPE = "directoryType";
     private static final String PARAM_DO_NOTIFY = "doNotify";
     private SyncManager syncManager;
 
@@ -31,10 +34,18 @@ public class SyncFeedService extends IntentService {
         super("SyncFeedService");
     }
 
-    public static void addFeed(Context context, String feedUrl) {
+    public static void addFeedFromUrl(Context context, String feedUrl) {
         Intent intent = new Intent(context, SyncFeedService.class);
-        intent.setAction(ACTION_ADD_FEED);
+        intent.setAction(ACTION_ADD_FEED_FROM_URL);
         intent.putExtra(PARAM_FEED_URL, feedUrl);
+        context.startService(intent);
+    }
+
+    public static void addFeedFromDirectory(Context context, int directoryType, String directoryId) {
+        Intent intent = new Intent(context, SyncFeedService.class);
+        intent.setAction(ACTION_ADD_FEED_FROM_DIRECTORY);
+        intent.putExtra(PARAM_DIRECTORY_ID, directoryId);
+        intent.putExtra(PARAM_DIRECTORY_TYPE, directoryType);
         context.startService(intent);
     }
 
@@ -62,12 +73,17 @@ public class SyncFeedService extends IntentService {
 
             try {
                 switch (action) {
-                    case ACTION_ADD_FEED:
+                    case ACTION_ADD_FEED_FROM_URL:
                         String feedUrl = intent.getStringExtra(PARAM_FEED_URL);
                         channel = new Channel();
                         channel.setFeedUrl(feedUrl);
                         channel.setGeneratedId(TextHelper.generateMD5(feedUrl));
                         syncManager = new SyncManager(this, channel);
+                        break;
+                    case ACTION_ADD_FEED_FROM_DIRECTORY:
+                        String directoryId = intent.getStringExtra(PARAM_DIRECTORY_ID);
+                        int directoryType = intent.getIntExtra(PARAM_DIRECTORY_TYPE, -1);
+                        syncManager = new SyncManager(this, directoryType, directoryId);
                         break;
                     case ACTION_REFRESH_FEED:
                         channel = ChannelModel.getChannelByGeneratedId(this,

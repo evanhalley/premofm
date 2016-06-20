@@ -77,6 +77,20 @@
             android:parentActivityName="com.mainmethod.premofm.ui.activity.PremoActivity"
             android:label="@string/title_activity_debug"/>
 
+        <activity android:name="com.mainmethod.premofm.ui.activity.LinkActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="itunes.apple.com" />
+                <data android:pathPrefix="/us/podcast" />
+            </intent-filter>
+        </activity>
+
+
         <!-- Services -->
         <service
             android:name="com.mainmethod.premofm.service.PodcastPlayerService"

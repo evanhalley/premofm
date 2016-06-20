@@ -99,7 +99,7 @@ public class AddPodcastDialog extends DialogFragment implements Dialog.OnClickLi
                 } else if (!URLUtil.isValidUrl(url)) {
 
                 } else {
-                    SyncFeedService.addFeed(getActivity(), url);
+                    SyncFeedService.addFeedFromUrl(getActivity(), url);
                     progress.setVisibility(View.VISIBLE);
                 }
                 break;
