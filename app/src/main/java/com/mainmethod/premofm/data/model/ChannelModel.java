@@ -24,6 +24,7 @@ import android.util.ArrayMap;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.LoadMapCallback;
 import com.mainmethod.premofm.data.PremoContract;
+import com.mainmethod.premofm.helper.PodcastDirectoryHelper;
 import com.mainmethod.premofm.helper.ResourceHelper;
 import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.helper.UserPrefHelper;
@@ -53,13 +54,12 @@ import timber.log.Timber;
 public class ChannelModel {
 
     public static final int LOADER_ID = 2;
+    private static final int UPDATE = 0;
+    private static final int ADD    = 1;
+    private static final int DELETE = 2;
 
-    public static final String ITUNES_DIRECTORY_LOOKUP_URL = "https://itunes.apple.com/lookup?id=%1$s";
-    public static final int DIRECTORY_TYPE_ITUNES = 10000;
-    public static final int UPDATE = 0;
-    public static final int ADD    = 1;
-    public static final int DELETE = 2;
-
+    private static final String GENERATED_ID_QUERY = PremoContract.ChannelEntry.GENERATED_ID + " = ?";
+    private static final String FEED_URL_QUERY = PremoContract.ChannelEntry.FEED_URL + " = ?";
 
     public static Loader<Cursor> getCursorLoader(Context context) {
         return new CursorLoader(context, PremoContract.ChannelEntry.CONTENT_URI, null, null, null,
@@ -116,16 +116,42 @@ public class ChannelModel {
         return record;
     }
 
-    public static Channel getChannelByGeneratedId(Context context, String serverId) {
+    public static Channel getChannelByGeneratedId(Context context, String generatedId) {
 
-        if (TextUtils.isEmpty(serverId)) {
+        if (TextUtils.isEmpty(generatedId)) {
             return null;
         }
         Channel channel = null;
         Cursor cursor = context.getContentResolver().query(PremoContract.ChannelEntry.CONTENT_URI,
                 null,
-                PremoContract.ChannelEntry.GENERATED_ID + " = '" + serverId + "'",
+                GENERATED_ID_QUERY,
+                new String[] { generatedId },
+                null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        try {
+            if (cursor.moveToFirst()) {
+                channel = toChannel(cursor);
+            }
+        } finally {
+            ResourceHelper.closeResource(cursor);
+        }
+        return channel;
+    }
+
+    public static Channel getChannelByFeedUrl(Context context, String feedUrl) {
+
+        if (TextUtils.isEmpty(feedUrl)) {
+            return null;
+        }
+        Channel channel = null;
+        Cursor cursor = context.getContentResolver().query(PremoContract.ChannelEntry.CONTENT_URI,
                 null,
+                FEED_URL_QUERY,
+                new String[] { feedUrl },
                 null);
 
         if (cursor == null) {
@@ -459,28 +485,16 @@ public class ChannelModel {
         HttpURLConnection connection = null;
         InputStream inputStream = null;
 
-        if (directoryType == DIRECTORY_TYPE_ITUNES) {
-            try {
-                connection =
-                        HttpHelper.getConnection(String.format(ITUNES_DIRECTORY_LOOKUP_URL, directoryId));
-                inputStream = HttpHelper.getInputStream(connection);
-                String data = HttpHelper.readData(inputStream);
-                JSONObject json = new JSONObject(data);
-
-                if (json.has("results") && json.has("resultCount") && json.getInt("resultCount") > 0) {
-                    JSONObject result = json.getJSONArray("results").getJSONObject(0);
-                    channel = new Channel();
-                    channel.setFeedUrl(result.getString("feedUrl"));
-                    channel.setGeneratedId(TextHelper.generateMD5(result.getString("feedUrl")));
-                    channel.setTitle(result.optString("trackName"));
-                    channel.setAuthor(result.optString("artistName"));
-                    channel.setArtworkUrl(result.optString("artworkUrl1600"));
-                }
-            } catch (Exception e) {
-                Timber.e(e, "Error in getChannelFromDirectory");
-            } finally {
-                ResourceHelper.closeResources(connection, inputStream);
-            }
+        try {
+            String directoryUrl = PodcastDirectoryHelper.getDirectoryUrl(directoryType, directoryId);
+            connection = HttpHelper.getConnection(directoryUrl);
+            inputStream = HttpHelper.getInputStream(connection);
+            String data = HttpHelper.readData(inputStream);
+            channel = PodcastDirectoryHelper.getChannelFromITunesJson(data);
+        } catch (Exception e) {
+            Timber.e(e, "Error in getChannelFromDirectory");
+        } finally {
+            ResourceHelper.closeResources(connection, inputStream);
         }
         return channel;
     }

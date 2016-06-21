@@ -13,21 +13,21 @@ import android.content.Context;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.helper.UserPrefHelper;
-import com.mainmethod.premofm.service.SyncFeedService;
+import com.mainmethod.premofm.service.PodcastSyncService;
 
 import timber.log.Timber;
 
 /**
  * Created by evan on 1/22/15.
  */
-public class SyncFeedJobService extends PremoJobService {
+public class PodcastSyncJobService extends PremoJobService {
 
-    private static final int JOB_ID = SyncFeedJobService.class.hashCode();
+    private static final int JOB_ID = PodcastSyncJobService.class.hashCode();
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Timber.d("Starting sync feed job service");
-        SyncFeedService.syncAllFeeds(this, true);
+        Timber.d("Starting podcast sync job service");
+        PodcastSyncService.syncAllPodcasts(this, true);
         jobFinished(params, false);
         return false;
     }
@@ -38,7 +38,7 @@ public class SyncFeedJobService extends PremoJobService {
     }
 
     /**
-     * Schedules the download job service which kicks off the download service for caching episodes
+     * Schedules the podcast sync job service which kicks off the download service for caching episodes
      */
     public static void schedule(Context context) {
 
@@ -55,7 +55,7 @@ public class SyncFeedJobService extends PremoJobService {
 
         Timber.d("Scheduling");
         UserPrefHelper helper = UserPrefHelper.get(context);
-        ComponentName comp = new ComponentName(context, SyncFeedJobService.class);
+        ComponentName comp = new ComponentName(context, PodcastSyncJobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(JOB_ID, comp)
                 .setPersisted(true)
                 .setRequiresDeviceIdle(false)
@@ -78,7 +78,6 @@ public class SyncFeedJobService extends PremoJobService {
             Timber.d("This job hasn't already been scheduled, no need to cancel");
             return;
         }
-
         JobScheduler scheduler = (JobScheduler) context.getSystemService(
                 Context.JOB_SCHEDULER_SERVICE);
         scheduler.cancel(JOB_ID);

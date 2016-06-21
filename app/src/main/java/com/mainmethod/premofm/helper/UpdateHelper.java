@@ -15,7 +15,7 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.DatabaseOpenHelper;
 import com.mainmethod.premofm.data.model.FilterModel;
 import com.mainmethod.premofm.service.job.DownloadJobService;
-import com.mainmethod.premofm.service.job.SyncFeedJobService;
+import com.mainmethod.premofm.service.job.PodcastSyncJobService;
 
 import timber.log.Timber;
 
@@ -93,7 +93,7 @@ public class UpdateHelper {
 
         // save the new version code
         AppPrefHelper.getInstance(context).setAppVersion(newVersionCode);
-        SyncFeedJobService.schedule(context);
+        PodcastSyncJobService.schedule(context);
         DownloadJobService.scheduleEpisodeDownload(context);
     }
 

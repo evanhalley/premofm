@@ -38,6 +38,8 @@
     <string name="action_pin">Pin</string>
     <string name="action_unpin">Unpin episode</string>
     <string name="action_set_playback_speed">Set playback speed</string>
+    <string name="action_add_podcast">Add Podcast</string>
+    <string name="dialog_opml_import">Import OPML</string>
 
     <!-- sleep timer -->
     <string name="sleep_timer_title">Stop Playing After...</string>
@@ -181,6 +183,9 @@
     <string name="title_service_sync_service">SyncService</string>
     <string name="title_service_delete_episodes">DeleteEpisodesService</string>
     <string name="title_service_push_collections">PushCollectionsService</string>
+    <string name="title_service_sync_feed">PodcastSyncService</string>
+    <string name="title_service_async_job_service">Async Job Service</string>
+    <string name="title_service_sync_job">PodcastSyncJobService</string>
 
     <!-- search results strings -->
     <string name="channel_search_results">Podcasts</string>
@@ -422,10 +427,6 @@
     <string name="enter_url">Enter URL</string>
     <string name="dialog_add">Add</string>
     <string name="button_add_podcast">Add a Podcast</string>
-    <string name="title_service_sync_feed">SyncFeedService</string>
-    <string name="title_service_async_job_service">Async Job Service</string>
-    <string name="title_service_sync_job">SyncJobService</string>
     <string name="last_sync_label">Last synced %s</string>
-    <string name="action_add_podcast">Add Podcast</string>
     <string name="widget_name">PremoFM Mini Player</string>
 </resources>

@@ -15,7 +15,7 @@ import com.mainmethod.premofm.R;
 /**
  * Created by evan on 8/20/15.
  */
-public class ChannelInfoHolder extends RecyclerView.ViewHolder {
+public class PodcastInfoHolder extends RecyclerView.ViewHolder {
 
     public TextView title;
     public TextView description;
@@ -24,7 +24,7 @@ public class ChannelInfoHolder extends RecyclerView.ViewHolder {
     public Button website;
     public EpisodeHolder episodeHolder;
 
-    public ChannelInfoHolder(View itemView, EpisodeHolder.PinClickListener listener) {
+    public PodcastInfoHolder(View itemView, EpisodeHolder.PinClickListener listener) {
         super(itemView);
         title = (TextView) itemView.findViewById(R.id.channel_title);
         description = (TextView) itemView.findViewById(R.id.channel_description);

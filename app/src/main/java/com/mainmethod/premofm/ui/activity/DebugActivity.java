@@ -17,7 +17,7 @@ import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.service.DownloadService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
-import com.mainmethod.premofm.service.SyncFeedService;
+import com.mainmethod.premofm.service.PodcastSyncService;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -62,7 +62,7 @@ public class DebugActivity extends BaseActivity implements View.OnClickListener 
 
         switch (v.getId()) {
             case R.id.sync_episode_changes:
-                SyncFeedService.syncAllFeeds(this, true);
+                PodcastSyncService.syncAllPodcasts(this, true);
                 break;
             case R.id.trigger_download_service:
                 Intent downloadIntent  = new Intent(this, DownloadService.class);

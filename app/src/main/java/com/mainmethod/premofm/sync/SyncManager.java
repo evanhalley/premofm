@@ -3,8 +3,8 @@ package com.mainmethod.premofm.sync;
 import android.content.Context;
 
 import com.mainmethod.premofm.data.model.ChannelModel;
+import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.object.Channel;
-import com.mainmethod.premofm.service.SyncFeedService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,18 +57,30 @@ public class SyncManager implements Runnable {
     @Override
     public void run() {
 
+        if (directoryType!= -1 && directoryId != null) {
+            Channel channelFromDirectory = ChannelModel.getChannelFromDirectory(directoryType,
+                    directoryId);
+
+            if (channelFromDirectory == null) {
+                return;
+            }
+            Channel storedChannel = ChannelModel.getChannelByFeedUrl(context,
+                    channelFromDirectory.getFeedUrl());
+
+            if (storedChannel != null) {
+                Timber.d("Channel exists, ending processing");
+                BroadcastHelper.broadcastPodcastProcessed(context, storedChannel, true);
+                return;
+            } else {
+                channelList.add(channelFromDirectory);
+            }
+        }
+
         if (channelList == null) {
             // TODO build getChannelsToSync to sort and sync by channel data like last sync time
             channelList = ChannelModel.getChannels(context);
         }
 
-        if (directoryType!= -1 && directoryId != null) {
-            Channel channel = ChannelModel.getChannelFromDirectory(directoryType, directoryId);
-
-            if (channel != null) {
-                channelList.add(channel);
-            }
-        }
         Timber.d("Starting sync manager with %d channels", channelList.size());
 
         for (int i = 0; i < channelList.size(); i++) {

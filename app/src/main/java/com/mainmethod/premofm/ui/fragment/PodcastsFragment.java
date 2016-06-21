@@ -27,8 +27,11 @@ import com.mainmethod.premofm.helper.ImageLoadHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.ui.activity.BaseActivity;
 import com.mainmethod.premofm.ui.activity.ChannelProfileActivity;
+import com.mainmethod.premofm.ui.activity.PremoActivity;
 import com.mainmethod.premofm.ui.adapter.CursorRecyclerViewAdapter;
 import com.mainmethod.premofm.ui.dialog.AddPodcastDialog;
+
+import timber.log.Timber;
 
 /**
  * Created by evan on 12/3/14.

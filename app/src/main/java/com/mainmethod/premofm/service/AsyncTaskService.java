@@ -113,7 +113,7 @@ public class AsyncTaskService extends IntentService {
                         importSuccess = true;
                     }
                     BroadcastHelper.broadcastOpmlProcessFinish(this, importSuccess);
-                    SyncFeedService.syncAllFeeds(this, false);
+                    PodcastSyncService.syncAllPodcasts(this, false);
                     break;
                 case ACTION_OPML_EXPORT:
                     ChannelModel.exportChannelsToOpml(this, intent.getParcelableExtra(PARAM_OPML_URI));

@@ -3,19 +3,17 @@ package com.mainmethod.premofm.ui.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.LinkHelper;
+import com.mainmethod.premofm.helper.PodcastDirectoryHelper;
 import com.mainmethod.premofm.object.Channel;
-import com.mainmethod.premofm.service.SyncFeedService;
+import com.mainmethod.premofm.service.PodcastSyncService;
 
 import org.parceler.Parcels;
 
@@ -56,21 +54,20 @@ public class LinkActivity extends BaseActivity {
             showFailureToast();
             return;
         }
-        SyncFeedService.addFeedFromDirectory(this, ChannelModel.DIRECTORY_TYPE_ITUNES, id);
+        PodcastSyncService.addPodcastFromDirectory(this, PodcastDirectoryHelper.DIRECTORY_TYPE_ITUNES, id);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(podcastAddedReceiver);
+        BroadcastHelper.unregisterReceiver(this, podcastAddedReceiver);
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(podcastAddedReceiver,
-                new IntentFilter(BroadcastHelper.INTENT_PODCAST_PROCESSED));
+        BroadcastHelper.registerReceiver(this, podcastAddedReceiver, BroadcastHelper.INTENT_PODCAST_PROCESSED);
     }
 
     @Override

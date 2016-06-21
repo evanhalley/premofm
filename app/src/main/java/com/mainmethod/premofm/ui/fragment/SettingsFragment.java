@@ -32,7 +32,7 @@ import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.service.DeleteEpisodeService;
 import com.mainmethod.premofm.service.job.DownloadJobService;
-import com.mainmethod.premofm.service.job.SyncFeedJobService;
+import com.mainmethod.premofm.service.job.PodcastSyncJobService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -124,7 +124,7 @@ public class SettingsFragment extends PreferenceFragment implements
         DownloadJobService.scheduleEpisodeDownload(getActivity());
 
         if (syncValChanged) {
-            SyncFeedJobService.schedule(getActivity());
+            PodcastSyncJobService.schedule(getActivity());
         }
     }
 

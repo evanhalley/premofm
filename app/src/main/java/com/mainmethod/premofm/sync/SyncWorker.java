@@ -54,7 +54,7 @@ public class SyncWorker implements Runnable {
     private void processChannel() throws UnsupportedEncodingException, NoSuchAlgorithmException {
         Timber.d("Processing channel %s", channel.getFeedUrl());
 
-        // get the xml data and process it into a Feed object
+        // get the xml data and process it into a Feed object 1116303051
         try {
 
             if (!HttpHelper.hasInternetConnection(context)) {
@@ -88,10 +88,14 @@ public class SyncWorker implements Runnable {
         channel.setLastSyncTime(DatetimeHelper.getTimestamp());
 
         if (channel.getId() == -1) {
-            ChannelModel.insertChannel(context, channel);
-            UserPrefHelper.get(context).addGeneratedId(R.string.pref_key_notification_channels,
-                    channel.getGeneratedId());
-            BroadcastHelper.broadcastPodcastProcessed(context, channel);
+            int id = ChannelModel.insertChannel(context, channel);
+
+            if (id != -1) {
+                UserPrefHelper.get(context).addGeneratedId(R.string.pref_key_notification_channels, channel.getGeneratedId());
+                BroadcastHelper.broadcastPodcastProcessed(context, channel, true);
+            } else {
+                BroadcastHelper.broadcastPodcastProcessed(context, channel, false);
+            }
         } else {
             ChannelModel.updateChannel(context, channel);
         }

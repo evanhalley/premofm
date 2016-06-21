@@ -4,20 +4,18 @@
  */
 package com.mainmethod.premofm.helper;
 
-import android.util.Log;
-
 import java.io.Closeable;
 import java.net.HttpURLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+
+import timber.log.Timber;
 
 /**
  * Helper methods for resource management
  * Created by evan on 12/1/14.
  */
 public class ResourceHelper {
-
-    private static final String TAG = ResourceHelper.class.getSimpleName();
 
     /**
      * Closes or disconnections a closable and disconnectable resource
@@ -39,12 +37,10 @@ public class ResourceHelper {
             } else if (resource instanceof PreparedStatement) {
                 ((PreparedStatement) resource).close();
             } else {
-                Log.w(TAG, "Unable to close object: " + resource.getClass().getSimpleName());
+                Timber.w("Unable to close object: %s", resource.getClass().getSimpleName());
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error closing resources of type: " +
-                    resource.getClass().getSimpleName());
-            Log.e(TAG, e.getMessage());
+            Timber.e(e, "Error closing resources of type: %s", resource.getClass().getSimpleName());
         }
     }
 

@@ -33,7 +33,7 @@ import com.mainmethod.premofm.object.Playlist;
 import com.mainmethod.premofm.parse.DateParser;
 import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
-import com.mainmethod.premofm.ui.holder.ChannelInfoHolder;
+import com.mainmethod.premofm.ui.holder.PodcastInfoHolder;
 import com.mainmethod.premofm.ui.holder.EpisodeHolder;
 
 import java.lang.ref.WeakReference;
@@ -102,8 +102,8 @@ public class EpisodeAdapter extends
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor, int position) {
 
-        if (viewHolder instanceof ChannelInfoHolder) {
-            bindChannelInfoViewToHolder((ChannelInfoHolder) viewHolder, cursor);
+        if (viewHolder instanceof PodcastInfoHolder) {
+            bindChannelInfoViewToHolder((PodcastInfoHolder) viewHolder, cursor);
         } else if (viewHolder instanceof EpisodeHolder) {
             bindEpisodeViewToHolder((EpisodeHolder) viewHolder, cursor, position);
         }
@@ -130,7 +130,7 @@ public class EpisodeAdapter extends
 
         switch (viewType) {
             case ITEM_TYPE_CHANNEL_INFO:
-                return new ChannelInfoHolder(
+                return new PodcastInfoHolder(
                         LayoutInflater.from(viewGroup.getContext())
                                 .inflate(R.layout.item_channel_info, viewGroup, false), this);
             case ITEM_TYPE_EPISODE:
@@ -215,7 +215,7 @@ public class EpisodeAdapter extends
         }
     }
 
-    private void bindChannelInfoViewToHolder(ChannelInfoHolder channelInfoHolder, Cursor cursor) {
+    private void bindChannelInfoViewToHolder(PodcastInfoHolder channelInfoHolder, Cursor cursor) {
         Context context = mContext.get();
 
         if (context == null) {

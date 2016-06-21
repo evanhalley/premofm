@@ -22,7 +22,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
@@ -38,14 +37,12 @@ import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.service.SyncFeedService;
+import com.mainmethod.premofm.service.PodcastSyncService;
 import com.mainmethod.premofm.service.job.DownloadJobService;
 import com.mainmethod.premofm.ui.fragment.BaseFragment;
 import com.mainmethod.premofm.ui.fragment.CollectionsFragment;
 import com.mainmethod.premofm.ui.fragment.EpisodesFragment;
 import com.mainmethod.premofm.ui.fragment.PodcastsFragment;
-
-import timber.log.Timber;
 
 /**
  * Frame of the basic application
@@ -166,7 +163,7 @@ public class PremoActivity
                 drawerLayout.closeDrawers();
                 break;
             case R.id.last_sync_time:
-                SyncFeedService.syncAllFeeds(this, true);
+                PodcastSyncService.syncAllPodcasts(this, true);
                 break;
         }
     }

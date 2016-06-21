@@ -9,7 +9,8 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
+import timber.log.Timber;
 
 /**
  * Our database maintenance class
@@ -17,7 +18,6 @@ import android.util.Log;
  */
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
-    private static final String TAG                     = DatabaseOpenHelper.class.getSimpleName();
     private static final int    DATABASE_VERSION        = 11;
     private static final String DATABASE_NAME           = "premo.db";
 
@@ -35,8 +35,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             db.execSQL(PremoContract.FilterEntry.CREATE_SQL);
             createIndexes(db);
         } catch (SQLException e) {
-            Log.e(TAG, "Error in onCreate");
-            Log.e(TAG, e.toString());
+            Timber.e(e, "Error in onCreate");
             throw e;
         }
     }
@@ -46,6 +45,9 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE INDEX IF NOT EXISTS channel_generatedId_Idx ON " +
                 PremoContract.ChannelEntry.TABLE_NAME + " (" +
                 PremoContract.ChannelEntry.GENERATED_ID + ")");
+        db.execSQL("CREATE INDEX IF NOT EXISTS channel_feedUrl_Idx ON " +
+                PremoContract.ChannelEntry.TABLE_NAME + " (" +
+                PremoContract.ChannelEntry.FEED_URL + ")");
 
         // episode indexes
         db.execSQL("CREATE INDEX IF NOT EXISTS episode_generatedId_Idx ON " +
@@ -81,7 +83,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "Upgrading database, old version:  " + oldVersion +", new version: " + newVersion);
-
+        Timber.d("Upgrading database, old version: %d, new version: %d", oldVersion, newVersion);
     }
 }

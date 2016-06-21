@@ -5,8 +5,10 @@
 
 package com.mainmethod.premofm.helper;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.mainmethod.premofm.object.Channel;
@@ -75,9 +77,10 @@ public class BroadcastHelper {
         sendBroadcast(context, intent);
     }
 
-    public static void broadcastPodcastProcessed(Context context, Channel channel) {
+    public static void broadcastPodcastProcessed(Context context, Channel channel, boolean success) {
         Intent intent = new Intent(INTENT_PODCAST_PROCESSED);
         intent.putExtra(EXTRA_CHANNEL, Parcels.wrap(channel));
+        intent.putExtra(EXTRA_SUCCESS, success);
         sendBroadcast(context, intent);
     }
 
@@ -87,8 +90,9 @@ public class BroadcastHelper {
         sendBroadcast(context, intent);
     }
 
-    public static void broadcastRssRefreshFinish(Context context) {
+    public static void broadcastRssRefreshFinish(Context context, boolean success) {
         Intent intent = new Intent(INTENT_RSS_REFRESH_FINISH);
+        intent.putExtra(EXTRA_SUCCESS, success);
         sendBroadcast(context, intent);
     }
 
@@ -98,5 +102,19 @@ public class BroadcastHelper {
             Timber.d("Broadcasting intent: %s", intent.getAction());
         }
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void registerReceiver(Context context, BroadcastReceiver receiver, String... actions) {
+
+        for (int i = 0; i < actions.length; i++) {
+            LocalBroadcastManager.getInstance(context).registerReceiver(receiver, new IntentFilter(actions[i]));
+        }
+    }
+
+    public static void unregisterReceiver(Context context, BroadcastReceiver... receivers) {
+
+        for (int i = 0; i < receivers.length; i++) {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(receivers[i]);
+        }
     }
 }
