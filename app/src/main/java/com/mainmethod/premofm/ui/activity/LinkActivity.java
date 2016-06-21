@@ -17,13 +17,15 @@ import com.mainmethod.premofm.service.PodcastSyncService;
 
 import org.parceler.Parcels;
 
+import timber.log.Timber;
+
 /**
  * Forwards incoming intents to the correct activity
  * Created by evanhalley on 12/23/15.
  */
 public class LinkActivity extends BaseActivity {
 
-    private BroadcastReceiver podcastAddedReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver podcastProcessedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Channel channel = Parcels.unwrap(intent.getParcelableExtra(BroadcastHelper.EXTRA_CHANNEL));
@@ -47,27 +49,33 @@ public class LinkActivity extends BaseActivity {
             showFailureToast();
             return;
         }
+        Timber.d("Uri encountered %s", uri);
 
-        String id = LinkHelper.getITunesId(uri);
+        if (uri.getHost().contains("itunes.apple.com")) {
+            String id = LinkHelper.getITunesId(uri);
 
-        if (TextUtils.isEmpty(id)) {
-            showFailureToast();
-            return;
+            if (TextUtils.isEmpty(id)) {
+                showFailureToast();
+                return;
+            }
+            PodcastSyncService.addPodcastFromDirectory(this, PodcastDirectoryHelper.DIRECTORY_TYPE_ITUNES, id);
+        } else {
+            PodcastSyncService.addPodcastFromUrl(this, uri.toString());
         }
-        PodcastSyncService.addPodcastFromDirectory(this, PodcastDirectoryHelper.DIRECTORY_TYPE_ITUNES, id);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        BroadcastHelper.unregisterReceiver(this, podcastAddedReceiver);
+        BroadcastHelper.unregisterReceiver(this, podcastProcessedReceiver);
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        BroadcastHelper.registerReceiver(this, podcastAddedReceiver, BroadcastHelper.INTENT_PODCAST_PROCESSED);
+        BroadcastHelper.registerReceiver(this, podcastProcessedReceiver,
+                BroadcastHelper.INTENT_PODCAST_PROCESSED);
     }
 
     @Override
