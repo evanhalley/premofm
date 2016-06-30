@@ -359,6 +359,7 @@
     <string name="error_deleting_collection">Unable to delete collection, try again</string>
     <string name="error_no_filter_name">Enter a valid filter name</string>
     <string name="error_cannot_load_channel">This channel cannot be found</string>
+    <string name="error_cannot_load_podcast">This podcast cannot be loaded</string>
     <string name="empty_time">-:&#8212;</string>
     <string name="time_left">-%s</string>
 
@@ -413,6 +414,7 @@
     <string name="please_create_collection">A collection should be created first</string>
     <string name="streaming">streaming</string>
     <string name="loading">Loading...</string>
+    <string name="loading_podcast">Loading podcast...</string>
     <string name="importing_opml">Importing OPML file...</string>
     <string name="error_importing_opml">Unable to import OPML file, try again</string>
     <string name="error_no_new_imports">No new podcasts were imported</string>

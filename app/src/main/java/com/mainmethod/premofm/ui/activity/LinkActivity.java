@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.helper.BroadcastHelper;
-import com.mainmethod.premofm.helper.LinkHelper;
 import com.mainmethod.premofm.helper.PodcastDirectoryHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.service.PodcastSyncService;
@@ -28,8 +27,13 @@ public class LinkActivity extends BaseActivity {
     private BroadcastReceiver podcastProcessedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Channel channel = Parcels.unwrap(intent.getParcelableExtra(BroadcastHelper.EXTRA_CHANNEL));
-            ChannelProfileActivity.openChannelProfile(LinkActivity.this, channel, null, false);
+
+            if (intent.getBooleanExtra(BroadcastHelper.EXTRA_SUCCESS, false)) {
+                Channel channel = Parcels.unwrap(intent.getParcelableExtra(BroadcastHelper.EXTRA_CHANNEL));
+                ChannelProfileActivity.openChannelProfile(LinkActivity.this, channel, null, false);
+            } else {
+                Toast.makeText(context, R.string.error_cannot_load_podcast, Toast.LENGTH_SHORT).show();
+            }
             finish();
         }
     };
@@ -51,8 +55,8 @@ public class LinkActivity extends BaseActivity {
         }
         Timber.d("Uri encountered %s", uri);
 
-        if (uri.getHost().contains("itunes.apple.com")) {
-            String id = LinkHelper.getITunesId(uri);
+        if (PodcastDirectoryHelper.containsITunesHost(uri)) {
+            String id = PodcastDirectoryHelper.getITunesId(uri);
 
             if (TextUtils.isEmpty(id)) {
                 showFailureToast();
@@ -80,11 +84,11 @@ public class LinkActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResourceId() {
-        return -1;
+        return R.layout.activity_link;
     }
 
     private void showFailureToast() {
-        Toast.makeText(LinkActivity.this, R.string.error_cannot_load_channel,
+        Toast.makeText(LinkActivity.this, R.string.error_cannot_load_podcast,
                 Toast.LENGTH_SHORT).show();
         finish();
     }

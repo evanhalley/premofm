@@ -1,5 +1,7 @@
 package com.mainmethod.premofm.helper;
 
+import android.net.Uri;
+
 import com.mainmethod.premofm.object.Channel;
 
 import org.json.JSONException;
@@ -7,6 +9,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -15,6 +18,7 @@ import java.util.Locale;
 public class PodcastDirectoryHelper {
 
     private static final String ITUNES_DIRECTORY_LOOKUP_URL = "https://itunes.apple.com/lookup?id=%1$s";
+    private static final String ITUNES_HOST = "itunes.apple.com";
     public static final int DIRECTORY_TYPE_ITUNES = 10000;
 
     // keys for parsing things from iTunes directory JSON
@@ -52,5 +56,34 @@ public class PodcastDirectoryHelper {
                 throw new IllegalArgumentException(String.format(Locale.getDefault(),
                         "Unknown directory type %d", directoryType));
         }
+    }
+
+    public static boolean containsITunesHost(Uri uri) {
+        return uri != null && uri.getHost().contains(PodcastDirectoryHelper.ITUNES_HOST);
+    }
+
+    /**
+     * Returns the iTunes ID from a url that looks like
+     * https://itunes.apple.com/us/podcast/the-vergecast/id430333725?mt=2
+     * @param uri
+     * @return
+     */
+    public static String getITunesId(Uri uri) {
+
+        if (uri == null) {
+            throw new IllegalArgumentException("uri is null");
+        }
+
+        String id = "";
+        List<String> segments = uri.getPathSegments();
+
+        for (int i = 0; segments != null && i < segments.size(); i++) {
+
+            if (segments.get(i).startsWith("id")) {
+                id = segments.get(i).replace("id", "");
+                break;
+            }
+        }
+        return id;
     }
 }
