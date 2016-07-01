@@ -32,7 +32,10 @@ public class PodcastAudioRendererV21 extends PodcastAudioRenderer {
 
     public synchronized void setSpeed(float speed) {
         this.mSpeed = speed;
-        this.mSonic.setSpeed(speed);
+
+        if (mSonic != null) {
+            this.mSonic.setSpeed(speed);
+        }
     }
 
     @Override
@@ -69,10 +72,9 @@ public class PodcastAudioRendererV21 extends PodcastAudioRenderer {
                 bufferInfo, bufferIndex, shouldSkip);
     }
 
-
     @Override
-    protected void onOutputFormatChanged(final MediaFormat format) {
-        super.onOutputFormatChanged(format);
+    protected void onOutputFormatChanged(MediaCodec codec, MediaFormat format) {
+        super.onOutputFormatChanged(codec, format);
 
         final int sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE);
         final int channelCount = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT);

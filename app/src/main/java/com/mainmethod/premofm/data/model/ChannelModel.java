@@ -16,18 +16,37 @@ import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.ArrayMap;
 
+import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.LoadMapCallback;
 import com.mainmethod.premofm.data.PremoContract;
+import com.mainmethod.premofm.helper.PodcastDirectoryHelper;
 import com.mainmethod.premofm.helper.ResourceHelper;
+import com.mainmethod.premofm.helper.TextHelper;
+import com.mainmethod.premofm.helper.UserPrefHelper;
+import com.mainmethod.premofm.helper.opml.OpmlReader;
+import com.mainmethod.premofm.helper.opml.OpmlWriter;
+import com.mainmethod.premofm.http.HttpHelper;
 import com.mainmethod.premofm.object.Channel;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 /**
  * Created by evan on 4/15/15.
@@ -35,9 +54,12 @@ import java.util.Map;
 public class ChannelModel {
 
     public static final int LOADER_ID = 2;
-    public static final int UPDATE = 0;
-    public static final int ADD    = 1;
-    public static final int DELETE = 2;
+    private static final int UPDATE = 0;
+    private static final int ADD    = 1;
+    private static final int DELETE = 2;
+
+    private static final String GENERATED_ID_QUERY = PremoContract.ChannelEntry.GENERATED_ID + " = ?";
+    private static final String FEED_URL_QUERY = PremoContract.ChannelEntry.FEED_URL + " = ?";
 
     public static Loader<Cursor> getCursorLoader(Context context) {
         return new CursorLoader(context, PremoContract.ChannelEntry.CONTENT_URI, null, null, null,
@@ -56,15 +78,19 @@ public class ChannelModel {
         }
         Channel channel = new Channel();
         channel.setId(cursor.getInt(cursor.getColumnIndex(PremoContract.ChannelEntry._ID)));
-        channel.setServerId(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.SERVER_ID)));
+        channel.setGeneratedId(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.GENERATED_ID)));
         channel.setTitle(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.TITLE)));
         channel.setAuthor(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.AUTHOR)));
         channel.setDescription(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.DESCRIPTION)));
         channel.setSiteUrl(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.SITE_URL)));
         channel.setFeedUrl(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.FEED_URL)));
         channel.setArtworkUrl(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.ARTWORK_URL)));
-        channel.setNetwork(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.NETWORK)));
-        channel.setTags(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.TAGS)));
+        channel.setSubscribed(cursor.getInt(cursor.getColumnIndex(PremoContract.ChannelEntry.IS_SUBSCRIBED)) == 1);
+        channel.setETag(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.ETAG)));
+        channel.setLastModified(cursor.getLong(cursor.getColumnIndex(PremoContract.ChannelEntry.LAST_MODIFIED)));
+        channel.setDataMd5(cursor.getString(cursor.getColumnIndex(PremoContract.ChannelEntry.MD5)));
+        channel.setLastSyncTime(cursor.getLong(cursor.getColumnIndex(PremoContract.ChannelEntry.LAST_SYNC_TIME)));
+        channel.setLastSyncSuccessful(cursor.getInt(cursor.getColumnIndex(PremoContract.ChannelEntry.LAST_SYNC_SUCCESSFUL)) == 1);
         return channel;
     }
 
@@ -74,28 +100,58 @@ public class ChannelModel {
      */
     public static ContentValues fromChannel(Channel channel) {
         ContentValues record = new ContentValues();
-        record.put(PremoContract.ChannelEntry.SERVER_ID, channel.getServerId());
+        record.put(PremoContract.ChannelEntry.GENERATED_ID, channel.getGeneratedId());
         record.put(PremoContract.ChannelEntry.TITLE, channel.getTitle());
         record.put(PremoContract.ChannelEntry.DESCRIPTION, channel.getDescription());
         record.put(PremoContract.ChannelEntry.AUTHOR, channel.getAuthor());
         record.put(PremoContract.ChannelEntry.SITE_URL, channel.getSiteUrl());
         record.put(PremoContract.ChannelEntry.FEED_URL, channel.getFeedUrl());
         record.put(PremoContract.ChannelEntry.ARTWORK_URL, channel.getArtworkUrl());
-        record.put(PremoContract.ChannelEntry.NETWORK, channel.getNetwork());
-        record.put(PremoContract.ChannelEntry.TAGS, channel.getTags());
+        record.put(PremoContract.ChannelEntry.IS_SUBSCRIBED, channel.isSubscribed() ? 1 : 0);
+        record.put(PremoContract.ChannelEntry.ETAG, channel.getETag());
+        record.put(PremoContract.ChannelEntry.LAST_MODIFIED, channel.getLastModified());
+        record.put(PremoContract.ChannelEntry.MD5, channel.getDataMd5());
+        record.put(PremoContract.ChannelEntry.LAST_SYNC_TIME, channel.getLastSyncTime());
+        record.put(PremoContract.ChannelEntry.LAST_SYNC_SUCCESSFUL, channel.isLastSyncSuccessful() ? 1 : 0);
         return record;
     }
 
-    public static Channel getChannelByServerId(Context context, String serverId) {
+    public static Channel getChannelByGeneratedId(Context context, String generatedId) {
 
-        if (TextUtils.isEmpty(serverId)) {
+        if (TextUtils.isEmpty(generatedId)) {
             return null;
         }
         Channel channel = null;
         Cursor cursor = context.getContentResolver().query(PremoContract.ChannelEntry.CONTENT_URI,
                 null,
-                PremoContract.ChannelEntry.SERVER_ID + " = '" + serverId + "'",
+                GENERATED_ID_QUERY,
+                new String[] { generatedId },
+                null);
+
+        if (cursor == null) {
+            return null;
+        }
+
+        try {
+            if (cursor.moveToFirst()) {
+                channel = toChannel(cursor);
+            }
+        } finally {
+            ResourceHelper.closeResource(cursor);
+        }
+        return channel;
+    }
+
+    public static Channel getChannelByFeedUrl(Context context, String feedUrl) {
+
+        if (TextUtils.isEmpty(feedUrl)) {
+            return null;
+        }
+        Channel channel = null;
+        Cursor cursor = context.getContentResolver().query(PremoContract.ChannelEntry.CONTENT_URI,
                 null,
+                FEED_URL_QUERY,
+                new String[] { feedUrl },
                 null);
 
         if (cursor == null) {
@@ -121,7 +177,7 @@ public class ChannelModel {
         List<Channel> channelList = getChannels(context);
 
         for (int i = 0; i < channelList.size(); i++) {
-            channelMap.put(channelList.get(i).getServerId(), channelList.get(i));
+            channelMap.put(channelList.get(i).getGeneratedId(), channelList.get(i));
         }
 
         return channelMap;
@@ -169,7 +225,7 @@ public class ChannelModel {
             cursor = context.getContentResolver().query(
                     PremoContract.ChannelEntry.CONTENT_URI,
                     null,
-                    PremoContract.ChannelEntry.SERVER_ID + " = ?",
+                    PremoContract.ChannelEntry.GENERATED_ID + " = ?",
                     new String[]{ serverId },
                     null);
 
@@ -203,17 +259,17 @@ public class ChannelModel {
         Map<String, Channel> serverChannelMap = new ArrayMap<>();
 
         for (Channel channel : localChannels) {
-            localChannelMap.put(channel.getServerId(), channel);
+            localChannelMap.put(channel.getGeneratedId(), channel);
         }
 
         for (Channel channel : serverChannels) {
-            serverChannelMap.put(channel.getServerId(), channel);
+            serverChannelMap.put(channel.getGeneratedId(), channel);
         }
 
         // what channels are new?
         for (Channel channel : serverChannelMap.values()) {
 
-            if (!localChannelMap.containsKey(channel.getServerId())) {
+            if (!localChannelMap.containsKey(channel.getGeneratedId())) {
                 channelsToAdd.add(channel);
             }
         }
@@ -221,14 +277,14 @@ public class ChannelModel {
         // what channels should we delete
         for (Channel channel : localChannelMap.values()) {
 
-            if (!serverChannelMap.containsKey(channel.getServerId())) {
+            if (!serverChannelMap.containsKey(channel.getGeneratedId())) {
                 channelsToDelete.add(channel);
             }
         }
 
         // what channels should we update
         for (Channel channel : serverChannelMap.values()) {
-            Channel localChannel = localChannelMap.get(channel.getServerId());
+            Channel localChannel = localChannelMap.get(channel.getGeneratedId());
 
             if (localChannel != null) {
 
@@ -256,7 +312,7 @@ public class ChannelModel {
      * @throws android.os.RemoteException
      * @throws android.content.OperationApplicationException
      */
-    public static void storeChannels(Context context, int operationType, List<Channel> channelList)
+    public static void storeImportedChannels(Context context, int operationType, List<Channel> channelList)
             throws RemoteException, OperationApplicationException {
 
         if (channelList != null && channelList.size() > 0) {
@@ -316,5 +372,130 @@ public class ChannelModel {
             ResourceHelper.closeResource(cursor);
         }
         return channels;
+    }
+
+    public static List<String> getChannelGeneratedIds(Context context) {
+        List<String> generatedIds = null;
+        Cursor cursor = null;
+
+        ContentResolver resolver = context.getContentResolver();
+
+        try {
+            cursor = resolver.query(PremoContract.ChannelEntry.CONTENT_URI,
+                    new String[] { PremoContract.ChannelEntry.GENERATED_ID },
+                    null, null, PremoContract.ChannelEntry.TITLE + " ASC");
+
+            if (cursor != null) {
+                generatedIds = new ArrayList<>();
+
+                while (cursor.moveToNext()) {
+                    generatedIds.add(cursor.getString(cursor.getColumnIndex(
+                            PremoContract.ChannelEntry.GENERATED_ID)));
+                }
+            }
+        } finally {
+            ResourceHelper.closeResource(cursor);
+        }
+        return generatedIds;
+    }
+
+    public static void updateChannel(Context context, Channel channel) {
+        ContentValues record = ChannelModel.fromChannel(channel);
+        context.getContentResolver().update(PremoContract.ChannelEntry.CONTENT_URI,
+                record,
+                PremoContract.ChannelEntry._ID + " = ?",
+                new String[] { String.valueOf(channel.getId())});
+    }
+
+    public static void deleteChannel(Context context, String channelGeneratedId) {
+        context.getContentResolver().delete(PremoContract.ChannelEntry.CONTENT_URI,
+                PremoContract.ChannelEntry.GENERATED_ID + " = ?",
+                new String[] { channelGeneratedId });
+    }
+
+    public static void changeSubscription(Context context, String channelGeneratedId, boolean doSubscribe) {
+        ContentValues record = new ContentValues();
+        record.put(PremoContract.ChannelEntry.IS_SUBSCRIBED, doSubscribe ? 1 : 0);
+        context.getContentResolver().update(PremoContract.ChannelEntry.CONTENT_URI,
+                record,
+                PremoContract.ChannelEntry.GENERATED_ID + " = ?",
+                new String[] { channelGeneratedId });
+    }
+
+    public static List<Channel> getChannelsFromOpml(String opmlData) {
+        StringReader reader = null;
+        List<Channel> channelList = new ArrayList<>();
+
+        try {
+            reader = new StringReader(opmlData);
+            OpmlReader opmlReader = new OpmlReader();
+            channelList = opmlReader.readDocument(reader);
+        } catch (Exception e) {
+            Timber.e(e, "Error reading OPML");
+            throw new RuntimeException(e);
+        } finally {
+            ResourceHelper.closeResource(reader);
+        }
+        return channelList;
+    }
+
+    public static void storeImportedChannels(Context context, List<Channel> channels) {
+
+        try {
+            ChannelModel.storeImportedChannels(context, ChannelModel.ADD, channels);
+            List<String> generatedIds = CollectionModel.getCollectableGeneratedIds(channels);
+
+            for (int i = 0; i < generatedIds.size(); i++) {
+                UserPrefHelper.get(context).addGeneratedId(R.string.pref_key_notification_channels,
+                        generatedIds.get(i));
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error storing channels");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Uri exportChannelsToOpml(Context context, Uri uri) {
+        ParcelFileDescriptor pfd = null;
+        FileOutputStream outputStream = null;
+        OutputStreamWriter writer = null;
+
+        try {
+            List<Channel> channels = ChannelModel.getChannels(context);
+            pfd = context.getContentResolver().openFileDescriptor(uri, "w");
+
+            if (pfd == null) {
+                throw new IllegalStateException("ParcelFileDescriptor is null");
+            }
+            outputStream = new FileOutputStream(pfd.getFileDescriptor());
+            writer = new OutputStreamWriter(outputStream);
+            OpmlWriter opmlWriter = new OpmlWriter();
+            opmlWriter.writeDocument(channels, writer);
+        } catch (Exception e) {
+            Timber.e(e, "Error in exportChannelsToOpml");
+            throw new RuntimeException(e);
+        } finally {
+            ResourceHelper.closeResources(pfd, outputStream, writer);
+        }
+        return uri;
+    }
+
+    public static Channel getChannelFromDirectory(int directoryType, String directoryId) {
+        Channel channel = null;
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
+
+        try {
+            String directoryUrl = PodcastDirectoryHelper.getDirectoryUrl(directoryType, directoryId);
+            connection = HttpHelper.getConnection(directoryUrl);
+            inputStream = HttpHelper.getInputStream(connection);
+            String data = HttpHelper.readData(inputStream);
+            channel = PodcastDirectoryHelper.getChannelFromITunesJson(data);
+        } catch (Exception e) {
+            Timber.e(e, "Error in getChannelFromDirectory");
+        } finally {
+            ResourceHelper.closeResources(connection, inputStream);
+        }
+        return channel;
     }
 }

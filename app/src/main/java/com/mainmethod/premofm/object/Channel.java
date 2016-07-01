@@ -14,15 +14,20 @@ import org.parceler.Parcel;
 public class Channel implements Collectable {
 
     private int mId = -1;
-    private String mServerId;
+    private String mGeneratedId;
     private String mTitle;
     private String mAuthor;
     private String mDescription;
     private String mSiteUrl;
     private String mFeedUrl;
     private String mArtworkUrl;
-    private String mNetwork;
-    private String mTags;
+    private boolean isSubscribed;
+
+    private long mLastSyncTime;
+    private boolean mLastSyncSuccessful;
+    private long mLastModified;
+    private String mETag;
+    private String mDataMd5;
 
     public Channel() {
 
@@ -36,12 +41,12 @@ public class Channel implements Collectable {
         mId = id;
     }
 
-    public String getServerId() {
-        return mServerId;
+    public String getGeneratedId() {
+        return mGeneratedId;
     }
 
-    public void setServerId(String serverId) {
-        mServerId = serverId;
+    public void setGeneratedId(String generatedId) {
+        mGeneratedId = generatedId;
     }
 
     public String getTitle() {
@@ -93,39 +98,65 @@ public class Channel implements Collectable {
         mArtworkUrl = artworkUrl;
     }
 
-    public String getNetwork() {
-        return mNetwork;
-    }
-
-    public void setNetwork(String network) {
-        mNetwork = network;
-    }
-
-    public String getTags() {
-        return mTags;
-    }
-
-    public void setTags(String tags) {
-        mTags = tags;
-    }
-
     public boolean isSubscribed() {
-        return mId > -1;
+        return isSubscribed;
+    }
+
+    public void setSubscribed(boolean subscribed) {
+        isSubscribed = subscribed;
+    }
+
+    public String getETag() {
+        return mETag;
+    }
+
+    public void setETag(String eTag) {
+        this.mETag = eTag;
+    }
+
+    public long getLastModified() {
+        return mLastModified;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.mLastModified = lastModified;
+    }
+
+    public String getDataMd5() {
+        return mDataMd5;
+    }
+
+    public void setDataMd5(String dataMd5) {
+        this.mDataMd5 = dataMd5;
+    }
+
+    public boolean isLastSyncSuccessful() {
+        return mLastSyncSuccessful;
+    }
+
+    public void setLastSyncSuccessful(boolean lastSyncSuccessful) {
+        this.mLastSyncSuccessful = lastSyncSuccessful;
+    }
+
+    public long getLastSyncTime() {
+        return mLastSyncTime;
+    }
+
+    public void setLastSyncTime(long lastSyncTime) {
+        this.mLastSyncTime = lastSyncTime;
     }
 
     @Override
     public String toString() {
         return "Channel{" +
                 "mId=" + mId +
-                ", mServerId='" + mServerId + '\'' +
+                ", mGeneratedId='" + mGeneratedId + '\'' +
                 ", mTitle='" + mTitle + '\'' +
                 ", mAuthor='" + mAuthor + '\'' +
                 ", mDescription='" + mDescription + '\'' +
                 ", mSiteUrl='" + mSiteUrl + '\'' +
                 ", mFeedUrl='" + mFeedUrl + '\'' +
                 ", mArtworkUrl='" + mArtworkUrl + '\'' +
-                ", mNetwork='" + mNetwork + '\'' +
-                ", mTags='" + mTags + '\'' +
                 '}';
     }
 
@@ -139,9 +170,7 @@ public class Channel implements Collectable {
         if (!mAuthor.equals(channel.mAuthor)) return false;
         if (!mDescription.equals(channel.mDescription)) return false;
         if (!mFeedUrl.equals(channel.mFeedUrl)) return false;
-        if (!mNetwork.equals(channel.mNetwork)) return false;
         if (!mSiteUrl.equals(channel.mSiteUrl)) return false;
-        if (!mTags.equals(channel.mTags)) return false;
         if (!mTitle.equals(channel.mTitle)) return false;
 
         return true;
@@ -158,10 +187,8 @@ public class Channel implements Collectable {
         if (!mAuthor.equals(channel.mAuthor)) return false;
         if (!mDescription.equals(channel.mDescription)) return false;
         if (!mFeedUrl.equals(channel.mFeedUrl)) return false;
-        if (!mNetwork.equals(channel.mNetwork)) return false;
-        if (!mServerId.equals(channel.mServerId)) return false;
+        if (!mGeneratedId.equals(channel.mGeneratedId)) return false;
         if (!mSiteUrl.equals(channel.mSiteUrl)) return false;
-        if (!mTags.equals(channel.mTags)) return false;
         if (!mTitle.equals(channel.mTitle)) return false;
 
         return true;

@@ -113,7 +113,7 @@ public class EditFilterActivity extends BaseActivity implements CompoundButton.O
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_edit_filter_activity;
+        return R.menu.edit_filter_activity;
     }
 
     @Override

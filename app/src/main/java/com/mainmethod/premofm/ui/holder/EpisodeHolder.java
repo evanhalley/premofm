@@ -16,11 +16,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiHelper;
 import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.data.model.PlaylistModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.DownloadStatus;
@@ -44,6 +42,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
     public int episodeId = -1;
     public int downloadStatusId = -1;
     public String episodeServerId;
+    public View publishedData;
     public TextView episodeTitle;
     public TextView channelTitle;
     public TextView description;
@@ -91,11 +90,10 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
         downloaded = (ImageView) view.findViewById(R.id.downloaded);
         pinned = (ImageView) view.findViewById(R.id.pinned);
         downloadProgress = (ProgressBar) view.findViewById(R.id.download_progress);
-
-        View publishedData = view.findViewById(R.id.published_data);
+        publishedData = view.findViewById(R.id.published_data);
 
         if (publishedData != null) {
-            view.findViewById(R.id.published_data).setOnClickListener(this);
+            publishedData.setOnClickListener(this);
             channelArt.setOnClickListener(this);
         }
         // our action buttons
@@ -108,7 +106,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
 
         // configure the item overflow menu
         popupMenu = new PopupMenu(more.getContext(), more);
-        popupMenu.getMenuInflater().inflate(R.menu.menu_home_episode_item, popupMenu.getMenu());
+        popupMenu.getMenuInflater().inflate(R.menu.episode_item, popupMenu.getMenu());
         popupMenu.setOnMenuItemClickListener(EpisodeHolder.this);
         Menu menu = popupMenu.getMenu();
         queueMenu = menu.findItem(R.id.action_add_to_queue);
@@ -152,20 +150,13 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
             case R.id.channel_art:
             case R.id.published_data:
                 if (channelServerId != null) {
-                    Channel channel = ChannelModel.getChannelByServerId(v.getContext(), channelServerId);
+                    Channel channel = ChannelModel.getChannelByGeneratedId(publishedData.getContext(),
+                            channelServerId);
 
                     if (channel != null) {
-                        ChannelProfileActivity.openChannelProfile((BaseActivity) v.getContext(),
+                        ChannelProfileActivity.openChannelProfile(
+                                (BaseActivity) publishedData.getContext(),
                                 channel, channelArt, false);
-                    } else {
-
-                        ApiHelper.getChannelAsync(v.getContext(), channelServerId, channel1 -> {
-
-                            if (channel1 != null) {
-                                ChannelProfileActivity.openChannelProfile((BaseActivity) v.getContext(),
-                                        channel1, channelArt, true);
-                            }
-                        });
                     }
                 }
                 break;
@@ -187,10 +178,6 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
                 return true;
             case R.id.action_download:
                 DownloadService.downloadEpisode(itemView.getContext(), episodeId);
-                AnalyticsHelper.sendEvent(itemView.getContext(),
-                        AnalyticsHelper.CATEGORY_EPISODE_DOWNLOAD,
-                        AnalyticsHelper.ACTION_CLICK,
-                        "");
 
                 if (!isChannelSubscribed) {
                     EpisodeModel.manuallyAddEpisode(itemView.getContext(), episodeId);
@@ -204,11 +191,11 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
                         EpisodeModel.getEpisodeById(itemView.getContext(), episodeId));
                 return true;
             case R.id.action_favorite:
-                ApiHelper.toggleFavoriteAsync(itemView.getContext(), episodeId, null);
+                EpisodeModel.toggleFavoriteAsync(itemView.getContext(), episodeId, null);
                 return true;
             case R.id.action_add_to_queue:
                 PlaylistModel.addEpisodeToPlaylist(itemView.getContext(),
-                        EpisodeModel.getEpisodeById(itemView.getContext(), episodeId).getServerId());
+                        EpisodeModel.getEpisodeById(itemView.getContext(), episodeId).getGeneratedId());
 
                 if (!isChannelSubscribed) {
                     EpisodeModel.manuallyAddEpisode(itemView.getContext(), episodeId);

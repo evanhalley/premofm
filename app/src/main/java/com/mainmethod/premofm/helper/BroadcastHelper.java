@@ -5,47 +5,42 @@
 
 package com.mainmethod.premofm.helper;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
+
+import com.mainmethod.premofm.object.Channel;
+
+import org.parceler.Parcels;
+
+import timber.log.Timber;
 
 /**
  * Created by evan on 4/26/15.
  */
 public class BroadcastHelper {
 
-    private static final String TAG = "BroadcastHelper";
-
     public static final String INTENT_SUBSCRIPTION_CHANGE = "com.mainmethod.premofm.subscriptionChange";
-    public static final String INTENT_ACCOUNT_CHANGE = "com.mainmethod.premofm.accountChange";
-    public static final String INTENT_REAUTHENTICATION = "com.mainmethod.premofm.reauthenticate";
     public static final String INTENT_EPISODE_DOWNLOADED = "com.mainmethod.premofm.episodeDownloaded";
     public static final String INTENT_DOWNLOAD_SERVICE_FINISHED = "com.mainmethod.premofm.downloadServiceFinished";
-    public static final String INTENT_EPISODE_SYNC_FINISHED = "com.mainmethod.premofm.episodeSyncFinished";
-    public static final String INTENT_PUSH_COLLECTION_SERVICE_FINISHED = "com.mainmethod.premofm.pushCollectionFinished";
-    public static final String INTENT_EPISODES_LOADED_FROM_SERVER = "com.mainmethod.premofm.episodesLoadedFromServer";
-    public static final String INTENT_USER_AUTH_RESULT = "com.mainmethod.premofm.userAuthResult";
-    public static final String INTENT_PURCHASE_STORED  = "com.mainmethod.premofm.purchaseStored";
     public static final String INTENT_PLAYER_STATE_CHANGE = "com.mainmethod.premofm.playerStateChange";
     public static final String INTENT_PROGRESS_UPDATE = "com.mainmethod.premofm.progressUpdate";
+    public static final String INTENT_PODCAST_PROCESSED = "com.mainmethod.premofm.podcastProcessed";
+    public static final String INTENT_OPML_PROCESS_FINISH = "com.mainmethod.premofm.opmlProcessFinish";
+    public static final String INTENT_RSS_REFRESH_FINISH = "com.mainmethod.premofm.rssRefreshFinish";
 
-    public static final String EXTRA_IS_SUCCESSFUL = "isSuccessfull";
     public static final String EXTRA_IS_SUBSCRIBED = "isSubscribed";
     public static final String EXTRA_CHANNEL_SERVER_ID = "channelServerId";
-    public static final String EXTRA_CHANNEL_ID = "channelId";
     public static final String EXTRA_EPISODE_ID = "episodeId";
     public static final String EXTRA_EPISODE_SERVER_ID = "episodeServerId";
-    public static final String EXTRA_NUMBER_EPISODES_LOADED = "numberEpisodesLoaded";
     public static final String EXTRA_PLAYER_STATE = "playerStateId";
-
-    public static final String EXTRA_IS_ACCOUNT_CHANGED = "isEmailChanged";
-    public static final String EXTRA_IS_REAUTHENTICATED = "isReauthentication";
-    public static final String EXTRA_IS_AUTHENTICATED = "isAuthenticated";
-    public static final String EXTRA_MESSAGE = "message";
-    public static final String EXTRA_PURCHASE_STORED = "isPurchaseStored";
     public static final String EXTRA_PROGRESS = "progress";
     public static final String EXTRA_BUFFERED_PROGRESS = "bufferedProgress";
     public static final String EXTRA_DURATION = "duration";
+    public static final String EXTRA_CHANNEL = "channel";
+    public static final String EXTRA_SUCCESS = "success";
 
     public static void broadcastPlayerStateChange(Context context, int playerStateId,
                                                   String episodeServerId) {
@@ -55,24 +50,11 @@ public class BroadcastHelper {
         sendBroadcast(context, intent);
     }
 
-    public static void broadcastPurchaseStored(Context context, boolean isPurchaseStored) {
-        Intent intent = new Intent(INTENT_PURCHASE_STORED);
-        intent.putExtra(EXTRA_PURCHASE_STORED, isPurchaseStored);
-        sendBroadcast(context, intent);
-    }
-
     public static void broadcastSubscriptionChange(Context context, boolean isSubscribed,
-                                                   int channelId, String channelServerId) {
+                                                   String generatedId) {
         Intent intent = new Intent(INTENT_SUBSCRIPTION_CHANGE);
         intent.putExtra(EXTRA_IS_SUBSCRIBED, isSubscribed);
-        intent.putExtra(EXTRA_CHANNEL_ID, channelId);
-        intent.putExtra(EXTRA_CHANNEL_SERVER_ID, channelServerId);
-        sendBroadcast(context, intent);
-    }
-
-    public static void broadcastReauthentication(Context context, boolean successful) {
-        Intent intent = new Intent(INTENT_REAUTHENTICATION);
-        intent.putExtra(EXTRA_IS_REAUTHENTICATED, successful);
+        intent.putExtra(EXTRA_CHANNEL_SERVER_ID, generatedId);
         sendBroadcast(context, intent);
     }
 
@@ -80,42 +62,9 @@ public class BroadcastHelper {
         sendBroadcast(context, new Intent(INTENT_DOWNLOAD_SERVICE_FINISHED));
     }
 
-    public static void broadcastEpisodeSyncFinished(Context context, boolean isSuccessful) {
-        Intent intent = new Intent(INTENT_EPISODE_SYNC_FINISHED);
-        intent.putExtra(EXTRA_IS_SUCCESSFUL, isSuccessful);
-        sendBroadcast(context, intent);
-    }
-
-    public static void broadcastCollectionPushFinished(Context context, boolean isSuccessful) {
-        Intent intent = new Intent(INTENT_PUSH_COLLECTION_SERVICE_FINISHED);
-        intent.putExtra(EXTRA_IS_SUCCESSFUL, isSuccessful);
-        sendBroadcast(context, intent);
-    }
-
-    public static void broadcastAccountChange(Context context, boolean accountChanged) {
-        Intent intent = new Intent(INTENT_ACCOUNT_CHANGE);
-        intent.putExtra(EXTRA_IS_ACCOUNT_CHANGED, accountChanged);
-        sendBroadcast(context, intent);
-    }
-
     public static void broadcastEpisodeDownloaded(Context context, int episodeId) {
         Intent intent = new Intent(INTENT_EPISODE_DOWNLOADED);
         intent.putExtra(EXTRA_EPISODE_ID, episodeId);
-        sendBroadcast(context, intent);
-    }
-
-    public static void broadcastEpisodesLoadedFromServer(Context context, String channelServerId,
-                                                         int numEpisodesLoaded) {
-        Intent intent = new Intent(INTENT_EPISODES_LOADED_FROM_SERVER);
-        intent.putExtra(EXTRA_CHANNEL_SERVER_ID, channelServerId);
-        intent.putExtra(EXTRA_NUMBER_EPISODES_LOADED, numEpisodesLoaded);
-        sendBroadcast(context, intent);
-    }
-
-    public static void broadcastAuthenticationResult(Context context, boolean authSuceeded, String message) {
-        Intent intent = new Intent(INTENT_USER_AUTH_RESULT);
-        intent.putExtra(EXTRA_IS_AUTHENTICATED, authSuceeded);
-        intent.putExtra(EXTRA_MESSAGE, message);
         sendBroadcast(context, intent);
     }
 
@@ -128,8 +77,44 @@ public class BroadcastHelper {
         sendBroadcast(context, intent);
     }
 
+    public static void broadcastPodcastProcessed(Context context, Channel channel, boolean success) {
+        Intent intent = new Intent(INTENT_PODCAST_PROCESSED);
+        intent.putExtra(EXTRA_CHANNEL, Parcels.wrap(channel));
+        intent.putExtra(EXTRA_SUCCESS, success);
+        sendBroadcast(context, intent);
+    }
+
+    public static void broadcastOpmlProcessFinish(Context context, boolean success) {
+        Intent intent = new Intent(INTENT_OPML_PROCESS_FINISH);
+        intent.putExtra(EXTRA_SUCCESS, success);
+        sendBroadcast(context, intent);
+    }
+
+    public static void broadcastRssRefreshFinish(Context context, boolean success) {
+        Intent intent = new Intent(INTENT_RSS_REFRESH_FINISH);
+        intent.putExtra(EXTRA_SUCCESS, success);
+        sendBroadcast(context, intent);
+    }
+
     private static void sendBroadcast(Context context, Intent intent) {
-        //Log.d(TAG, String.format("Broadcasting intent: %s", intent.getAction()));
+
+        if (!intent.getAction().contentEquals(INTENT_PROGRESS_UPDATE)) {
+            Timber.d("Broadcasting intent: %s", intent.getAction());
+        }
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    public static void registerReceiver(Context context, BroadcastReceiver receiver, String... actions) {
+
+        for (int i = 0; i < actions.length; i++) {
+            LocalBroadcastManager.getInstance(context).registerReceiver(receiver, new IntentFilter(actions[i]));
+        }
+    }
+
+    public static void unregisterReceiver(Context context, BroadcastReceiver... receivers) {
+
+        for (int i = 0; i < receivers.length; i++) {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(receivers[i]);
+        }
     }
 }

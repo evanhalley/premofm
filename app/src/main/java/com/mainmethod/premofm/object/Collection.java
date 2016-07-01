@@ -18,16 +18,12 @@ public class Collection {
     public static final int COLLECTION_TYPE_EPISODE     = 1;
 
     private int mId = -1;
-    private String mServerId;
+    private String mGeneratedId;
     private String mName;
     private String mDescription;
     private int mType;
     private List<String> mParameters = new ArrayList<>();
     private List<String> mCollectedServerIds = new ArrayList<>();
-    private int mSyncStatus;
-    private int mCreatedAt;
-    private boolean mIsPublic;
-    private String mAuthorServerId;
 
     public int getId() {
         return mId;
@@ -69,12 +65,12 @@ public class Collection {
         mCollectedServerIds = collectedServerIds;
     }
 
-    public String getServerId() {
-        return mServerId;
+    public String getGeneratedId() {
+        return mGeneratedId;
     }
 
-    public void setServerId(String mServerId) {
-        this.mServerId = mServerId;
+    public void setGeneratedId(String generatedId) {
+        this.mGeneratedId = generatedId;
     }
 
     public int getType() {
@@ -85,43 +81,11 @@ public class Collection {
         this.mType = mType;
     }
 
-    public int getSyncStatus() {
-        return mSyncStatus;
-    }
-
-    public void setSyncStatus(int syncStatus) {
-        mSyncStatus = syncStatus;
-    }
-
-    public boolean isPublic() {
-        return mIsPublic;
-    }
-
-    public void setIsPublic(boolean isPublic) {
-        mIsPublic = isPublic;
-    }
-
-    public String getAuthorServerId() {
-        return mAuthorServerId;
-    }
-
-    public void setAuthorServerId(String authorServerId) {
-        mAuthorServerId = authorServerId;
-    }
-
-    public int getCreatedAt() {
-        return mCreatedAt;
-    }
-
-    public void setCreatedAt(int createdAt) {
-        mCreatedAt = createdAt;
-    }
-
     @Override
     public String toString() {
         return "Collection{" +
                 "mId=" + mId +
-                ", mServerId='" + mServerId + '\'' +
+                ", mGeneratedId='" + mGeneratedId + '\'' +
                 ", mName='" + mName + '\'' +
                 ", mDescription='" + mDescription + '\'' +
                 ", mType=" + mType +

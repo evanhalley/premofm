@@ -99,7 +99,7 @@ public class UserPrefHelper {
         putString(key, TextUtils.join(",", serverIds));
     }
 
-    public void addServerId(int keyResId, String serverId) {
+    public void addGeneratedId(int keyResId, String serverId) {
         String key = mContext.getString(keyResId);
         String serverIdStr = mPreferences.getString(key, "");
 

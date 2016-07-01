@@ -18,7 +18,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.MediaRouteActionProvider;
 import android.support.v7.media.MediaRouteSelector;
 import android.support.v7.media.MediaRouter;
-import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,9 +26,7 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
 import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiHelper;
 import com.mainmethod.premofm.data.model.EpisodeModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.DialogHelper;
 import com.mainmethod.premofm.object.Episode;
@@ -38,27 +35,27 @@ import com.mainmethod.premofm.ui.dialog.QueueDialogFragment;
 
 import java.lang.ref.WeakReference;
 
+import timber.log.Timber;
+
 /**
  * Handles functionality for controlling audio from an activity
  * Created by evan on 12/28/14.
  */
 public abstract class PlayableActivity extends BaseActivity {
 
-    private static final String TAG = PlayableActivity.class.getSimpleName();
-
-    private PodcastPlayerService mPodcastPlayerService;
-    private MediaController mMediaController;
-    private MediaRouter mMediaRouter;
-    private MediaRouteSelector mMediaRouteSelector;
-    private MediaRouterCallback mMediaRouterCallback;
-    private MediaControllerCallback mMediaControllerCallback;
-    private PlayerConnection mConnection;
+    private PodcastPlayerService podcastPlayerService;
+    private MediaController mediaController;
+    private MediaRouter mediaRouter;
+    private MediaRouteSelector mediaRouteSelector;
+    private MediaRouterCallback mediaRouterCallback;
+    private MediaControllerCallback mediaControllerCallback;
+    private PlayerConnection playerConnection;
 
     protected abstract void onPodcastPlayerServiceBound();
 
     protected void onPodcastPlayerServiceBoundBase() {
-        mMediaController = new MediaController(getApplicationContext(), mPodcastPlayerService.getMediaSessionToken());
-        mMediaController.registerCallback(mMediaControllerCallback);
+        mediaController = new MediaController(getApplicationContext(), podcastPlayerService.getMediaSessionToken());
+        mediaController.registerCallback(mediaControllerCallback);
         onStateChanged(getState(), getEpisode());
         onPodcastPlayerServiceBound();
     }
@@ -66,8 +63,8 @@ public abstract class PlayableActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMediaRouter = MediaRouter.getInstance(this);
-        mMediaRouteSelector = new MediaRouteSelector.Builder()
+        mediaRouter = MediaRouter.getInstance(this);
+        mediaRouteSelector = new MediaRouteSelector.Builder()
                 .addControlCategory(CastMediaControlIntent.categoryForCast(BuildConfig.CAST_APP_ID))
                 .build();
     }
@@ -82,15 +79,15 @@ public abstract class PlayableActivity extends BaseActivity {
                 new ContextThemeWrapper(this, R.style.AppTheme_CastIcon));
         MenuItemCompat.setActionProvider(item, mediaRouteActionProvider);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        mediaRouteActionProvider.setRouteSelector(mMediaRouteSelector);
+        mediaRouteActionProvider.setRouteSelector(mediaRouteSelector);
         return true;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mMediaRouterCallback = new MediaRouterCallback(this);
-        mMediaRouter.addCallback(mMediaRouteSelector, mMediaRouterCallback,
+        mediaRouterCallback = new MediaRouterCallback(this);
+        mediaRouter.addCallback(mediaRouteSelector, mediaRouterCallback,
                 MediaRouter.CALLBACK_FLAG_PERFORM_ACTIVE_SCAN);
         Intent intent = new Intent(this, PodcastPlayerService.class);
         startService(intent);
@@ -99,39 +96,39 @@ public abstract class PlayableActivity extends BaseActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        mMediaRouter.removeCallback(mMediaRouterCallback);
+        mediaRouter.removeCallback(mediaRouterCallback);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        if (mMediaController != null) {
-            mMediaController.unregisterCallback(mMediaControllerCallback);
+        if (mediaController != null) {
+            mediaController.unregisterCallback(mediaControllerCallback);
         }
-        getApplicationContext().unbindService(mConnection);
-        mConnection = null;
-        mPodcastPlayerService = null;
-        mMediaControllerCallback = null;
-        mMediaController = null;
+        getApplicationContext().unbindService(playerConnection);
+        playerConnection = null;
+        podcastPlayerService = null;
+        mediaControllerCallback = null;
+        mediaController = null;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mMediaControllerCallback = new MediaControllerCallback(this);
+        mediaControllerCallback = new MediaControllerCallback(this);
         bindToPodcastPlayService();
     }
 
     protected final boolean isStreaming() {
-        return mPodcastPlayerService != null && mPodcastPlayerService.isStreaming();
+        return podcastPlayerService != null && podcastPlayerService.isStreaming();
     }
 
     protected int getState() {
         int state = PlaybackState.STATE_NONE;
 
-        if (mMediaController != null && mMediaController.getPlaybackState() != null) {
-            state = mMediaController.getPlaybackState().getState();
+        if (mediaController != null && mediaController.getPlaybackState() != null) {
+            state = mediaController.getPlaybackState().getState();
         }
         return state;
     }
@@ -141,9 +138,9 @@ public abstract class PlayableActivity extends BaseActivity {
         final AppPrefHelper appPrefHelper = AppPrefHelper.getInstance(this);
         int episodeId = -1;
 
-        if (mMediaController != null && mMediaController.getExtras() != null &&
-                mMediaController.getExtras().containsKey(PodcastPlayerService.PARAM_EPISODE_ID)) {
-            episodeId = mMediaController.getExtras().getInt(PodcastPlayerService.PARAM_EPISODE_ID);
+        if (mediaController != null && mediaController.getExtras() != null &&
+                mediaController.getExtras().containsKey(PodcastPlayerService.PARAM_EPISODE_ID)) {
+            episodeId = mediaController.getExtras().getInt(PodcastPlayerService.PARAM_EPISODE_ID);
         }  else if (appPrefHelper.getLastPlayedEpisodeId() != -1) {
             episodeId = appPrefHelper.getLastPlayedEpisodeId();
         }
@@ -157,11 +154,11 @@ public abstract class PlayableActivity extends BaseActivity {
     public abstract void onStateChanged(int state, Episode episode);
 
     private void bindToPodcastPlayService() {
-        Log.d(TAG, "Binding to PlayService");
-        mConnection = new PlayerConnection(this);
+        Timber.d("Binding to PlayService");
+        playerConnection = new PlayerConnection(this);
         Intent intent = new Intent(this, PodcastPlayerService.class);
-        boolean bound = getApplicationContext().bindService(intent, mConnection, 0);
-        Log.d(TAG, "Bound: " + bound);
+        boolean bound = getApplicationContext().bindService(intent, playerConnection, 0);
+        Timber.d("Bound: %s", String.valueOf(bound));
     }
 
     public void onPlayEpisode() {
@@ -170,26 +167,26 @@ public abstract class PlayableActivity extends BaseActivity {
         if (episode != null) {
             Bundle extras = new Bundle();
             extras.putInt(PodcastPlayerService.PARAM_EPISODE_ID, episode.getId());
-            mMediaController.getTransportControls().playFromSearch(null, extras);
+            mediaController.getTransportControls().playFromSearch(null, extras);
         }
     }
 
-    public void onResumePlayback() { mMediaController.getTransportControls().play(); }
+    public void onResumePlayback() { mediaController.getTransportControls().play(); }
 
     public void onPauseEpisode() {
-        mMediaController.getTransportControls().pause();
+        mediaController.getTransportControls().pause();
     }
 
     protected void onSeekForward() {
-        mMediaController.getTransportControls().fastForward();
+        mediaController.getTransportControls().fastForward();
     }
 
     protected void onSeekBackward() {
-        mMediaController.getTransportControls().rewind();
+        mediaController.getTransportControls().rewind();
     }
 
     protected void onSeekTo(int seekTo) {
-        mMediaController.getTransportControls().seekTo(seekTo);
+        mediaController.getTransportControls().seekTo(seekTo);
     }
 
     protected void showPlayQueue() {
@@ -198,10 +195,10 @@ public abstract class PlayableActivity extends BaseActivity {
         fragment.show(getFragmentManager(), "Queue");
     }
 
-    protected void favoriteEpisode(ApiHelper.OnToggleFavoriteEpisodeListener listener) {
+    protected void favoriteEpisode(EpisodeModel.OnToggleFavoriteEpisodeListener listener) {
 
         if (getEpisode() != null) {
-            ApiHelper.toggleFavoriteAsync(this, getEpisode().getId(), listener);
+            EpisodeModel.toggleFavoriteAsync(this, getEpisode().getId(), listener);
         }
     }
 
@@ -226,7 +223,7 @@ public abstract class PlayableActivity extends BaseActivity {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG, "Service connected: " + name.flattenToString());
+            Timber.d("Service connected: %s", name.flattenToString());
             PlayableActivity activity = mActivity.get();
 
             if (activity == null) {
@@ -234,14 +231,14 @@ public abstract class PlayableActivity extends BaseActivity {
             }
 
             if (service instanceof PodcastPlayerService.ServiceBinder) {
-                activity.mPodcastPlayerService = ((PodcastPlayerService.ServiceBinder) service).getService();
+                activity.podcastPlayerService = ((PodcastPlayerService.ServiceBinder) service).getService();
                 activity.onPodcastPlayerServiceBoundBase();
             }
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "Service disconnected: " + name.flattenToString());
+            Timber.d("Service disconnected: %s", name.flattenToString());
         }
     }
 
@@ -286,10 +283,6 @@ public abstract class PlayableActivity extends BaseActivity {
         public void onRouteSelected(MediaRouter router, MediaRouter.RouteInfo route) {
             CastDevice castDevice = CastDevice.getFromBundle(route.getExtras());
             PodcastPlayerService.startCast(mContext.get(), castDevice);
-            AnalyticsHelper.sendEvent(mContext.get(),
-                    AnalyticsHelper.CATEGORY_CAST,
-                    AnalyticsHelper.ACTION_CLICK,
-                    null);
         }
 
         @Override

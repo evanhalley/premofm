@@ -22,6 +22,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.SparseIntArray;
 
+import timber.log.Timber;
+
 /**
  * Provides ability to bind a recycler view to a Android database cursor
  */
@@ -210,14 +212,16 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         int newCursorPosition = newCursor.getPosition();
 
         if (newCursor.moveToFirst()) {
-            int columnIndex = oldCursor.getColumnIndex(mComparisonColumn);
-            int cursorIndex = 0;
+            int oldColumnIndex = oldCursor.getColumnIndex(mComparisonColumn);
+            int newColumnIndex = newCursor.getColumnIndex(mComparisonColumn);
+            int newCursorIndex = 0;
 
             // loop
             do {
 
                 if (oldCursor.moveToFirst()) {
                     boolean newRecordFound = false;
+                    int oldCursorIndex = 0;
 
                     // loop
                     do {
@@ -227,18 +231,18 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
                             newRecordFound = true;
 
                             // values are different, this record has changed
-                            if (!oldCursor.getString(columnIndex).contentEquals(newCursor.getString(columnIndex))) {
-                                changes.put(cursorIndex, CHANGED);
+                            if (!oldCursor.getString(oldColumnIndex).contentEquals(newCursor.getString(newColumnIndex))) {
+                                changes.put(oldCursorIndex, CHANGED);
                             }
                             break;
                         }
+                        oldCursorIndex++;
                     } while (oldCursor.moveToNext());
 
                     // new record not found in old cursor, it was newly inserted
                     if (!newRecordFound) {
-                        changes.put(cursorIndex, INSERTED);
+                        changes.put(newCursorIndex, INSERTED);
                     }
-                    cursorIndex++;
                 }
 
                 // unable to move the new cursor, all records in new are inserted
@@ -246,6 +250,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
                     changes.put(ALL, INSERTED);
                     break;
                 }
+                newCursorIndex++;
             } while (newCursor.moveToNext());
         }
 
@@ -288,6 +293,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
         }
 
         if (changes != null) {
+            Timber.d("Changes %s", changes);
             // process changes
             if (changes.get(ALL) == INSERTED) {
                 notifyItemRangeInserted(0, newCursor.getCount());
@@ -299,6 +305,7 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
 
                     switch (changes.valueAt(i)) {
                         case CHANGED:
+                            int key = changes.keyAt(i);
                             notifyItemChanged(changes.keyAt(i));
                             break;
                         case INSERTED:

@@ -177,7 +177,7 @@ public class MiniPlayer implements View.OnClickListener, View.OnTouchListener {
             if (bitmap != null) {
                 mMiniPlayer.get().mChannelArt.setImageBitmap(bitmap);
                 PaletteHelper.get(mMiniPlayer.get().mMiniPlayer.getContext()).getChannelColors(
-                        mMiniPlayer.get().mEpisode.getChannelServerId(), bitmap,
+                        mMiniPlayer.get().mEpisode.getChannelGeneratedId(), bitmap,
                         new PaletteLoaded(mMiniPlayer.get()));
             }
         }

@@ -67,10 +67,10 @@ public class FilterModel {
 
             switch (collection.getType()) {
                 case Collection.COLLECTION_TYPE_CHANNEL:
-                    columnToSort = PremoContract.EpisodeEntry.CHANNEL_SERVER_ID;
+                    columnToSort = PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID;
                     break;
                 case Collection.COLLECTION_TYPE_EPISODE:
-                    columnToSort = PremoContract.EpisodeEntry.SERVER_ID;
+                    columnToSort = PremoContract.EpisodeEntry.GENERATED_ID;
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown collection type: " +
@@ -200,7 +200,7 @@ public class FilterModel {
                 int id = cursor.getInt(
                         cursor.getColumnIndex(PremoContract.EpisodeEntry._ID));
                 String serverId = cursor.getString(
-                        cursor.getColumnIndex(PremoContract.EpisodeEntry.SERVER_ID));
+                        cursor.getColumnIndex(PremoContract.EpisodeEntry.GENERATED_ID));
 
                 if (id == episodeId) {
                     startCollecting = true;
@@ -227,7 +227,7 @@ public class FilterModel {
                 serverIdsStr.append(",");
             }
         }
-        return PremoContract.EpisodeEntry.CHANNEL_SERVER_ID + " IN (" + serverIdsStr.toString() + ") ";
+        return PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID + " IN (" + serverIdsStr.toString() + ") ";
     }
 
     private static String generateEpisodeWhere(Collection collection) {
@@ -240,7 +240,7 @@ public class FilterModel {
                 serverIdsStr.append(",");
             }
         }
-        return PremoContract.EpisodeEntry.SERVER_ID + " IN (" + serverIdsStr.toString() + ") ";
+        return PremoContract.EpisodeEntry.GENERATED_ID + " IN (" + serverIdsStr.toString() + ") ";
     }
 
     public static void createSampleFilters(Context context) {
@@ -252,9 +252,9 @@ public class FilterModel {
         whatsNewFilter.setDownloadStatusIds(new Integer[0]);
         whatsNewFilter.setEpisodeStatusIds(new Integer[]{EpisodeStatus.NEW, EpisodeStatus.PLAYED});
         whatsNewFilter.setOrder(0);
-        whatsNewFilter.setEpisodesPerChannel(1);
+        whatsNewFilter.setEpisodesPerChannel(DISABLED);
         whatsNewFilter.setEpisodesManuallyAdded(false);
-        whatsNewFilter.setDaysSincePublished(DAYS_SINCE_PUBLISHED_LAST_MONTH);
+        whatsNewFilter.setDaysSincePublished(DAYS_SINCE_PUBLISHED_LAST_WEEK);
 
         Filter downloadedFilter = new Filter();
         downloadedFilter.setName(context.getString(R.string.filter_name_downloaded));

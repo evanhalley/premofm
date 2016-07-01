@@ -27,9 +27,7 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiHelper;
 import com.mainmethod.premofm.data.model.EpisodeModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.ColorHelper;
@@ -56,7 +54,7 @@ import java.util.Calendar;
  */
 public class NowPlayingActivity extends PlayableActivity implements
         View.OnClickListener,
-        ApiHelper.OnToggleFavoriteEpisodeListener,
+        EpisodeModel.OnToggleFavoriteEpisodeListener,
         OnSeekBarChangeListener {
 
     public static final String PARAM_EPISODE_ID             = "episodeId";
@@ -109,7 +107,7 @@ public class NowPlayingActivity extends PlayableActivity implements
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_now_playing_activity;
+        return R.menu.now_playing_activity;
     }
 
     @Override
@@ -241,34 +239,22 @@ public class NowPlayingActivity extends PlayableActivity implements
                 endTimer();
                 return true;
             case R.id.action_sleep:
-                AnalyticsHelper.sendEvent(this,
-                        AnalyticsHelper.CATEGORY_SLEEP_TIMER,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
                 showSleepTimerDialog();
                 return true;
             case R.id.action_share_episode:
 
                 if (mEpisode != null) {
-                    IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByServerId(this,
-                            mEpisode.getServerId()));
+                    IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByGeneratedId(this,
+                            mEpisode.getGeneratedId()));
                 }
                 return true;
             case R.id.action_play_queue:
-                AnalyticsHelper.sendEvent(this,
-                        AnalyticsHelper.CATEGORY_VIEW_PLAYLIST,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
                 showPlayQueue();
                 return true;
             case R.id.action_playback_speed:
 
                 if (mEpisode != null) {
-                    AnalyticsHelper.sendEvent(this,
-                            AnalyticsHelper.CATEGORY_PLAYBACK_SPEED,
-                            AnalyticsHelper.ACTION_CLICK,
-                            null);
-                    PlaybackSpeedDialog.show(this, mEpisode.getChannelServerId());
+                    PlaybackSpeedDialog.show(this, mEpisode.getChannelGeneratedId());
                 }
                 return true;
             default:
@@ -322,7 +308,7 @@ public class NowPlayingActivity extends PlayableActivity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if (!menu.findItem(R.string.action_cast).isVisible()) {
+        if (menu.findItem(R.string.action_cast).isVisible()) {
             ShowcaseHelper.showNowPlayingShowcase(this);
         }
         return super.onPrepareOptionsMenu(menu);
@@ -356,7 +342,7 @@ public class NowPlayingActivity extends PlayableActivity implements
             }
 
             if (mPrimaryColor == -1 && mTextColor == -1) {
-                String channelServerId = episode.getChannelServerId();
+                String channelServerId = episode.getChannelGeneratedId();
 
                 ImageLoadHelper.loadImageAsync(this, episode.getChannelArtworkUrl(), new ImageLoadHelper.OnImageLoaded() {
                     @Override
@@ -401,7 +387,7 @@ public class NowPlayingActivity extends PlayableActivity implements
             String title;
             if (mEpisode != null) {
                 title = AppPrefHelper.getInstance(this).getPlaybackSpeedLabel(
-                                mEpisode.getChannelServerId());
+                                mEpisode.getChannelGeneratedId());
             } else {
                 title = MediaHelper.formatSpeed(MediaHelper.DEFAULT_PLAYBACK_SPEED);
             }

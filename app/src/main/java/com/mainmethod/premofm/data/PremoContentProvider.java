@@ -15,10 +15,9 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.mainmethod.premofm.helper.DatetimeHelper;
-import com.mainmethod.premofm.object.SyncStatus;
-import com.mainmethod.premofm.service.job.PushChangesJobService;
-import com.mainmethod.premofm.service.job.PushCollectionChangesJobService;
 import com.mainmethod.premofm.util.StringUtil;
+
+import timber.log.Timber;
 
 /**
  * Provides are application with data
@@ -118,7 +117,7 @@ public class PremoContentProvider extends ContentProvider {
                     .append("WHERE (")
                     .append("SELECT COUNT (*) ")
                     .append("FROM ").append(PremoContract.EpisodeEntry.TABLE_NAME).append(" b ")
-                    .append("WHERE b.").append(PremoContract.EpisodeEntry.CHANNEL_SERVER_ID).append(" = a.").append(PremoContract.EpisodeEntry.CHANNEL_SERVER_ID).append(" ")
+                    .append("WHERE b.").append(PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID).append(" = a.").append(PremoContract.EpisodeEntry.CHANNEL_GENERATED_ID).append(" ")
                     .append("AND b.").append(PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS).append(" > a.").append(PremoContract.EpisodeEntry.PUBLISHED_AT_MILLIS).append(" ")
                     .append("AND ").append(selection)
                     .append(") <").append(episodesPerChannel).append(" ")
@@ -205,25 +204,16 @@ public class PremoContentProvider extends ContentProvider {
                 }
                 break;
             case COLLECTIONS:
-                long timestamp = DatetimeHelper.getTimestamp();
-                values.put(PremoContract.CollectionEntry.UPDATED_AT, timestamp);
                 id = mOpenHelper.getWritableDatabase().insert(
                         PremoContract.CollectionEntry.TABLE_NAME, null, values);
 
                 if (id > 0) {
-
-                    // only need to schedule a push, if there is a pending create
-                    if (values.containsKey(PremoContract.CollectionEntry.SYNC_STATUS) &&
-                            values.getAsInteger(PremoContract.CollectionEntry.SYNC_STATUS) == SyncStatus.PENDING_CREATE) {
-                        PushCollectionChangesJobService.schedule(getContext());
-                    }
                     returnUri = PremoContract.CollectionEntry.buildUri(id);
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
                 break;
             case FILTERS:
-                values.put(PremoContract.FilterEntry.UPDATED_AT, DatetimeHelper.getTimestamp());
                 id = mOpenHelper.getWritableDatabase().insert(
                         PremoContract.FilterEntry.TABLE_NAME, null, values);
 
@@ -270,6 +260,7 @@ public class PremoContentProvider extends ContentProvider {
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        Timber.d("Rows deleted: %d", rowsDeleted);
 
         if (rowsDeleted != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
@@ -287,40 +278,23 @@ public class PremoContentProvider extends ContentProvider {
                 values.put(PremoContract.EpisodeEntry.UPDATED_AT, DatetimeHelper.getTimestamp());
                 rowsUpdated = mOpenHelper.getWritableDatabase().update(
                         PremoContract.EpisodeEntry.TABLE_NAME, values, selection, selectionArgs);
-
-                // request update if changes occurred in favorite, progress, or status
-                if (values.containsKey(PremoContract.EpisodeEntry.FAVORITE) ||
-                        values.containsKey(PremoContract.EpisodeEntry.PROGRESS) ||
-                        values.containsKey(PremoContract.EpisodeEntry.EPISODE_STATUS_ID)) {
-                    PushChangesJobService.schedule(getContext().getApplicationContext());
-                }
-
                 break;
             case CHANNELS:
                 rowsUpdated = mOpenHelper.getWritableDatabase().update(
                         PremoContract.ChannelEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             case COLLECTIONS:
-                values.put(PremoContract.CollectionEntry.UPDATED_AT, DatetimeHelper.getTimestamp());
                 rowsUpdated = mOpenHelper.getWritableDatabase().update(
                         PremoContract.CollectionEntry.TABLE_NAME, values, selection, selectionArgs);
-
-                // only schedule a push, if there is a pending change
-                if (rowsUpdated > 0 && values.containsKey(PremoContract.CollectionEntry.SYNC_STATUS) &&
-                        (values.getAsInteger(PremoContract.CollectionEntry.SYNC_STATUS) == SyncStatus.PENDING_UPDATE ||
-                                values.getAsInteger(PremoContract.CollectionEntry.SYNC_STATUS) == SyncStatus.PENDING_CREATE ||
-                                values.getAsInteger(PremoContract.CollectionEntry.SYNC_STATUS) == SyncStatus.PENDING_DELETE)) {
-                    PushCollectionChangesJobService.schedule(getContext());
-                }
                 break;
             case FILTERS:
-                values.put(PremoContract.FilterEntry.UPDATED_AT, DatetimeHelper.getTimestamp());
                 rowsUpdated = mOpenHelper.getWritableDatabase().update(
                         PremoContract.FilterEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
+        Timber.d("Rows updated: %d", rowsUpdated);
 
         if (rowsUpdated != 0) {
             getContext().getContentResolver().notifyChange(uri, null, false);

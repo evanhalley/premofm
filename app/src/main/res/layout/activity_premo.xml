@@ -72,6 +72,6 @@
         app:itemBackground="@drawable/navigation_item_bg_color"
         app:itemTextColor="@drawable/navigation_item_label_color"
         app:itemIconTint="@drawable/navigation_item_icon_color"
-        app:menu="@menu/menu_navigation"/>
+        app:menu="@menu/navigation_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

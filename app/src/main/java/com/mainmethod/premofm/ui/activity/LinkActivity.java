@@ -1,5 +1,7 @@
 package com.mainmethod.premofm.ui.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,15 +9,34 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.mainmethod.premofm.R;
-import com.mainmethod.premofm.api.ApiHelper;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
-import com.mainmethod.premofm.helper.LinkHelper;
+import com.mainmethod.premofm.helper.BroadcastHelper;
+import com.mainmethod.premofm.helper.PodcastDirectoryHelper;
+import com.mainmethod.premofm.object.Channel;
+import com.mainmethod.premofm.service.PodcastSyncService;
+
+import org.parceler.Parcels;
+
+import timber.log.Timber;
 
 /**
  * Forwards incoming intents to the correct activity
  * Created by evanhalley on 12/23/15.
  */
 public class LinkActivity extends BaseActivity {
+
+    private BroadcastReceiver podcastProcessedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getBooleanExtra(BroadcastHelper.EXTRA_SUCCESS, false)) {
+                Channel channel = Parcels.unwrap(intent.getParcelableExtra(BroadcastHelper.EXTRA_CHANNEL));
+                ChannelProfileActivity.openChannelProfile(LinkActivity.this, channel, null, false);
+            } else {
+                Toast.makeText(context, R.string.error_cannot_load_podcast, Toast.LENGTH_SHORT).show();
+            }
+            finish();
+        }
+    };
 
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
@@ -32,36 +53,42 @@ public class LinkActivity extends BaseActivity {
             showFailureToast();
             return;
         }
+        Timber.d("Uri encountered %s", uri);
 
-        String id = LinkHelper.getITunesId(uri);
+        if (PodcastDirectoryHelper.containsITunesHost(uri)) {
+            String id = PodcastDirectoryHelper.getITunesId(uri);
 
-        if (TextUtils.isEmpty(id)) {
-            showFailureToast();
-            return;
-        }
-
-        ApiHelper.getChannelByItunesIdAsync(this, id, channel -> {
-
-            if (channel != null) {
-                AnalyticsHelper.sendEvent(this,
-                        AnalyticsHelper.CATEGORY_ITUNES_LINK,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
-                ChannelProfileActivity.openChannelProfile(LinkActivity.this, channel, null, true);
-                finish();
-            } else {
+            if (TextUtils.isEmpty(id)) {
                 showFailureToast();
+                return;
             }
-        });
+            PodcastSyncService.addPodcastFromDirectory(this, PodcastDirectoryHelper.DIRECTORY_TYPE_ITUNES, id);
+        } else {
+            PodcastSyncService.addPodcastFromUrl(this, uri.toString());
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        BroadcastHelper.unregisterReceiver(this, podcastProcessedReceiver);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BroadcastHelper.registerReceiver(this, podcastProcessedReceiver,
+                BroadcastHelper.INTENT_PODCAST_PROCESSED);
     }
 
     @Override
     protected int getLayoutResourceId() {
-        return -1;
+        return R.layout.activity_link;
     }
 
     private void showFailureToast() {
-        Toast.makeText(LinkActivity.this, R.string.error_cannot_load_channel,
+        Toast.makeText(LinkActivity.this, R.string.error_cannot_load_podcast,
                 Toast.LENGTH_SHORT).show();
         finish();
     }

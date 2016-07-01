@@ -1,29 +1,39 @@
 package com.mainmethod.premofm.http;
 
-import android.util.Log;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.mainmethod.premofm.helper.ResourceHelper;
+import com.mainmethod.premofm.helper.TextHelper;
+import com.mainmethod.premofm.object.Channel;
 
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Map;
+import java.security.NoSuchAlgorithmException;
 import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 
 import javax.net.ssl.HttpsURLConnection;
+
+import timber.log.Timber;
 
 /**
  * Created by evan on 12/1/14.
  */
 public class HttpHelper {
 
-    private static final String TAG = HttpHelper.class.getSimpleName();
     private static final int CONNECTION_TIMEOUT = 10_000;
     private static final int BUFFER_SIZE = 8_192;
+
+    public static boolean hasInternetConnection(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
 
     /**
      * Returns a HTTPS URL connection object for consumption
@@ -33,9 +43,9 @@ public class HttpHelper {
      */
     public static HttpURLConnection getConnection(String urlStr) throws IOException {
         HttpURLConnection connection = null;
-        Log.d(TAG, "Creating a new connection for " + urlStr);
+        Timber.d("Creating a new connection for %s", urlStr);
 
-        if(urlStr != null && urlStr.trim().length() > 0) {
+        if (urlStr != null && urlStr.trim().length() > 0) {
             URL url = new URL(urlStr.trim());
 
             if(url.getProtocol().toLowerCase().contentEquals("https")) {
@@ -43,7 +53,7 @@ public class HttpHelper {
             } else {
                 connection = (HttpURLConnection) url.openConnection();
             }
-            connection.setUseCaches(false);
+            connection.setUseCaches(true);
             connection.setInstanceFollowRedirects(true);
             connection.setConnectTimeout(CONNECTION_TIMEOUT);
         }
@@ -81,7 +91,7 @@ public class HttpHelper {
      * @return
      * @throws IOException
      */
-    private static String readString(InputStream inputStream) throws IOException {
+    public static String readData(InputStream inputStream) throws IOException {
         ByteArrayOutputStream buffer = null;
 
         try {
@@ -96,140 +106,117 @@ public class HttpHelper {
         } finally {
             ResourceHelper.closeResource(buffer);
         }
-        return buffer.toString("UTF-8");
+        return buffer.toString("UTF-8").trim();
     }
 
     /**
-     * Gets data from a URL with optional headers, returns a response with a status code, headers, and body
-     * @param connection
+     * Gets the channels XML data
      * @return
      */
-    public static Response getData(HttpURLConnection connection) {
-        return getData(connection, null);
-    }
-
-    /**
-     * Gets data from a URL with optional headers, returns a response with a status code, headers, and body
-     * @param connection
-     * @param header
-     * @return
-     */
-    public static Response getData(HttpURLConnection connection, Map<String, String> header) {
-        Response response = null;
+    public static String getXmlData(Channel channel, boolean isRedirect) throws XmlDataException {
+        String channelData = null;
         InputStream inputStream = null;
-
-        if (connection == null) {
-            return null;
-        }
-        Log.d(TAG, "Getting data from " + connection.getURL().toString());
+        HttpURLConnection connection = null;
 
         try {
-            // configure the connection
-            connection.setRequestMethod("GET");
-            connection.setDoInput(true);
-            connection.addRequestProperty("Accept-Encoding", "gzip,deflate");
+            connection = getConnection(channel.getFeedUrl());
 
-            // configure the header
-            if (header != null) {
-                Log.d(TAG, "Adding header information to connection");
+            // only add the http caching functions if we aren't forcing an update and they are present
+            if (channel.getLastModified() > -1) {
+                connection.addRequestProperty("Last-Modified", String.valueOf(channel.getLastModified()));
+            }
 
-                for (String key : header.keySet()) {
-                    connection.setRequestProperty(key, header.get(key));
+            if (channel.getETag() != null && channel.getETag().trim().length() > 0) {
+                connection.addRequestProperty("If-None-Match", channel.getETag());
+            }
+            int responseCode = connection.getResponseCode();
+            Timber.d("Response code: %d", responseCode);
+            Timber.d("Content-Length: %d", connection.getContentLength());
+
+            if (responseCode == HttpURLConnection.HTTP_MOVED_PERM) {
+                Timber.d("Podcast URL moved permanently: %s", channel.getFeedUrl());
+                channel.setFeedUrl(connection.getHeaderField("Location"));
+
+                if (!isRedirect) {
+                    return getXmlData(channel, true);
+                } else {
+                    throw new XmlDataException(XmlDataException.ERROR_PERM_REDIRECT);
                 }
             }
 
-            // check the response
-            int responseCode = connection.getResponseCode();
-            Log.d(TAG, "Response code: " + responseCode);
-            response = new Response();
-            response.setResponseCode(responseCode);
-            response.setHeaderFields(connection.getHeaderFields());
-
-            // if the response is good, check for a response body
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
+            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
                 inputStream = getInputStream(connection);
-                response.setResponseBody(readString(inputStream));
-                Log.d(TAG, "Received " + response.getResponseBody().getBytes("UTF-8").length +
-                        " bytes");
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Error occurred while getting data");
-            Log.e(TAG, e.toString());
-        } finally {
-            ResourceHelper.closeResources(new Object[]{ inputStream, connection });
-        }
-        return response;
-    }
+                channelData = readData(inputStream);
 
-    /**
-     * Send some data to a URL without headers, returns a response with a status code, headers, and body
-     * @param connection
-     * @param data
-     * @return
-     */
-    public static Response postData(HttpURLConnection connection, String data) {
-        return postData(connection, data, null);
-    }
-
-    /**
-     * Send some data to a URL with optional headers, returns a response with a status code, headers, and body
-     * @param connection
-     * @param data
-     * @param header
-     * @return
-     */
-    public static Response postData(HttpURLConnection connection, String data, Map<String, String> header) {
-        Response response = null;
-        DataOutputStream outputStream = null;
-        InputStream inputStream = null;
-
-        if (connection == null || data == null) {
-            return null;
-        }
-        Log.d(TAG, "Posting data to " + connection.getURL().toString());
-
-        try {
-            // configure the connection
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.addRequestProperty("Accept-Encoding", "gzip,deflate");
-
-            // configure the header
-            if (header != null) {
-                Log.d(TAG, "Adding header information to connection");
-
-                for (String key : header.keySet()) {
-                    connection.setRequestProperty(key, header.get(key));
+                if (channelData.length() == 0) {
+                    throw new XmlDataException(XmlDataException.ERROR_NO_DATA);
                 }
+
+                // remove UTF-16 BOM character '\uFEFF
+                if (channelData.startsWith("\uFEFF")) {
+                    channelData = channelData.replace("\uFEFF", "");
+                }
+
+                if (!channelData.startsWith("<?xml") && !channelData.startsWith("<rss")) {
+                    throw new XmlDataException(XmlDataException.ERROR_MALFORMED_RSS);
+                }
+                updateHttpCacheHeaderValues(connection, channel);
+                String newMd5 = TextHelper.generateMD5(channelData);
+                String oldMd5 = channel.getDataMd5();
+
+                if (oldMd5 == null || oldMd5.length() == 0 || !oldMd5.contentEquals(newMd5)) {
+                    channel.setDataMd5(newMd5);
+                } else {
+                    Timber.d("Data MD5 prevents update for channel %s", channel.getFeedUrl());
+                    channelData = null;
+                }
+            } else if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                Timber.d("HTTP caching prevents update for channel %s", channel.getFeedUrl());
+            } else if (responseCode >= 400 && responseCode <= 500) {
+                throw new XmlDataException(XmlDataException.ERROR_HTTP);
             }
-
-            // set up the output stream and send some data
-            byte[] dataBytes = data.getBytes("UTF-8");
-            Log.d(TAG, "Sending " + dataBytes.length + " bytes");
-            outputStream = new DataOutputStream(connection.getOutputStream());
-            outputStream.write(dataBytes);
-            outputStream.flush();
-
-            // check the response
-            int responseCode = connection.getResponseCode();
-            Log.d(TAG, "Response code: " + responseCode);
-            response = new Response();
-            response.setResponseCode(responseCode);
-            response.setHeaderFields(connection.getHeaderFields());
-
-            // if the response is good, check for a response body
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                inputStream = getInputStream(connection);
-                response.setResponseBody(readString(inputStream));
-                Log.d(TAG, "Received " + response.getResponseBody().getBytes("UTF-8").length + " bytes");
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Error occurred while sending data");
-            Log.e(TAG, e.toString());
+        } catch (IOException | NoSuchAlgorithmException e) {
+            Timber.w(e, "Error in parseChannel");
+            throw new XmlDataException(XmlDataException.ERROR_OTHER);
         } finally {
-            ResourceHelper.closeResources(new Object[]{connection, outputStream, inputStream});
+            ResourceHelper.closeResources(inputStream, connection);
         }
-        return response;
+        return channelData;
+    }
+
+    /**
+     * Determines, based on HTTP header values, if a channel needs to be updated
+     * @param connection
+     */
+    private static void updateHttpCacheHeaderValues(HttpURLConnection connection, Channel channel) {
+        long lastModified = connection.getLastModified();
+        String eTag = connection.getHeaderField("ETag");
+
+        if (lastModified > 0) {
+            channel.setLastModified(lastModified);
+        }
+
+        if (eTag != null) {
+            channel.setETag(eTag);
+        }
+    }
+
+    public static class XmlDataException extends Exception {
+        public static final int ERROR_HTTP = 0;
+        public static final int ERROR_MALFORMED_RSS = 1;
+        public static final int ERROR_PERM_REDIRECT = 2;
+        public static final int ERROR_NO_DATA = 3;
+        public static final int ERROR_OTHER = 4;
+        public static final int ERROR_PARSE = 5;
+
+        private final int error;
+
+        public XmlDataException(int error) {
+            this.error = error;
+        }
+
+        public int getError() {
+            return error;
+        }
     }
 }

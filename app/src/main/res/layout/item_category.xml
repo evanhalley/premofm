@@ -22,7 +22,7 @@
             android:id="@+id/category_icon"
             android:gravity="center_vertical"
             android:tint="@color/primary"
-            tools:src="@drawable/ic_category_art"
+            tools:src="@drawable/ic_action_search"
             android:layout_gravity="center_vertical"
             android:layout_alignParentLeft="true"
             android:layout_width="@dimen/card_button_size"

@@ -18,11 +18,12 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -30,21 +31,18 @@ import android.widget.TextView;
 import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.EpisodeModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.object.User;
+import com.mainmethod.premofm.service.PodcastSyncService;
 import com.mainmethod.premofm.service.job.DownloadJobService;
-import com.mainmethod.premofm.ui.dialog.SetupAccountDialog;
 import com.mainmethod.premofm.ui.fragment.BaseFragment;
-import com.mainmethod.premofm.ui.fragment.ChannelsFragment;
 import com.mainmethod.premofm.ui.fragment.CollectionsFragment;
 import com.mainmethod.premofm.ui.fragment.EpisodesFragment;
-import com.mainmethod.premofm.ui.fragment.ExploreFragment;
+import com.mainmethod.premofm.ui.fragment.PodcastsFragment;
 
 /**
  * Frame of the basic application
@@ -60,9 +58,6 @@ public class PremoActivity
 
     private static final String TAG = PremoActivity.class.getSimpleName();
 
-    private static final int MAX_LISTENING_TO_RATE      = 54_000; // 15 hours
-    private static final int MIN_LISTENING_TO_RATE      = 36_000; // 10 hours
-    private static final int MIN_DURATION_SEC           = 1_209_600; // 2 weeks, seconds
     private static final int FEEDBACK_OPTION_PROBLEM    = 0;
     private static final int FEEDBACK_OPTION_IDEA       = 1;
     private static final int FEEDBACK_RATE_APP          = 2;
@@ -70,37 +65,34 @@ public class PremoActivity
     private static final String PARAM_CURRENT_FRAGMENT = "currentFragment";
     public static final String PARAM_EPISODE_ID = "episodeId";
 
-    private Toolbar mToolbar;
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
+    private Toolbar toolbar;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
     private BaseFragment mActiveFragment;
-    private int mSelectedDrawerItem;
-    private TabLayout mTabs;
-    private AppBarLayout mAppBarLayout;
-    private CoordinatorLayout mCoordinatorLayout;
-    private View mNavHeader;
+    private int selectedDrawerItem;
+    private TabLayout tabLayout;
+    private AppBarLayout appBarLayout;
+    private CoordinatorLayout coordinatorLayout;
+    private View navHeader;
 
-    private boolean mInExploreExperience;
-
-    private BroadcastReceiver mAccountChangeReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver rssRefreshFinished = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            populateUserDetails();
+            updateSyncTime();
         }
     };
 
     @Override
     protected void onCreateBase(Bundle savedInstanceState) {
         super.onCreateBase(savedInstanceState);
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mTabs = (TabLayout) findViewById(R.id.tabs);
-        mTabs.setTabMode(TabLayout.MODE_SCROLLABLE);
+        appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
         setupNavDrawer();
         loadUI(savedInstanceState);
-        populateUserDetails();
         DownloadJobService.scheduleEpisodeDownload(this);
 
         // dismiss any new episode or new download notifications
@@ -120,23 +112,28 @@ public class PremoActivity
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mAccountChangeReceiver,
-                new IntentFilter(BroadcastHelper.INTENT_ACCOUNT_CHANGE));
-        populateUserDetails();
-        showRateMessage();
+        LocalBroadcastManager.getInstance(this).registerReceiver(rssRefreshFinished,
+                new IntentFilter(BroadcastHelper.INTENT_RSS_REFRESH_FINISH));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mAccountChangeReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(rssRefreshFinished);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTabs = null;
-        mAccountChangeReceiver = null;
+
+        if (tabLayout != null) {
+            tabLayout.removeOnTabSelectedListener(this);
+        }
+
+        if (drawerLayout != null) {
+            drawerLayout.removeDrawerListener(this);
+        }
+        tabLayout = null;
     }
 
     @Override
@@ -163,21 +160,17 @@ public class PremoActivity
 
         switch (v.getId()) {
             case R.id.navigation_header:
-
-                if (User.load(this).isTempUser()) {
-                    SetupAccountDialog dialog = new SetupAccountDialog();
-                    dialog.show(getFragmentManager(), "SetupAccount");
-                } else {
-                    startPremoActivity(UserProfileActivity.class, -1, null);
-                }
-                mDrawerLayout.closeDrawers();
+                drawerLayout.closeDrawers();
+                break;
+            case R.id.last_sync_time:
+                PodcastSyncService.syncAllPodcasts(this, true);
                 break;
         }
     }
 
     public void setViewPager(ViewPager viewPager) {
-        mTabs.setupWithViewPager(viewPager);
-        mTabs.setOnTabSelectedListener(new TabViewPagerOnTabSelectedListener(viewPager));
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(new TabViewPagerOnTabSelectedListener(viewPager));
     }
 
 
@@ -193,7 +186,7 @@ public class PremoActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt(PARAM_CURRENT_FRAGMENT, mSelectedDrawerItem);
+        outState.putInt(PARAM_CURRENT_FRAGMENT, selectedDrawerItem);
         super.onSaveInstanceState(outState);
     }
 
@@ -214,23 +207,25 @@ public class PremoActivity
 
     private void setupNavDrawer() {
         // configure the action bar and drawer
-        mToolbar.setNavigationIcon(R.drawable.ic_action_drawer);
-        mDrawerLayout.setDrawerListener(this);
+        toolbar.setNavigationIcon(R.drawable.ic_action_drawer);
+        drawerLayout.addDrawerListener(this);
 
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mNavigationView.setNavigationItemSelectedListener(this);
-        mNavHeader = mNavigationView.inflateHeaderView(R.layout.nav_header);
-        mNavHeader.findViewById(R.id.navigation_header).setOnClickListener(this);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        navHeader = navigationView.inflateHeaderView(R.layout.nav_header);
+        navHeader.findViewById(R.id.navigation_header).setOnClickListener(this);
+        navHeader.findViewById(R.id.last_sync_time).setOnClickListener(this);
+        updateSyncTime();
 
         if (BuildConfig.DEBUG) {
-            mNavigationView.getMenu().findItem(R.id.action_debug).setVisible(true);
+            navigationView.getMenu().findItem(R.id.action_debug).setVisible(true);
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
         expandToolbar();
-        mDrawerLayout.closeDrawers();
+        drawerLayout.closeDrawers();
         onDrawerItemSelected(menuItem);
         return true;
     }
@@ -242,17 +237,7 @@ public class PremoActivity
 
     @Override
     public void onDrawerOpened(View drawerView) {
-
-        if (mInExploreExperience) {
-            startFragment(R.id.action_explore);
-            mInExploreExperience = false;
-            mDrawerLayout.closeDrawer(Gravity.LEFT);
-        }
-    }
-
-    public void startExploreExperience() {
-        mInExploreExperience = true;
-        mDrawerLayout.openDrawer(Gravity.LEFT);
+        updateSyncTime();
     }
 
     @Override
@@ -272,7 +257,7 @@ public class PremoActivity
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_premo_activity;
+        return R.menu.premo_activity;
     }
 
     @Override
@@ -281,10 +266,10 @@ public class PremoActivity
 
         switch (id) {
             case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-                    mDrawerLayout.closeDrawer(Gravity.LEFT);
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
                 } else {
-                    mDrawerLayout.openDrawer(Gravity.LEFT);
+                    drawerLayout.openDrawer(GravityCompat.START);
                 }
                 return true;
             default:
@@ -294,38 +279,17 @@ public class PremoActivity
 
     public void expandToolbar(){
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
-                mAppBarLayout.getLayoutParams();
+                appBarLayout.getLayoutParams();
         AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
 
         if (behavior != null) {
             behavior.setTopAndBottomOffset(0);
-            behavior.onNestedPreScroll(mCoordinatorLayout, mAppBarLayout, null, 0, 1, new int[2]);
-        }
-    }
-
-    private void populateUserDetails() {
-
-        if (mNavigationView == null) {
-            return;
-        }
-        User user = User.load(this);
-
-        // put the email in the nav header
-        if (user != null) {
-
-            if (user.isTempUser()) {
-                ((TextView) mNavHeader.findViewById(R.id.username)).setText(R.string.drawer_action_setup_account);
-            } else if (user.getNickname() != null && user.getNickname().length() > 0) {
-                ((TextView) mNavHeader.findViewById(R.id.username)).setText(user.getNickname());
-            } else {
-                ((TextView) mNavHeader.findViewById(R.id.username)).setText(user.getEmail());
-            }
-            mNavHeader.findViewById(R.id.navigation_header).setOnClickListener(this);
+            behavior.onNestedPreScroll(coordinatorLayout, appBarLayout, null, 0, 1, new int[2]);
         }
     }
 
     private void onDrawerItemSelected(int itemId) {
-        onDrawerItemSelected(mNavigationView.getMenu().findItem(itemId));
+        onDrawerItemSelected(navigationView.getMenu().findItem(itemId));
     }
 
     private void onDrawerItemSelected(MenuItem menuItem) {
@@ -333,9 +297,8 @@ public class PremoActivity
 
         switch (itemId) {
             case R.id.action_home:
-            case R.id.action_channels:
+            case R.id.action_podcasts:
             case R.id.action_collections:
-            case R.id.action_explore:
                 startFragment(itemId);
                 menuItem.setChecked(true);
                 break;
@@ -361,11 +324,6 @@ public class PremoActivity
             default:
                 break;
         }
-
-        AnalyticsHelper.sendEvent(this,
-                AnalyticsHelper.CATEGORY_DRAWER,
-                AnalyticsHelper.ACTION_CLICK,
-                menuItem.getTitle().toString());
     }
 
     private void startFragment(int itemId) {
@@ -380,14 +338,11 @@ public class PremoActivity
                 case R.id.action_home:
                     fragment = EpisodesFragment.newInstance(null);
                     break;
-                case R.id.action_channels:
-                    fragment =  ChannelsFragment.newInstance(null);
+                case R.id.action_podcasts:
+                    fragment = PodcastsFragment.newInstance(null);
                     break;
                 case R.id.action_collections:
                     fragment = CollectionsFragment.newInstance();
-                    break;
-                case R.id.action_explore:
-                    fragment = ExploreFragment.newInstance();
                     break;
                 default:
                     throw new IllegalArgumentException(
@@ -399,13 +354,13 @@ public class PremoActivity
         }
         Log.d(TAG, "Switching to Fragment: " + fragment.getClass().getSimpleName());
 
-        mSelectedDrawerItem = itemId;
+        selectedDrawerItem = itemId;
         mActiveFragment = fragment;
         fragmentManager.beginTransaction().replace(R.id.fragment_container,
                 mActiveFragment, String.valueOf(itemId)).commit();
 
         // configure the tabs
-        mTabs.removeAllTabs();
+        tabLayout.removeAllTabs();
         AppBarLayout.LayoutParams params =
                 (AppBarLayout.LayoutParams) getToolbar().getLayoutParams();
 
@@ -413,11 +368,10 @@ public class PremoActivity
             // only scroll the toolbar if the fragment uses the tab layout
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
-            mTabs.setVisibility(View.VISIBLE);
-            mTabs.setOnTabSelectedListener(this);
+            tabLayout.setVisibility(View.VISIBLE);
         } else {
             params.setScrollFlags(-1);
-            mTabs.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.GONE);
         }
     }
 
@@ -442,12 +396,18 @@ public class PremoActivity
                 IntentHelper.sendIdeaEmail(this);
                 break;
             case FEEDBACK_RATE_APP:
-                AnalyticsHelper.sendEvent(this,
-                        AnalyticsHelper.CATEGORY_RATE_PREMOFM,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
                 IntentHelper.openAppListing(this);
                 break;
+        }
+    }
+
+    private void updateSyncTime() {
+        long lastSyncTime = AppPrefHelper.getInstance(this).getLastEpisodeSync();
+
+        if (lastSyncTime > -1) {
+            ((TextView) navHeader.findViewById(R.id.last_sync_time)).setText(getString(R.string.last_sync_label,
+                    DateUtils.getRelativeTimeSpanString(lastSyncTime, DatetimeHelper.getTimestamp(),
+                            DateUtils.MINUTE_IN_MILLIS)));
         }
     }
 
@@ -456,44 +416,6 @@ public class PremoActivity
                 .setAction(actionTextResId, clickListener)
                 .setActionTextColor(getResources().getColor(R.color.primary))
                 .show();
-    }
-
-    private void showRateMessage() {
-
-        if (AppPrefHelper.getInstance(this).hasAskedForRating()) {
-            return;
-        }
-
-        User user = User.load(this);
-
-        if (user == null) {
-            return;
-        }
-        boolean showRating;
-
-        if (user.getListeningTime() > MAX_LISTENING_TO_RATE) {
-            showRating = true;
-        } else {
-            long firstBoot = AppPrefHelper.getInstance(this).getFirstBoot();
-            long today = DatetimeHelper.getTimestamp();
-            long diff = (today - firstBoot) / 1_000;
-            showRating = diff > MIN_DURATION_SEC && user.getListeningTime() > MIN_LISTENING_TO_RATE;
-        }
-
-        if (showRating) {
-            showSnackbarMessage(R.string.rate_app_message, R.string.rate, v -> {
-                IntentHelper.openAppListing(v.getContext());
-                AnalyticsHelper.sendEvent(v.getContext(),
-                        AnalyticsHelper.CATEGORY_RATE_PREMOFM,
-                        AnalyticsHelper.ACTION_CLICK,
-                        null);
-            });
-            AnalyticsHelper.sendEvent(this,
-                    AnalyticsHelper.CATEGORY_RATE_PREMOFM,
-                    AnalyticsHelper.ACTION_VIEW,
-                    null);
-            AppPrefHelper.getInstance(this).setAskedForRating();
-        }
     }
 
     private class TabViewPagerOnTabSelectedListener extends TabLayout.ViewPagerOnTabSelectedListener{

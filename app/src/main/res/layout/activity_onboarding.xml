@@ -16,21 +16,6 @@
         android:layout_height="match_parent" />
 
     <LinearLayout
-        android:id="@+id/auth_form"
-        android:orientation="vertical"
-        android:layout_above="@+id/auth_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginLeft="@dimen/double_margin"
-        android:layout_marginRight="@dimen/double_margin">
-
-        <include
-            layout="@layout/layout_authentication"
-            android:visibility="gone"/>
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/auth_buttons"
         android:orientation="horizontal"
         android:layout_above="@+id/privacy_and_tos"
@@ -38,7 +23,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/try_now"
+            android:id="@+id/get_started"
             android:layout_margin="@dimen/base_margin"
             android:background="?android:selectableItemBackground"
             android:layout_height="@dimen/borderless_button_size"
@@ -47,17 +32,6 @@
             android:layout_weight="1"
             android:layout_gravity="center"
             android:text="@string/button_try"/>
-
-        <Button
-            android:id="@+id/sign_in"
-            android:layout_margin="@dimen/base_margin"
-            android:background="?android:selectableItemBackground"
-            android:layout_height="@dimen/borderless_button_size"
-            android:textColor="@color/primary"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:text="@string/button_sign_in"/>
 
     </LinearLayout>
 

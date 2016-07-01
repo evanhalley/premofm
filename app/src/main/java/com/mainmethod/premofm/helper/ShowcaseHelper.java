@@ -37,15 +37,6 @@ public class ShowcaseHelper {
         }
     }
 
-    public static void showCategoryShowcase(BaseActivity activity) {
-
-        if (!AppPrefHelper.getInstance(activity).hasViewedCategoryShowcase()) {
-            displayShowcase(activity, R.id.action_category, R.string.showcase_category_title,
-                    R.string.showcase_category_message);
-            AppPrefHelper.getInstance(activity).setViewedCategoryShowcase(true);
-        }
-    }
-
     private static void displayShowcase(BaseActivity activity, int menuItemResId, int titleResId, int messageResId) {
         new ShowcaseView.Builder(activity)
                 .setTarget(new ToolbarActionItemTarget(activity.getToolbar(), menuItemResId))

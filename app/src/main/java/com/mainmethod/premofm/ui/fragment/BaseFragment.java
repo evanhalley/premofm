@@ -9,7 +9,6 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,13 +17,13 @@ import android.view.ViewGroup;
 
 import com.mainmethod.premofm.ui.activity.BaseActivity;
 
+import timber.log.Timber;
+
 /**
  * Contains functionality common to all fragments in Premo
  * Created by evan on 12/3/14.
  */
 public abstract class BaseFragment extends Fragment {
-
-    private static final String TAG = BaseFragment.class.getSimpleName();
 
     protected abstract int getLayoutResourceId();
 
@@ -80,7 +79,7 @@ public abstract class BaseFragment extends Fragment {
         int menuResId = getMenuResourceId();
 
         if (menuResId > -1) {
-            Log.d(TAG, "Inflating menu");
+            Timber.d("Inflating menu");
             inflater.inflate(menuResId, menu);
         }
     }

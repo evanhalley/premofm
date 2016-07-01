@@ -32,7 +32,6 @@ import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.ColorHelper;
-import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.ImageLoadHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.PaletteHelper;
@@ -40,7 +39,7 @@ import com.mainmethod.premofm.helper.PaletteHelper.OnPaletteLoaded;
 import com.mainmethod.premofm.helper.UserPrefHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.Episode;
-import com.mainmethod.premofm.service.ApiService;
+import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.ui.adapter.EpisodeAdapter;
 
 import org.parceler.Parcels;
@@ -61,7 +60,6 @@ public class ChannelProfileActivity
     public static final String PARAM_VISITING_FROM_EXPLORE = "visitingFromExplore";
 
     private static final int LOADER_ID = ChannelProfileActivity.class.hashCode();
-    private static final int VISIBLE_THRESHOLD = 1;
 
     private Channel mChannel;
     private RecyclerView mRecyclerView;
@@ -69,14 +67,8 @@ public class ChannelProfileActivity
     private ImageView mChannelArt;
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private boolean mVisitingFromExplore;
-
-    private boolean mLoadingFromServer;
-    private long mOldestTimestamp = DatetimeHelper.getTimestamp();
-    private long mNewestTimestamp = -1;
-    private boolean mKeepLoadingChannels = true;
     private EpisodeAdapter mAdapter;
     private SubscriptionBroadcastReceiver mSubscriptionBroadcastReceiver;
-    private EpisodesLoadedBroadcastReceiver mEpisodesLoadedReceiver;
 
     public static void openChannelProfile(BaseActivity activity, Channel channel, View channelArt,
                                           boolean visitingFromExplore) {
@@ -84,7 +76,7 @@ public class ChannelProfileActivity
         args.putBoolean(PARAM_VISITING_FROM_EXPLORE, visitingFromExplore);
         args.putParcelable(ChannelProfileActivity.PARAM_CHANNEL, Parcels.wrap(channel));
         args.putLong(PARAM_NUM_STORED_EPISODES,
-                EpisodeModel.getNumberOfEpisodesForChannel(activity, channel.getServerId()));
+                EpisodeModel.getNumberOfEpisodesForChannel(activity, channel.getGeneratedId()));
         activity.startPremoActivity(ChannelProfileActivity.class, channelArt,
                 "channel_art", -1, args);
     }
@@ -109,17 +101,13 @@ public class ChannelProfileActivity
 
         // channel passed in as unsubscribed, check the db
         if (!mChannel.isSubscribed()) {
-            int channelId = ChannelModel.channelIsSubscribed(this, mChannel.getServerId());
+            int channelId = ChannelModel.channelIsSubscribed(this, mChannel.getGeneratedId());
 
             if (channelId != -1) {
                 mChannel.setId(channelId);
             }
         }
         setupHeader();
-
-        if (extras.getLong(PARAM_NUM_STORED_EPISODES) == 0) {
-            getEpisodesFromServer();
-        }
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
@@ -136,30 +124,7 @@ public class ChannelProfileActivity
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        int position = cursor.getPosition();
-
-        // get the newest timestampt
-        if (mNewestTimestamp == -1) {
-
-            if (cursor.moveToFirst()) {
-                Episode episode = EpisodeModel.toEpisode(cursor);
-                mNewestTimestamp = episode.getPublishedAt().getTime();
-                Bundle args = new Bundle();
-                args.putParcelable(ApiService.PARAM_CHANNEL, Parcels.wrap(mChannel));
-                args.putLong(ApiService.PARAM_TIMESTAMP, mNewestTimestamp);
-                ApiService.start(this, ApiService.ACTION_GET_CHANNEL_EPISODES_NEWER_THAN, args);
-            }
-        }
-        
-        // no channels returned and the channel is unsubscribed, get more from the server
-        if (cursor.moveToLast()) {
-            // get the last episodes published time, use it for the timestamp
-            Episode episode = EpisodeModel.toEpisode(cursor);
-            mOldestTimestamp = episode.getPublishedAt().getTime();
-        }
-        cursor.moveToPosition(position);
         mAdapter.changeCursor(cursor);
-        mRecyclerView.addOnScrollListener(new ScrollListener(this));
     }
 
     @Override
@@ -171,21 +136,16 @@ public class ChannelProfileActivity
     protected void onResume() {
         super.onResume();
         mSubscriptionBroadcastReceiver = new SubscriptionBroadcastReceiver(this);
-        mEpisodesLoadedReceiver = new EpisodesLoadedBroadcastReceiver(this);
         LocalBroadcastManager.getInstance(this).registerReceiver(mSubscriptionBroadcastReceiver,
                 new IntentFilter(BroadcastHelper.INTENT_SUBSCRIPTION_CHANGE));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mEpisodesLoadedReceiver,
-                new IntentFilter(BroadcastHelper.INTENT_EPISODES_LOADED_FROM_SERVER));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mSubscriptionBroadcastReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mEpisodesLoadedReceiver);
         mRecyclerView.clearOnScrollListeners();
         mSubscriptionBroadcastReceiver = null;
-        mEpisodesLoadedReceiver = null;
     }
 
     @Override
@@ -193,6 +153,16 @@ public class ChannelProfileActivity
         super.onBackPressed();
         overrideTransition();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (!mChannel.isSubscribed()) {
+            AsyncTaskService.deleteChannel(this, mChannel.getGeneratedId());
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -202,9 +172,9 @@ public class ChannelProfileActivity
 
         if (mChannel.isSubscribed()) {
             downloadItem.setChecked(prefHelper.isServerIdAdded(R.string.pref_key_auto_download_channels,
-                    mChannel.getServerId()));
+                    mChannel.getGeneratedId()));
             notifyItem.setChecked(prefHelper.isServerIdAdded(R.string.pref_key_notification_channels,
-                    mChannel.getServerId()));
+                    mChannel.getGeneratedId()));
         } else {
             downloadItem.setVisible(false);
             notifyItem.setVisible(false);
@@ -227,7 +197,7 @@ public class ChannelProfileActivity
                         .setMessage(R.string.dialog_mark_channel_completed)
                         .setPositiveButton(R.string.dialog_mark_completed, (dialog, which) -> {
                             EpisodeModel.markEpisodesCompletedByChannelAsync(ChannelProfileActivity.this,
-                                    mChannel.getServerId());
+                                    mChannel.getGeneratedId());
                         })
                         .setNegativeButton(R.string.dialog_cancel, null)
                         .show();
@@ -237,11 +207,11 @@ public class ChannelProfileActivity
                 if (item.isChecked()) {
                     item.setChecked(false);
                     UserPrefHelper.get(this).removeServerId(R.string.pref_key_auto_download_channels,
-                            mChannel.getServerId());
+                            mChannel.getGeneratedId());
                 } else {
                     item.setChecked(true);
-                    UserPrefHelper.get(this).addServerId(R.string.pref_key_auto_download_channels,
-                            mChannel.getServerId());
+                    UserPrefHelper.get(this).addGeneratedId(R.string.pref_key_auto_download_channels,
+                            mChannel.getGeneratedId());
                 }
                 return true;
             case R.id.action_enable_notifications:
@@ -249,11 +219,11 @@ public class ChannelProfileActivity
                 if (item.isChecked()) {
                     item.setChecked(false);
                     UserPrefHelper.get(this).removeServerId(R.string.pref_key_notification_channels,
-                            mChannel.getServerId());
+                            mChannel.getGeneratedId());
                 } else {
                     item.setChecked(true);
-                    UserPrefHelper.get(this).addServerId(R.string.pref_key_notification_channels,
-                            mChannel.getServerId());
+                    UserPrefHelper.get(this).addGeneratedId(R.string.pref_key_notification_channels,
+                            mChannel.getGeneratedId());
                 }
                 return true;
             default:
@@ -286,22 +256,12 @@ public class ChannelProfileActivity
 
     @Override
     protected int getMenuResourceId() {
-        return R.menu.menu_channel_profile_activity;
+        return R.menu.channel_profile_activity;
     }
 
     @Override
     protected void onPodcastPlayerServiceBound() {
 
-    }
-
-    private void getEpisodesFromServer() {
-        mLoadingFromServer = true;
-        Bundle args = new Bundle();
-        args.putParcelable(ApiService.PARAM_CHANNEL, Parcels.wrap(mChannel));
-        args.putLong(ApiService.PARAM_TIMESTAMP, mOldestTimestamp);
-        ApiService.start(ChannelProfileActivity.this,
-                ApiService.ACTION_GET_CHANNEL_EPISODES_OLDER_THAN,
-                args);
     }
 
     private static class ImageLoadedListener implements ImageLoadHelper.OnImageLoaded {
@@ -325,7 +285,7 @@ public class ChannelProfileActivity
                         new BitmapDrawable(activity.getResources(), bitmap));
 
                 PaletteHelper.get(activity).getChannelColors(
-                        activity.mChannel.getServerId(), bitmap, new PaletteLoaded(activity));
+                        activity.mChannel.getGeneratedId(), bitmap, new PaletteLoaded(activity));
             }
         }
 
@@ -342,43 +302,6 @@ public class ChannelProfileActivity
         }
     }
 
-    private static class ScrollListener extends RecyclerView.OnScrollListener {
-
-        private WeakReference<ChannelProfileActivity> mActivity;
-
-        public ScrollListener(ChannelProfileActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            ChannelProfileActivity activity = mActivity.get();
-
-            if(activity == null) {
-                return;
-            }
-
-            if (!activity.mKeepLoadingChannels) {
-                return;
-            }
-
-            if (activity.mLoadingFromServer) {
-                return;
-            }
-
-            int mVisibleItemCount = activity.mRecyclerView.getChildCount();
-            int mTotalItemCount = activity.mLayoutManager.getItemCount();
-            int mFirstVisibleItem = activity.mLayoutManager.findFirstVisibleItemPosition();
-
-            if (!activity.mLoadingFromServer && ((mTotalItemCount - mVisibleItemCount) <=
-                    (mFirstVisibleItem + VISIBLE_THRESHOLD))) {
-                // we are at the end, let's get more from the server
-                activity.getEpisodesFromServer();
-            }
-        }
-    }
-
     private static class PaletteLoaded implements OnPaletteLoaded {
 
         private WeakReference<ChannelProfileActivity> mActivity;
@@ -389,6 +312,11 @@ public class ChannelProfileActivity
 
         @Override
         public void loaded(int primaryColor, int textColor) {
+
+            if (primaryColor == -1 || textColor == -1) {
+                return;
+            }
+
             ChannelProfileActivity activity = mActivity.get();
 
             if (activity == null) {
@@ -418,43 +346,14 @@ public class ChannelProfileActivity
             boolean isSubscribed = intent.getBooleanExtra(BroadcastHelper.EXTRA_IS_SUBSCRIBED, false);
 
             if (isSubscribed) {
-                activity.mChannel = ChannelModel.getChannelByServerId(activity,
-                        activity.mChannel.getServerId());
+                activity.mChannel = ChannelModel.getChannelByGeneratedId(activity,
+                        activity.mChannel.getGeneratedId());
             } else {
                 activity.mChannel.setId(-1);
+                activity.mChannel.setSubscribed(false);
             }
             activity.mAdapter.setChannel(activity.mChannel);
             activity.mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private static class EpisodesLoadedBroadcastReceiver extends BroadcastReceiver {
-
-        private WeakReference<ChannelProfileActivity> mActivity;
-
-        public EpisodesLoadedBroadcastReceiver(ChannelProfileActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            ChannelProfileActivity activity = mActivity.get();
-
-            if (activity == null) {
-                return;
-            }
-
-            if (activity.mChannel == null) {
-                return;
-            }
-
-            if (activity.mChannel.getServerId().contentEquals(intent.getStringExtra(BroadcastHelper.EXTRA_CHANNEL_SERVER_ID))) {
-                activity.mLoadingFromServer = false;
-
-                if (intent.getIntExtra(BroadcastHelper.EXTRA_NUMBER_EPISODES_LOADED, 0) == 0) {
-                    activity.mKeepLoadingChannels = false;
-                }
-            }
         }
     }
 }

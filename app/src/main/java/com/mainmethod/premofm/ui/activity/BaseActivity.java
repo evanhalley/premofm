@@ -12,23 +12,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.mainmethod.premofm.BuildConfig;
 import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.config.ConfigurationManager;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.UpdateHelper;
-import com.mainmethod.premofm.helper.XORHelper;
-import com.mainmethod.premofm.helper.billing.IabHelper;
-import com.mainmethod.premofm.helper.billing.IabResult;
-import com.mainmethod.premofm.helper.billing.Purchase;
-import com.mainmethod.premofm.object.User;
-import com.mainmethod.premofm.service.ApiService;
-
-import org.parceler.Parcels;
 
 /**
  * Created by evan on 12/1/14.
@@ -37,7 +26,7 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
     private static final String TAG = "BaseActivity";
 
-    private static final int REQUEST_CODE = 10001;
+    private static final String PARAM_USER_ONBOARDING = "userOnboarding";
 
     protected abstract void onCreateBase(Bundle savedInstanceState);
 
@@ -55,51 +44,27 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
     private ProgressDialog mProgressDialog;
 
-    private IabHelper mIabHelper;
-
     private Menu mMenu;
-
-    private boolean userIsOnboarding() {
-        return this instanceof OnboardingActivity;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((PremoApp) getApplication()).getTracker();
         ConfigurationManager.getInstance(this);
-        boolean userIsOnboarding = userIsOnboarding();
-        User user = User.load(this);
-        boolean userIsSignedIn = user != null;
 
-        /**
-         * How this works, we always want to check to see if the user has signed in,
-         *  if not show the intro screen
-         *
-         * If they are on the intro, sign in, or sign up screen continue that workflow
-         *
-         * If the user has signed in, we want to check to see if the app was updated,
-         *  if it was, run any needed migrate
-         */
+        boolean userIsOnboarding = getIntent().getBooleanExtra(PARAM_USER_ONBOARDING, false);
 
         // user hasn't signed in and isnt' in the process, redirect them to sign in/up
-        if (!userIsSignedIn && !userIsOnboarding) {
+        if (!AppPrefHelper.getInstance(this).hasUserOnboarded() && !userIsOnboarding) {
             // user has not signed in and isn't onboarding, let's onboard them
             Log.i(TAG, "User has not logged in, proceeding to intro screen");
             Intent activityIntent = new Intent(this, OnboardingActivity.class);
+            activityIntent.putExtra(PARAM_USER_ONBOARDING, true);
             activityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(activityIntent);
             finish();
-        }
-
-        // not signed, but the user is onboarding
-        else if (!userIsSignedIn && userIsOnboarding) {
+        } else if (userIsOnboarding) {
             startBaseActivity(savedInstanceState, false);
-        }
-
-        // signed in and not onboarding
-        else if (userIsSignedIn && !userIsOnboarding) {
-
+        } else {
             // app was updated, execute the update
             if (UpdateHelper.wasUpdated(this)) {
                 Log.d(TAG, "App was updated, executing update");
@@ -108,22 +73,17 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
             // app was not updated
             else {
-                startAppWithSignedInUser(savedInstanceState);
+                startApp(savedInstanceState);
             }
-        }
-
-        // signed and onboarding, not a legit case
-        else {
-            throw new IllegalStateException("User is signed in and onboarding, app in bad state");
         }
     }
 
     @Override
     public void onUpdateComplete() {
-        startAppWithSignedInUser(null);
+        startApp(null);
     }
 
-    private void startAppWithSignedInUser(Bundle savedInstanceState) {
+    private void startApp(Bundle savedInstanceState) {
         Intent intent = getIntent();
         Bundle args = intent.getExtras();
         boolean isUsersFirstSignIn = args != null &&
@@ -146,7 +106,6 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
             if (firstSignIn) {
                 Log.d(TAG, "User's first sign in, initiating first application sync");
-                ApiService.initiateFirstSignInProcess(this);
                 AppPrefHelper.getInstance(this).putLong(AppPrefHelper.PROPERTY_FIRST_BOOT,
                         DatetimeHelper.getTimestamp());
             }
@@ -174,13 +133,11 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
     @Override
     protected void onStart() {
         super.onStart();
-        GoogleAnalytics.getInstance(this).reportActivityStart(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        GoogleAnalytics.getInstance(this).reportActivityStop(this);
     }
 
     @Override
@@ -272,75 +229,4 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
             mProgressDialog.dismiss();
         }
     }
-
-    public void startPurchaseFlow(final String productId) {
-        String key = XORHelper.decode(getString(R.string.google_play_license), 27);
-        mIabHelper = new IabHelper(this, key);
-        mIabHelper.enableDebugLogging(BuildConfig.DEBUG);
-        mIabHelper.startSetup(result -> {
-            Log.d(TAG, "IAB Response: " + result.getResponse());
-            User user = User.load(BaseActivity.this);
-            mIabHelper.launchPurchaseFlow(BaseActivity.this, productId, REQUEST_CODE,
-                    (result1, info) -> {
-
-                        // initiate the flow here
-                        if (result1.isSuccess() && result1.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-
-                            if (info.getItemType() == IabHelper.ITEM_TYPE_INAPP) {
-                                mIabHelper.consumeAsync(info, new IabHelper.OnConsumeFinishedListener() {
-                                    @Override
-                                    public void onConsumeFinished(Purchase info, IabResult result1) {
-
-                                        if (result1.isSuccess() && result1.getResponse() == IabHelper.BILLING_RESPONSE_RESULT_OK) {
-                                            Bundle args = new Bundle();
-                                            args.putParcelable(ApiService.PARAM_PURCHASE, Parcels.wrap(info));
-                                            ApiService.start(BaseActivity.this, ApiService.ACTION_ADD_PURCHASE, args);
-
-                                            AnalyticsHelper.sendEvent(BaseActivity.this,
-                                                    AnalyticsHelper.CATEGORY_PURCHASE,
-                                                    AnalyticsHelper.ACTION_CLICK,
-                                                    "purchase");
-                                        }
-
-                                        if (mIabHelper != null) {
-                                            mIabHelper.dispose();
-                                        }
-                                    }
-                                });
-                            } else {
-
-                                Bundle args = new Bundle();
-                                args.putParcelable(ApiService.PARAM_PURCHASE, Parcels.wrap(info));
-                                ApiService.start(BaseActivity.this, ApiService.ACTION_ADD_PURCHASE, args);
-
-                                AnalyticsHelper.sendEvent(BaseActivity.this,
-                                        AnalyticsHelper.CATEGORY_PURCHASE,
-                                        AnalyticsHelper.ACTION_CLICK,
-                                        "purchase");
-
-                                if (mIabHelper != null) {
-                                    mIabHelper.dispose();
-                                }
-                            }
-                        } else {
-                            mIabHelper.dispose();
-                        }
-                    },
-                    user.getId());
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        boolean handled = false;
-
-        if (mIabHelper != null) {
-            handled = mIabHelper.handleActivityResult(requestCode, resultCode, data);
-        }
-
-        if (!handled) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
 }

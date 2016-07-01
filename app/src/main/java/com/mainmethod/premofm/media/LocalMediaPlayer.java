@@ -221,7 +221,7 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
                     new Mp3Extractor(),
                     new Mp4Extractor());
 
-            if (Util.SDK_INT == Build.VERSION_CODES.M) {
+            if (Util.SDK_INT >= Build.VERSION_CODES.M) {
                 trackRenderer = new PodcastAudioRenderer(sampleSource);
             } else {
                 trackRenderer = new PodcastAudioRendererV21(sampleSource);

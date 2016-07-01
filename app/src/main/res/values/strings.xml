@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="user_agent" translatable="false">PremoFM-%s</string>
 
     <string name="temp_user_email_domain" translatable="false">temp.premo.fm</string>
@@ -37,6 +38,8 @@
     <string name="action_pin">Pin</string>
     <string name="action_unpin">Unpin episode</string>
     <string name="action_set_playback_speed">Set playback speed</string>
+    <string name="action_add_podcast">Add Podcast</string>
+    <string name="dialog_opml_import">Import OPML</string>
 
     <!-- sleep timer -->
     <string name="sleep_timer_title">Stop Playing After...</string>
@@ -180,6 +183,9 @@
     <string name="title_service_sync_service">SyncService</string>
     <string name="title_service_delete_episodes">DeleteEpisodesService</string>
     <string name="title_service_push_collections">PushCollectionsService</string>
+    <string name="title_service_sync_feed">PodcastSyncService</string>
+    <string name="title_service_async_job_service">Async Job Service</string>
+    <string name="title_service_sync_job">PodcastSyncJobService</string>
 
     <!-- search results strings -->
     <string name="channel_search_results">Podcasts</string>
@@ -353,6 +359,7 @@
     <string name="error_deleting_collection">Unable to delete collection, try again</string>
     <string name="error_no_filter_name">Enter a valid filter name</string>
     <string name="error_cannot_load_channel">This channel cannot be found</string>
+    <string name="error_cannot_load_podcast">This podcast cannot be loaded</string>
     <string name="empty_time">-:&#8212;</string>
     <string name="time_left">-%s</string>
 
@@ -407,6 +414,7 @@
     <string name="please_create_collection">A collection should be created first</string>
     <string name="streaming">streaming</string>
     <string name="loading">Loading...</string>
+    <string name="loading_podcast">Loading podcast...</string>
     <string name="importing_opml">Importing OPML file...</string>
     <string name="error_importing_opml">Unable to import OPML file, try again</string>
     <string name="error_no_new_imports">No new podcasts were imported</string>
@@ -417,4 +425,10 @@
     <string name="min_playback_speed" translatable="false">0.5x</string>
     <string name="max_playback_speed" translatable="false">2x</string>
     <string name="normal_playback_speed">%s normal speed</string>
+    <string name="url_to_rss_feed">Podcast URL</string>
+    <string name="enter_url">Enter URL</string>
+    <string name="dialog_add">Add</string>
+    <string name="button_add_podcast">Add a Podcast</string>
+    <string name="last_sync_label">Last synced %s</string>
+    <string name="widget_name">PremoFM Mini Player</string>
 </resources>

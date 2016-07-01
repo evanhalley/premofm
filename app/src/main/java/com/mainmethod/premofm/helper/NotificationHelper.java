@@ -64,7 +64,7 @@ public class NotificationHelper {
         if (episodeServerIds == null || episodeServerIds.size() == 0) {
             return;
         }
-        List<Episode> episodeList = EpisodeModel.getEpisodesByServerId(context, episodeServerIds);
+        List<Episode> episodeList = EpisodeModel.getEpisodesByGeneratedId(context, episodeServerIds);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         Notification.Builder builder = new Notification.Builder(context);
@@ -86,8 +86,8 @@ public class NotificationHelper {
         }
 
         if (episodeList.size() == 1) {
-            Episode episode = EpisodeModel.getEpisodeByServerId(context,
-                    episodeList.get(0).getServerId());
+            Episode episode = EpisodeModel.getEpisodeByGeneratedId(context,
+                    episodeList.get(0).getGeneratedId());
             String title = context.getString(R.string.notification_new_episode,
                     episode.getChannelTitle());
             builder.setContentTitle(title);
@@ -285,7 +285,7 @@ public class NotificationHelper {
         if (episodeServerIds == null || episodeServerIds.size() == 0) {
             return;
         }
-        List<Episode> episodeList = EpisodeModel.getEpisodesByServerId(context, episodeServerIds);
+        List<Episode> episodeList = EpisodeModel.getEpisodesByGeneratedId(context, episodeServerIds);
 
         if (episodeList.size() == 0) {
             return;

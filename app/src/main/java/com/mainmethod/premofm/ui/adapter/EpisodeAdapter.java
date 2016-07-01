@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,6 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.PremoContract;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.data.model.FilterModel;
-import com.mainmethod.premofm.helper.AnalyticsHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.ImageLoadHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
@@ -30,9 +30,10 @@ import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
 import com.mainmethod.premofm.object.Filter;
 import com.mainmethod.premofm.object.Playlist;
-import com.mainmethod.premofm.service.ApiService;
+import com.mainmethod.premofm.parse.DateParser;
+import com.mainmethod.premofm.service.AsyncTaskService;
 import com.mainmethod.premofm.service.PodcastPlayerService;
-import com.mainmethod.premofm.ui.holder.ChannelInfoHolder;
+import com.mainmethod.premofm.ui.holder.PodcastInfoHolder;
 import com.mainmethod.premofm.ui.holder.EpisodeHolder;
 
 import java.lang.ref.WeakReference;
@@ -101,8 +102,8 @@ public class EpisodeAdapter extends
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor, int position) {
 
-        if (viewHolder instanceof ChannelInfoHolder) {
-            bindChannelInfoViewToHolder((ChannelInfoHolder) viewHolder, cursor);
+        if (viewHolder instanceof PodcastInfoHolder) {
+            bindChannelInfoViewToHolder((PodcastInfoHolder) viewHolder, cursor);
         } else if (viewHolder instanceof EpisodeHolder) {
             bindEpisodeViewToHolder((EpisodeHolder) viewHolder, cursor, position);
         }
@@ -129,7 +130,7 @@ public class EpisodeAdapter extends
 
         switch (viewType) {
             case ITEM_TYPE_CHANNEL_INFO:
-                return new ChannelInfoHolder(
+                return new PodcastInfoHolder(
                         LayoutInflater.from(viewGroup.getContext())
                                 .inflate(R.layout.item_channel_info, viewGroup, false), this);
             case ITEM_TYPE_EPISODE:
@@ -154,18 +155,12 @@ public class EpisodeAdapter extends
 
         switch (v.getId()) {
             case R.id.subscribe:
-                String action;
-                Bundle bundle = new Bundle();
-                bundle.putString(ApiService.PARAM_CHANNEL_SERVER_ID, mChannel.getServerId());
 
-                if (!mChannel.isSubscribed()) {
-                    action = ApiService.ACTION_SUBSCRIBE_CHANNEL;
+                if (mChannel.isSubscribed()) {
+                    AsyncTaskService.unsubscribeFromChannel(v.getContext(), mChannel.getGeneratedId());
                 } else {
-                    action = ApiService.ACTION_UNSUBSCRIBE_CHANNEL;
+                    AsyncTaskService.subscribeToChannel(v.getContext(), mChannel.getGeneratedId());
                 }
-                ApiService.start(v.getContext(), action, bundle);
-                mChannelSubscriptionChangePending = true;
-                notifyItemChanged(0);
                 break;
             case R.id.website:
                 IntentHelper.openBrowser(v.getContext(), mChannel.getSiteUrl());
@@ -215,16 +210,12 @@ public class EpisodeAdapter extends
                 Toast.makeText(context, R.string.episode_not_pinned, Toast.LENGTH_SHORT).show();
             }
             Toast.makeText(context, R.string.episode_pinned, Toast.LENGTH_SHORT).show();
-            AnalyticsHelper.sendEvent(context,
-                    AnalyticsHelper.CATEGORY_PIN,
-                    AnalyticsHelper.ACTION_CLICK,
-                    null);
         } else {
             Toast.makeText(context, R.string.episode_already_pinned, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void bindChannelInfoViewToHolder(ChannelInfoHolder channelInfoHolder, Cursor cursor) {
+    private void bindChannelInfoViewToHolder(PodcastInfoHolder channelInfoHolder, Cursor cursor) {
         Context context = mContext.get();
 
         if (context == null) {
@@ -266,8 +257,8 @@ public class EpisodeAdapter extends
 
         Episode episode = EpisodeModel.toEpisode(cursor);
         episodeHolder.episodeId = episode.getId();
-        episodeHolder.episodeServerId = episode.getServerId();
-        episodeHolder.channelServerId = episode.getChannelServerId();
+        episodeHolder.episodeServerId = episode.getGeneratedId();
+        episodeHolder.channelServerId = episode.getChannelGeneratedId();
         episodeHolder.updatedAt = episode.getUpdatedAt();
         episodeHolder.episodeTitle.setText(episode.getTitle());
         episodeHolder.downloadStatusId = episode.getDownloadStatus();
@@ -290,8 +281,9 @@ public class EpisodeAdapter extends
             episodeHolder.description.setVisibility(View.VISIBLE);
             episodeHolder.description.setText(episode.getDescription());
         }
-        episodeHolder.publishedAt.setText(DatetimeHelper.dateToShortReadableString(
-                context, episode.getPublishedAt()));
+        episodeHolder.publishedAt.setText(DateUtils.getRelativeTimeSpanString(
+                DateParser.getTimeInMillis(episode.getPublishedAt()),
+                DatetimeHelper.getTimestamp(), DateUtils.DAY_IN_MILLIS));
 
         if (mChannel != null && !mChannel.isSubscribed() && !episode.isManuallyAdded()) {
             episodeHolder.pin.setVisibility(View.VISIBLE);

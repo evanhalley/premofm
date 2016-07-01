@@ -8,8 +8,7 @@ package com.mainmethod.premofm.object;
 import com.mainmethod.premofm.helper.TextHelper;
 
 import org.parceler.Parcel;
-
-import java.util.Date;
+import org.threeten.bp.LocalDateTime;
 
 /**
  * Created by evan on 12/3/14.
@@ -17,15 +16,14 @@ import java.util.Date;
 @Parcel(Parcel.Serialization.BEAN)
 public class Episode implements Collectable {
 
-    private int     mId;
-    private String  mServerId;
-    private String  mGuid;
+    private int     mId = -1;
+    private String  mGeneratedId;
     private String  mTitle;
     private String  mDescriptionHtml;
     private String  mDescription;
-    private Date    mPublishedAt;
-    private long     mDuration;
-    private long     mProgress;
+    private LocalDateTime mPublishedAt;
+    private long    mDuration;
+    private long    mProgress;
     private String  mUrl;
     private String  mRemoteMediaUrl;
     private String  mLocalMediaUrl;
@@ -37,13 +35,13 @@ public class Episode implements Collectable {
     private boolean mManuallyAdded;
 
     // channel data
-    private String mChannelServerId;
+    private String mChannelGeneratedId;
     private String mChannelTitle;
     private String mChannelArtworkUrl;
     private String mChannelAuthor;
     private boolean mChannelIsSubscribed;
 
-    private int     mEpisodeStatus;
+    private int     mEpisodeStatus = EpisodeStatus.NEW;
     private int     mDownloadStatus = DownloadStatus.NOT_DOWNLOADED;
     private boolean mManualDownload = false;
 
@@ -76,28 +74,20 @@ public class Episode implements Collectable {
         mId = id;
     }
 
-    public String getChannelServerId() {
-        return mChannelServerId;
+    public String getChannelGeneratedId() {
+        return mChannelGeneratedId;
     }
 
-    public void setChannelServerId(String channelServerId) {
-        mChannelServerId = channelServerId;
+    public void setChannelGeneratedId(String channelGeneratedId) {
+        mChannelGeneratedId = channelGeneratedId;
     }
 
-    public String getServerId() {
-        return mServerId;
+    public String getGeneratedId() {
+        return mGeneratedId;
     }
 
-    public void setServerId(String serverId) {
-        mServerId = serverId;
-    }
-
-    public String getGuid() {
-        return mGuid;
-    }
-
-    public void setGuid(String guid) {
-        mGuid = guid;
+    public void setGeneratedId(String serverId) {
+        mGeneratedId = serverId;
     }
 
     public String getTitle() {
@@ -129,11 +119,11 @@ public class Episode implements Collectable {
         mDescriptionHtml = descriptionHtml;
     }
 
-    public Date getPublishedAt() {
+    public LocalDateTime getPublishedAt() {
         return mPublishedAt;
     }
 
-    public void setPublishedAt(Date publishedAt) {
+    public void setPublishedAt(LocalDateTime publishedAt) {
         mPublishedAt = publishedAt;
     }
 
@@ -281,14 +271,14 @@ public class Episode implements Collectable {
 
         Episode episode = (Episode) o;
 
-        if (!mServerId.equals(episode.mServerId)) return false;
+        if (!mGeneratedId.equals(episode.mGeneratedId)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return mServerId.hashCode();
+        return mGeneratedId.hashCode();
     }
 
     public boolean metadataEquals(Episode episode) {
@@ -300,9 +290,8 @@ public class Episode implements Collectable {
     public String toString() {
         return "Episode{" +
                 "mId=" + mId +
-                ", mServerId='" + mServerId + '\'' +
-                ", mChannelServerId='" + mChannelServerId + '\'' +
-                ", mGuid='" + mGuid + '\'' +
+                ", mGeneratedId='" + mGeneratedId + '\'' +
+                ", mChannelGeneratedId='" + mChannelGeneratedId + '\'' +
                 ", mTitle='" + mTitle + '\'' +
                 ", mPublishedAt=" + mPublishedAt +
                 ", mDuration=" + mDuration +

@@ -6,7 +6,7 @@ package com.mainmethod.premofm.object;
 public interface Collectable {
 
     int getId();
-    String getServerId();
+    String getGeneratedId();
     String getTitle();
     String getSubtitle();
     String getArtworkUrl();

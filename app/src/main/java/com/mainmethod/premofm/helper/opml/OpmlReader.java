@@ -2,6 +2,7 @@ package com.mainmethod.premofm.helper.opml;
 
 import android.util.Log;
 
+import com.mainmethod.premofm.helper.TextHelper;
 import com.mainmethod.premofm.object.Channel;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -10,15 +11,14 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 /** Reads OPML documents. */
 public class OpmlReader {
     private static final String TAG = "OpmlReader";
 
-    // ATTRIBUTES
     private boolean isInOpml = false;
-    private ArrayList<Channel> elementList;
 
     /**
      * Reads an Opml document and returns a list of all OPML elements it can
@@ -28,8 +28,8 @@ public class OpmlReader {
      * @throws XmlPullParserException
      */
     public ArrayList<Channel> readDocument(Reader reader)
-            throws XmlPullParserException, IOException {
-        elementList = new ArrayList<>();
+            throws XmlPullParserException, IOException, NoSuchAlgorithmException {
+        ArrayList<Channel> elementList = new ArrayList<>();
         XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         factory.setNamespaceAware(true);
         XmlPullParser xpp = factory.newPullParser();
@@ -59,6 +59,8 @@ public class OpmlReader {
                         }
                         element.setFeedUrl(xpp.getAttributeValue(null, OpmlSymbols.XMLURL));
                         element.setSiteUrl(xpp.getAttributeValue(null, OpmlSymbols.HTMLURL));
+                        element.setGeneratedId(TextHelper.generateMD5(element.getFeedUrl()));
+                        element.setSubscribed(true);
 
                         if (element.getFeedUrl() != null) {
 
@@ -73,8 +75,6 @@ public class OpmlReader {
             }
             eventType = xpp.next();
         }
-
         return elementList;
     }
-
 }

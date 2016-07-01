@@ -70,5 +70,5 @@
     <dimen name="widget_width">250dp</dimen>
     <dimen name="widget_control_size">50dp</dimen>
 
-
+    <dimen name="link_logo_size">160dp</dimen>
 </resources>
