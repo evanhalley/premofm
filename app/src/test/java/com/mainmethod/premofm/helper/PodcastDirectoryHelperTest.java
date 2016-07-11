@@ -15,18 +15,18 @@ import static org.mockito.Mockito.when;
 /**
  * Created by evanhalley on 12/23/15.
  */
-public class LinkHelperTest {
+public class PodcastDirectoryHelperTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void nullUriTest() {
-        LinkHelper.getITunesId(null);
+        PodcastDirectoryHelper.getITunesId(null);
     }
 
     @Test
     public void nullPathSegments() {
         Uri uri = Mockito.mock(Uri.class);
         when(uri.getPathSegments()).thenReturn(null);
-        String id = LinkHelper.getITunesId(uri);
+        String id = PodcastDirectoryHelper.getITunesId(uri);
         Assert.assertEquals("", id);
     }
 
@@ -35,7 +35,7 @@ public class LinkHelperTest {
         Uri uri = Mockito.mock(Uri.class);
         when(uri.getPathSegments()).thenReturn(
                 Arrays.asList("us", "podcast", "the-vergecast", "430333725"));
-        String id = LinkHelper.getITunesId(uri);
+        String id = PodcastDirectoryHelper.getITunesId(uri);
         Assert.assertEquals("", id);
     }
 
@@ -43,7 +43,7 @@ public class LinkHelperTest {
     public void noPathSegments() {
         Uri uri = Mockito.mock(Uri.class);
         when(uri.getPathSegments()).thenReturn(Collections.singletonList(""));
-        String id = LinkHelper.getITunesId(uri);
+        String id = PodcastDirectoryHelper.getITunesId(uri);
         Assert.assertEquals("", id);
     }
 
@@ -52,7 +52,7 @@ public class LinkHelperTest {
         Uri uri = Mockito.mock(Uri.class);
         when(uri.getPathSegments()).thenReturn(
                 Arrays.asList("us", "podcast", "the-vergecast", "id430333725"));
-        String id = LinkHelper.getITunesId(uri);
+        String id = PodcastDirectoryHelper.getITunesId(uri);
         Assert.assertEquals("430333725", id);
     }
 }
