@@ -48,7 +48,7 @@
         <item name="android:fontFamily">sans-serif</item>
     </style>
 
-    <style name="MiniPlayer.SubtitleText" parent="@style/android:TextAppearance.Material.Widget.ActionBar.Subtitle">
+    <style name="MiniPlayer.TimeRemainingText" parent="@style/android:TextAppearance.Material.Widget.ActionBar.Subtitle">
         <item name="android:textColor">@color/mini_player_title_text_color</item>
         <item name="android:textSize">@dimen/small_text_size</item>
         <item name="android:background">@android:color/transparent</item>
