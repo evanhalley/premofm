@@ -7,17 +7,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 
-import com.google.android.exoplayer.ExoPlaybackException;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
-import com.google.android.exoplayer.extractor.ExtractorSampleSource;
-import com.google.android.exoplayer.extractor.mp3.Mp3Extractor;
-import com.google.android.exoplayer.extractor.mp4.Mp4Extractor;
-import com.google.android.exoplayer.upstream.Allocator;
-import com.google.android.exoplayer.upstream.DataSource;
-import com.google.android.exoplayer.upstream.DefaultAllocator;
-import com.google.android.exoplayer.upstream.DefaultUriDataSource;
-import com.google.android.exoplayer.util.Util;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.object.DownloadStatus;
@@ -27,7 +23,7 @@ import com.mainmethod.premofm.object.Episode;
  * Plays media playback on the device audio output
  * Created by evanhalley on 11/18/15.
  */
-public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
+public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.EventListener,
         ProgressUpdateListener {
 
     private static final String TAG = LocalMediaPlayer.class.getSimpleName();
@@ -40,12 +36,15 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
     private Episode mEpisode;
     private boolean mIsStreaming;
     private int mMediaPlayerState;
+    private int mStateBeforeLoading;
 
     public LocalMediaPlayer(PremoMediaPlayerListener mediaPlayerListener,
                             ProgressUpdateListener progressUpdateListener, Context context) {
         super(mediaPlayerListener, progressUpdateListener);
         mContext = context;
-        mMediaPlayer = ExoPlayer.Factory.newInstance(1);
+        TrackSelection.Factory trackSelection = new FixedTrackSelection.Factory();
+        TrackSelector
+        mMediaPlayer = ExoPlayerFactory.newInstance()
         mMediaPlayer.addListener(this);
         mMediaPlayerState = MediaPlayerState.STATE_IDLE;
     }
@@ -124,6 +123,16 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
     }
 
     @Override
+    public void onLoadingChanged(boolean isLoading) {
+        if (isLoading) {
+            mStateBeforeLoading = mMediaPlayerState;
+            mMediaPlayerState = MediaPlayerState.STATE_CONNECTING;
+        } else {
+            mMediaPlayerState = mStateBeforeLoading;
+        }
+    }
+
+    @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         String playbackStateStr;
 
@@ -139,10 +148,6 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
             case ExoPlayer.STATE_IDLE:
                 mMediaPlayerState = MediaPlayerState.STATE_IDLE;
                 playbackStateStr = "Idle";
-                break;
-            case ExoPlayer.STATE_PREPARING:
-                mMediaPlayerState = MediaPlayerState.STATE_CONNECTING;
-                playbackStateStr = "Preparing";
                 break;
             case ExoPlayer.STATE_READY:
                 mMediaPlayerState = playWhenReady ? MediaPlayerState.STATE_PLAYING :
@@ -161,14 +166,19 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
     }
 
     @Override
-    public void onPlayWhenReadyCommitted() {
-        Log.d(TAG, "PlayWhenReadyCommitted");
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
         Log.w(TAG, "Player error encountered", error);
         stopPlayback();
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+
     }
 
     @Override
