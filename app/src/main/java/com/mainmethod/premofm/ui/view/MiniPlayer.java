@@ -26,6 +26,7 @@ import com.mainmethod.premofm.helper.PlaybackButtonHelper;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.ui.activity.NowPlayingActivity;
 import com.mainmethod.premofm.ui.activity.PlayableActivity;
+import com.mainmethod.premofm.ui.adapter.AdapterHelper;
 
 import java.lang.ref.WeakReference;
 
@@ -41,7 +42,7 @@ public class MiniPlayer implements View.OnClickListener, View.OnTouchListener {
     private View mMiniPlayer;
     private ImageView mChannelArt;
     private TextView mEpisodeTitle;
-    private TextView mChannelTitle;
+    private TextView mTimeLeft;
     private ImageButton mPlay;
     private int mPrimaryColor;
     private int mTextColor;
@@ -55,7 +56,7 @@ public class MiniPlayer implements View.OnClickListener, View.OnTouchListener {
     private void initMiniPlayer() {
         mMiniPlayer = mMiniPlayer.findViewById(R.id.mini_player);
         mEpisodeTitle = (TextView) mMiniPlayer.findViewById(R.id.episode_title);
-        mChannelTitle = (TextView) mMiniPlayer.findViewById(R.id.channel_title);
+        mTimeLeft = (TextView) mMiniPlayer.findViewById(R.id.time_left);
         mChannelArt = (ImageView) mMiniPlayer.findViewById(R.id.channel_art);
         mPlay = (ImageButton) mMiniPlayer.findViewById(R.id.play);
         mPlay.setOnClickListener(this);
@@ -120,7 +121,11 @@ public class MiniPlayer implements View.OnClickListener, View.OnTouchListener {
         mPlay.setImageResource(PlaybackButtonHelper.getPlayerPlaybackButtonResId(state));
         mPlay.setTag (state);
         mEpisodeTitle.setText(episode.getTitle());
-        mChannelTitle.setText(episode.getChannelTitle());
+        mTimeLeft.setText(AdapterHelper.buildDurationString(
+                mActivity.get(),
+                episode.getEpisodeStatus(),
+                episode.getDuration(),
+                episode.getProgress()));
 
         // load image into the channel art view
         ImageLoadHelper.loadImageIntoView(mMiniPlayer.getContext(), episode.getChannelArtworkUrl(),
@@ -141,7 +146,7 @@ public class MiniPlayer implements View.OnClickListener, View.OnTouchListener {
         mTextColor = textColor;
         mMiniPlayer.setBackgroundColor(primaryColor);
         mEpisodeTitle.setTextColor(ColorHelper.getTextColor(primaryColor));
-        mChannelTitle.setTextColor(ColorHelper.getTextColor(primaryColor));
+        mTimeLeft.setTextColor(ColorHelper.getTextColor(primaryColor));
         mPlay.setImageTintList(ColorStateList.valueOf(ColorHelper.getTextColor(primaryColor)));
     }
 
@@ -152,6 +157,18 @@ public class MiniPlayer implements View.OnClickListener, View.OnTouchListener {
             mMiniPlayer.startAnimation(slideDown);
             mMiniPlayer.setVisibility(View.GONE);
         }
+    }
+
+    public void setDuration(long duration, long progress) {
+
+        if (mEpisode == null || mActivity == null) {
+            return;
+        }
+        mTimeLeft.setText(AdapterHelper.buildDurationString(
+                mActivity.get(),
+                mEpisode.getEpisodeStatus(),
+                duration,
+                progress));
     }
 
     public void showMiniPlayer() {
@@ -194,7 +211,7 @@ public class MiniPlayer implements View.OnClickListener, View.OnTouchListener {
 
         private WeakReference<MiniPlayer> mMiniPlayer;
 
-        public PaletteLoaded(MiniPlayer miniPlayer) {
+        PaletteLoaded(MiniPlayer miniPlayer) {
             mMiniPlayer = new WeakReference<>(miniPlayer);
         }
 

@@ -51,9 +51,9 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                style="@style/MiniPlayer.SubtitleText"
-                tools:text="Zoocast"
-                android:id="@+id/channel_title"
+                style="@style/MiniPlayer.TimeRemainingText"
+                tools:text="23 min remaining"
+                android:id="@+id/time_left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

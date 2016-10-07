@@ -29,8 +29,7 @@ public class DatetimeHelper {
     private static final int SECONDS_IN_A_MINUTE = 60;
 
     public static long getTimestamp() {
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        return cal.getTimeInMillis();
+        return System.currentTimeMillis();
     }
 
     /**
