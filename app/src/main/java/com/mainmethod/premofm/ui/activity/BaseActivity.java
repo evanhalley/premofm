@@ -1,9 +1,14 @@
 package com.mainmethod.premofm.ui.activity;
 
+import android.Manifest;
 import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -15,9 +20,15 @@ import android.view.View;
 import com.mainmethod.premofm.PremoApp;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.config.ConfigurationManager;
+import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
+import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.UpdateHelper;
+import com.mainmethod.premofm.object.Episode;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by evan on 12/1/14.
@@ -27,6 +38,8 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
     private static final String TAG = "BaseActivity";
 
     private static final String PARAM_USER_ONBOARDING = "userOnboarding";
+
+    protected static final int REQUEST_CODE_WRITE_STORAGE = 143;
 
     protected abstract void onCreateBase(Bundle savedInstanceState);
 
@@ -45,6 +58,8 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
     private ProgressDialog mProgressDialog;
 
     private Menu mMenu;
+
+    private Episode mEpisodeToShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +169,17 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
         return true;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQUEST_CODE_WRITE_STORAGE && grantResults.length > 0 &&
+                grantResults[0] == PackageManager.PERMISSION_GRANTED && mEpisodeToShare != null) {
+            IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByGeneratedId(this,
+                    mEpisodeToShare.getGeneratedId()));
+            mEpisodeToShare = null;
+        }
+    }
+
     protected void setHomeAsUpEnabled(boolean homeAsUpEnabled) {
         ActionBar actionBar = getSupportActionBar();
 
@@ -227,6 +253,21 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
+        }
+    }
+
+    public void shareEpisode(Episode episode) {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByGeneratedId(this,
+                    episode.getGeneratedId()));
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE_WRITE_STORAGE);
+            mEpisodeToShare = episode;
         }
     }
 }

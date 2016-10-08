@@ -8,9 +8,11 @@ package com.mainmethod.premofm.helper;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import com.mainmethod.premofm.R;
+import com.mainmethod.premofm.data.LoadCallback;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.Episode;
 import com.mainmethod.premofm.object.EpisodeStatus;
@@ -122,6 +124,11 @@ public class IntentHelper {
      * @param episode
      */
     public static void shareEpisode(Context context, Episode episode) {
+        ImageLoadHelper.saveImage(context, episode.getArtworkUrl(),
+                uri -> shareEpisode(context, episode, uri));
+    }
+
+    private static void shareEpisode(Context context, Episode episode, Uri bitmapUri) {
         String channelTitle = episode.getChannelTitle();
 
         String shareUrl = episode.getUrl() != null ? episode.getUrl() : episode.getRemoteMediaUrl();
@@ -136,6 +143,10 @@ public class IntentHelper {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, shareText);
+
+        if (bitmapUri != null) {
+            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+        }
         Intent chooser = Intent.createChooser(intent, context.getString(R.string.share_with));
 
         // Verify the intent will resolve to at least one activity

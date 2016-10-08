@@ -187,8 +187,11 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
                 DownloadService.cancelEpisode(itemView.getContext(), episodeId);
                 return true;
             case R.id.action_share:
-                IntentHelper.shareEpisode(itemView.getContext(),
-                        EpisodeModel.getEpisodeById(itemView.getContext(), episodeId));
+
+                if (itemView.getContext() instanceof BaseActivity) {
+                    ((BaseActivity) itemView.getContext()).shareEpisode(
+                            EpisodeModel.getEpisodeById(itemView.getContext(), episodeId));
+                }
                 return true;
             case R.id.action_favorite:
                 EpisodeModel.toggleFavoriteAsync(itemView.getContext(), episodeId, null);

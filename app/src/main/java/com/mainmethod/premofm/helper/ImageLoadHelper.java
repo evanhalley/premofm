@@ -8,6 +8,9 @@ package com.mainmethod.premofm.helper;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 
@@ -20,12 +23,57 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.AppWidgetTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.mainmethod.premofm.R;
+import com.mainmethod.premofm.data.LoadCallback;
+
+import java.io.ByteArrayOutputStream;
+
+import timber.log.Timber;
 
 /**
  * Convenience functions for loading images into views or targets
  * Created by evan on 9/11/15.
  */
 public class ImageLoadHelper {
+
+    private static final String SHARED_IMAGE = "premofm_shared.jpg";
+
+    static void saveImage(Context context, String imageUrl, LoadCallback<Uri> callback) {
+
+        new AsyncTask<Void, Void, Uri>() {
+
+            @Override
+            protected Uri doInBackground(Void... params) {
+                ByteArrayOutputStream stream = null;
+
+                try {
+                    Bitmap bitmap = Glide.with(context)
+                            .load(imageUrl)
+                            .asBitmap()
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            .into(500, 500)
+                            .get();
+                    stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    String uriStr = MediaStore.Images.Media.insertImage(context.getContentResolver(),
+                            bitmap, SHARED_IMAGE, null);
+
+                    if (uriStr != null) {
+                        return Uri.parse(uriStr);
+                    }
+                } catch (Exception e) {
+                    Timber.e("Error in saveImage");
+                } finally {
+                    ResourceHelper.closeResource(stream);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Uri uri) {
+                callback.onLoaded(uri);
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
 
     /**
      * Asynchronously loads an image into a widget ImageView

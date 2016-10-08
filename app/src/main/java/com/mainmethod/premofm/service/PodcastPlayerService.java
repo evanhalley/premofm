@@ -65,7 +65,6 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
 
     private static final int MS_TO_REVERSE_ON_PAUSE         = 0;
     private static final float AUDIO_DUCK                   = 0.8f;
-    private static final int AUTO_COMPLETE_EPISODE          = 15_000;
     private static final long MEDIA_SESSION_ACTIONS =
             PlaybackState.ACTION_FAST_FORWARD |
             PlaybackState.ACTION_REWIND |
@@ -424,13 +423,8 @@ public class PodcastPlayerService extends Service implements AudioManager.OnAudi
                 break;
             case MediaPlayerState.STATE_PAUSED:
                 endUpdateTask();
-                
-                if (getDurationLeft() < AUTO_COMPLETE_EPISODE) {
-                    stopPlayback();
-                } else {
-                    updateEpisode(state);
-                    startNotificationUpdate();
-                }
+                updateEpisode(state);
+                startNotificationUpdate();
                 break;
         }
         updateWidget();
