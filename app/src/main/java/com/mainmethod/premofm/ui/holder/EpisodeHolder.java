@@ -19,7 +19,6 @@ import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.model.ChannelModel;
 import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.data.model.PlaylistModel;
-import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.object.Channel;
 import com.mainmethod.premofm.object.DownloadStatus;
 import com.mainmethod.premofm.service.DeleteEpisodeService;
@@ -189,7 +188,7 @@ public class EpisodeHolder extends RecyclerView.ViewHolder implements RecyclerVi
             case R.id.action_share:
 
                 if (itemView.getContext() instanceof BaseActivity) {
-                    ((BaseActivity) itemView.getContext()).shareEpisode(
+                    ((BaseActivity) itemView.getContext()).startEpisodeShare(
                             EpisodeModel.getEpisodeById(itemView.getContext(), episodeId));
                 }
                 return true;

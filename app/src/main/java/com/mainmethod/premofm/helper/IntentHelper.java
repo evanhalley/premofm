@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.text.TextUtils;
 
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.data.LoadCallback;
@@ -102,14 +103,19 @@ public class IntentHelper {
      * Shares a channel to the Android app of choice
      * @param context
      * @param channel
+     * @param bitmapUri
      */
-    public static void shareChannel(Context context, Channel channel) {
+    public static void shareChannel(Context context, Channel channel, Uri bitmapUri) {
         String shareText = String.format(
                 context.getString(R.string.share_channel_text), channel.getTitle(),
                 channel.getSiteUrl());
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_TEXT, shareText);
+
+        if (bitmapUri != null) {
+            intent.putExtra(Intent.EXTRA_STREAM, bitmapUri);
+        }
         Intent chooser = Intent.createChooser(intent, context.getString(R.string.share_with));
 
         // Verify the intent will resolve to at least one activity
@@ -119,16 +125,42 @@ public class IntentHelper {
     }
 
     /**
+     * Shares a channel to the Android app of choice
+     * @param context
+     * @param channel
+     */
+    public static void shareChannel(Context context, Channel channel) {
+
+        if (TextUtils.isEmpty(channel.getArtworkUrl())) {
+            shareChannel(context, channel, null);
+        } else {
+            ImageLoadHelper.saveImage(context, channel.getArtworkUrl(),
+                    uri -> shareChannel(context, channel, uri));
+        }
+    }
+
+    /**
      * Shares an episode to the Android app of choice
      * @param context
      * @param episode
      */
     public static void shareEpisode(Context context, Episode episode) {
-        ImageLoadHelper.saveImage(context, episode.getArtworkUrl(),
-                uri -> shareEpisode(context, episode, uri));
+
+        if (TextUtils.isEmpty(episode.getArtworkUrl())) {
+            shareEpisode(context, episode, null);
+        } else {
+            ImageLoadHelper.saveImage(context, episode.getArtworkUrl(),
+                    uri -> shareEpisode(context, episode, uri));
+        }
     }
 
-    private static void shareEpisode(Context context, Episode episode, Uri bitmapUri) {
+    /**
+     * Shares an episode to the Android app of choice
+     * @param context
+     * @param episode
+     * @param bitmapUri
+     */
+    public static void shareEpisode(Context context, Episode episode, Uri bitmapUri) {
         String channelTitle = episode.getChannelTitle();
 
         String shareUrl = episode.getUrl() != null ? episode.getUrl() : episode.getRemoteMediaUrl();

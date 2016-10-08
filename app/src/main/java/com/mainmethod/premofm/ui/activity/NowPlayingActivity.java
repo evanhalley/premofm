@@ -4,13 +4,11 @@
  */
 package com.mainmethod.premofm.ui.activity;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,9 +16,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.session.PlaybackState;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +33,6 @@ import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.ColorHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.ImageLoadHelper;
-import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.MediaHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.helper.PaletteHelper;
@@ -249,7 +243,7 @@ public class NowPlayingActivity extends PlayableActivity implements
             case R.id.action_share_episode:
 
                 if (mEpisode != null) {
-                    shareEpisode(mEpisode);
+                    startEpisodeShare(mEpisode);
                 }
                 return true;
             case R.id.action_play_queue:

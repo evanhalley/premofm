@@ -33,7 +33,6 @@ import com.mainmethod.premofm.data.model.EpisodeModel;
 import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.ColorHelper;
 import com.mainmethod.premofm.helper.ImageLoadHelper;
-import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.PaletteHelper;
 import com.mainmethod.premofm.helper.PaletteHelper.OnPaletteLoaded;
 import com.mainmethod.premofm.helper.UserPrefHelper;
@@ -190,7 +189,7 @@ public class ChannelProfileActivity
                 overrideTransition();
                 return true;
             case R.id.action_share_channel:
-                IntentHelper.shareChannel(this, mChannel);
+                startChannelShare(mChannel);
                 return true;
             case R.id.action_mark_all_channels_completed:
                 new AlertDialog.Builder(this)

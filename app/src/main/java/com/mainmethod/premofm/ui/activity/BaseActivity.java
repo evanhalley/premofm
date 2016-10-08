@@ -12,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,10 +26,9 @@ import com.mainmethod.premofm.helper.AppPrefHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.UpdateHelper;
+import com.mainmethod.premofm.object.Channel;
+import com.mainmethod.premofm.object.Collectable;
 import com.mainmethod.premofm.object.Episode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by evan on 12/1/14.
@@ -59,7 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
 
     private Menu mMenu;
 
-    private Episode mEpisodeToShare;
+    private Collectable mThingToShare;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,10 +173,14 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         if (requestCode == REQUEST_CODE_WRITE_STORAGE && grantResults.length > 0 &&
-                grantResults[0] == PackageManager.PERMISSION_GRANTED && mEpisodeToShare != null) {
-            IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByGeneratedId(this,
-                    mEpisodeToShare.getGeneratedId()));
-            mEpisodeToShare = null;
+                grantResults[0] == PackageManager.PERMISSION_GRANTED && mThingToShare != null) {
+
+            if (mThingToShare instanceof Episode) {
+                IntentHelper.shareEpisode(this, (Episode) mThingToShare);
+            } else if (mThingToShare instanceof Channel) {
+                IntentHelper.shareChannel(this, (Channel) mThingToShare);
+            }
+            mThingToShare = null;
         }
     }
 
@@ -256,18 +260,31 @@ public abstract class BaseActivity extends AppCompatActivity implements UpdateHe
         }
     }
 
-    public void shareEpisode(Episode episode) {
+    public void startEpisodeShare(Episode episode) {
         int permissionCheck = ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
         if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-            IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByGeneratedId(this,
-                    episode.getGeneratedId()));
+            IntentHelper.shareEpisode(this, episode);
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_CODE_WRITE_STORAGE);
-            mEpisodeToShare = episode;
+            mThingToShare = episode;
+        }
+    }
+
+    public void startChannelShare(Channel channel) {
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            IntentHelper.shareChannel(this, channel);
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CODE_WRITE_STORAGE);
+            mThingToShare = channel;
         }
     }
 }
