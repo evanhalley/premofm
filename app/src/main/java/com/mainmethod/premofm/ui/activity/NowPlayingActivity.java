@@ -33,7 +33,6 @@ import com.mainmethod.premofm.helper.BroadcastHelper;
 import com.mainmethod.premofm.helper.ColorHelper;
 import com.mainmethod.premofm.helper.DatetimeHelper;
 import com.mainmethod.premofm.helper.ImageLoadHelper;
-import com.mainmethod.premofm.helper.IntentHelper;
 import com.mainmethod.premofm.helper.MediaHelper;
 import com.mainmethod.premofm.helper.NotificationHelper;
 import com.mainmethod.premofm.helper.PaletteHelper;
@@ -244,8 +243,7 @@ public class NowPlayingActivity extends PlayableActivity implements
             case R.id.action_share_episode:
 
                 if (mEpisode != null) {
-                    IntentHelper.shareEpisode(this, EpisodeModel.getEpisodeByGeneratedId(this,
-                            mEpisode.getGeneratedId()));
+                    startEpisodeShare(mEpisode);
                 }
                 return true;
             case R.id.action_play_queue:
