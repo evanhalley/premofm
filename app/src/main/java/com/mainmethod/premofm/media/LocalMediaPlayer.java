@@ -42,7 +42,7 @@ public class LocalMediaPlayer extends MediaPlayer implements
 
     private final Context mContext;
     private final Handler mHandler;
-    private final SimpleExoPlayer mExoPlayer;
+    private final SimpleExoPlayer mMediaPlayer;
     private Episode mEpisode;
     private boolean mIsStreaming;
     private int mMediaPlayerState;
@@ -56,8 +56,8 @@ public class LocalMediaPlayer extends MediaPlayer implements
         mHandler = new Handler();
         TrackSelector trackSelector = new DefaultTrackSelector(mHandler);
         DefaultLoadControl loadControl = new DefaultLoadControl();
-        mExoPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
-        mExoPlayer.addListener(this);
+        mMediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
+        mMediaPlayer.addListener(this);
         mMediaPlayerState = MediaPlayerState.STATE_IDLE;
         mProgressUpdater = new ProgressUpdater();
     }
@@ -69,17 +69,17 @@ public class LocalMediaPlayer extends MediaPlayer implements
 
     @Override
     public long getCurrentPosition() {
-        return mExoPlayer.getCurrentPosition();
+        return mMediaPlayer.getCurrentPosition();
     }
 
     @Override
     public long getDuration() {
-        return mExoPlayer.getDuration();
+        return mMediaPlayer.getDuration();
     }
 
     @Override
     public long getBufferedPosition() {
-        return mExoPlayer.getBufferedPosition();
+        return mMediaPlayer.getBufferedPosition();
     }
 
     @Override
@@ -96,43 +96,43 @@ public class LocalMediaPlayer extends MediaPlayer implements
     public void startPlayback(boolean playImmediately) {
 
         if (mEpisode.getProgress() > -1) {
-            mExoPlayer.seekTo(mEpisode.getProgress());
+            mMediaPlayer.seekTo(mEpisode.getProgress());
         } else {
-            mExoPlayer.seekTo(0);
+            mMediaPlayer.seekTo(0);
         }
         MediaSource mMediaSource = buildMediaSource();
-        mExoPlayer.prepare(mMediaSource, false, false);
-        mExoPlayer.setPlayWhenReady(playImmediately);
+        mMediaPlayer.prepare(mMediaSource, false, false);
+        mMediaPlayer.setPlayWhenReady(playImmediately);
     }
 
     @Override
     public void resumePlayback() {
-        mExoPlayer.setPlayWhenReady(true);
+        mMediaPlayer.setPlayWhenReady(true);
     }
 
     @Override
     public void pausePlayback() {
-        mExoPlayer.setPlayWhenReady(false);
+        mMediaPlayer.setPlayWhenReady(false);
     }
 
     @Override
     public void stopPlayback() {
-        mExoPlayer.stop();
+        mMediaPlayer.stop();
         mIsStreaming = false;
         mEpisode = null;
     }
 
     @Override
     public void seekTo(long position) {
-        mExoPlayer.seekTo(position);
+        mMediaPlayer.seekTo(position);
     }
 
     @Override
     public void tearDown() {
         Log.d(TAG, "Tearing down");
         super.tearDown();
-        mExoPlayer.release();
-        mExoPlayer.removeListener(this);
+        mMediaPlayer.release();
+        mMediaPlayer.removeListener(this);
     }
 
     @Override
@@ -205,7 +205,7 @@ public class LocalMediaPlayer extends MediaPlayer implements
     public void setPlaybackSpeed(float speed) {
         PlaybackParams playbackParams = new PlaybackParams();
         playbackParams.setSpeed(speed);
-        mExoPlayer.setPlaybackParams(playbackParams);
+        mMediaPlayer.setPlaybackParams(playbackParams);
     }
 
     private MediaSource buildMediaSource() {
@@ -274,8 +274,8 @@ public class LocalMediaPlayer extends MediaPlayer implements
 
         @Override
         public void run() {
-            long progress = mExoPlayer.getCurrentPosition();
-            long duration = mExoPlayer.getDuration();
+            long progress = mMediaPlayer.getCurrentPosition();
+            long duration = mMediaPlayer.getDuration();
             mProgressUpdateListener.onProgressUpdate(progress, 0, duration);
             mHandler.postDelayed(mProgressUpdater, TIME_UPDATE_MS);
         }
