@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.mainmethod.premofm.R;
@@ -223,7 +224,9 @@ public class LocalMediaPlayer extends MediaPlayer implements
             case DownloadStatus.NOT_DOWNLOADED:
                 uri = Uri.parse(mEpisode.getRemoteMediaUrl());
                 dataSourceFactory = new DefaultHttpDataSourceFactory(
-                        mContext.getString(R.string.user_agent));
+                        mContext.getString(R.string.user_agent), null,
+                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true);
                 mIsStreaming = true;
                 break;
         }
