@@ -5,20 +5,29 @@ import android.content.Context;
 import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 
-import com.google.android.exoplayer.ExoPlaybackException;
-import com.google.android.exoplayer.ExoPlayer;
-import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
-import com.google.android.exoplayer.extractor.ExtractorSampleSource;
-import com.google.android.exoplayer.extractor.mp3.Mp3Extractor;
-import com.google.android.exoplayer.extractor.mp4.Mp4Extractor;
-import com.google.android.exoplayer.upstream.Allocator;
-import com.google.android.exoplayer.upstream.DataSource;
-import com.google.android.exoplayer.upstream.DefaultAllocator;
-import com.google.android.exoplayer.upstream.DefaultUriDataSource;
-import com.google.android.exoplayer.util.Util;
-import com.mainmethod.premofm.PremoApp;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.extractor.Extractor;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
+import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor;
+import com.google.android.exoplayer2.extractor.ogg.OggExtractor;
+import com.google.android.exoplayer2.extractor.wav.WavExtractor;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.object.DownloadStatus;
 import com.mainmethod.premofm.object.Episode;
@@ -27,27 +36,31 @@ import com.mainmethod.premofm.object.Episode;
  * Plays media playback on the device audio output
  * Created by evanhalley on 11/18/15.
  */
-public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
-        ProgressUpdateListener {
+public class LocalMediaPlayer extends MediaPlayer implements
+        ProgressUpdateListener, ExoPlayer.EventListener {
 
     private static final String TAG = LocalMediaPlayer.class.getSimpleName();
-    private static final int ALLOCATION_SIZE = 65_535;
-    private static final int BUFFER_SIZE = 10 * 1_024 * 1_024;
 
     private final Context mContext;
-    private final ExoPlayer mMediaPlayer;
-    private PodcastAudioRenderer mTrackRenderer;
+    private final Handler mHandler;
+    private final SimpleExoPlayer mMediaPlayer;
     private Episode mEpisode;
     private boolean mIsStreaming;
     private int mMediaPlayerState;
+    private boolean isUpdatingProgress;
+    private Runnable mProgressUpdater;
 
     public LocalMediaPlayer(PremoMediaPlayerListener mediaPlayerListener,
                             ProgressUpdateListener progressUpdateListener, Context context) {
         super(mediaPlayerListener, progressUpdateListener);
         mContext = context;
-        mMediaPlayer = ExoPlayer.Factory.newInstance(1);
+        mHandler = new Handler();
+        TrackSelector trackSelector = new DefaultTrackSelector(mHandler);
+        DefaultLoadControl loadControl = new DefaultLoadControl();
+        mMediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
         mMediaPlayer.addListener(this);
         mMediaPlayerState = MediaPlayerState.STATE_IDLE;
+        mProgressUpdater = new ProgressUpdater();
     }
 
     @Override
@@ -88,8 +101,8 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
         } else {
             mMediaPlayer.seekTo(0);
         }
-        mTrackRenderer = buildAudioRenderer();
-        mMediaPlayer.prepare(mTrackRenderer);
+        MediaSource mMediaSource = buildMediaSource();
+        mMediaPlayer.prepare(mMediaSource, false, false);
         mMediaPlayer.setPlayWhenReady(playImmediately);
     }
 
@@ -124,6 +137,11 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
     }
 
     @Override
+    public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+    @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         String playbackStateStr;
 
@@ -140,14 +158,16 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
                 mMediaPlayerState = MediaPlayerState.STATE_IDLE;
                 playbackStateStr = "Idle";
                 break;
-            case ExoPlayer.STATE_PREPARING:
-                mMediaPlayerState = MediaPlayerState.STATE_CONNECTING;
-                playbackStateStr = "Preparing";
-                break;
             case ExoPlayer.STATE_READY:
                 mMediaPlayerState = playWhenReady ? MediaPlayerState.STATE_PLAYING :
                         MediaPlayerState.STATE_PAUSED;
                 playbackStateStr = "Ready";
+
+                if (playWhenReady) {
+                    startProgressUpdater();
+                } else {
+                    stopProgressUpdater();
+                }
                 break;
             default:
                 mMediaPlayerState = MediaPlayerState.STATE_IDLE;
@@ -161,8 +181,12 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
     }
 
     @Override
-    public void onPlayWhenReadyCommitted() {
-        Log.d(TAG, "PlayWhenReadyCommitted");
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+
     }
 
     @Override
@@ -180,56 +204,83 @@ public class LocalMediaPlayer extends MediaPlayer implements ExoPlayer.Listener,
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void setPlaybackSpeed(float speed) {
-
-        if (mTrackRenderer != null) {
-
-            if (mTrackRenderer instanceof PodcastAudioRendererV21) {
-                ((PodcastAudioRendererV21) mTrackRenderer).setSpeed(speed);
-            } else {
-                mMediaPlayer.sendMessage(mTrackRenderer,
-                        MediaCodecAudioTrackRenderer.MSG_SET_PLAYBACK_PARAMS,
-                        new PlaybackParams().setSpeed(speed));
-            }
-        }
+        PlaybackParams playbackParams = new PlaybackParams();
+        playbackParams.setSpeed(speed);
+        mMediaPlayer.setPlaybackParams(playbackParams);
     }
 
-    private PodcastAudioRenderer buildAudioRenderer() {
-        PodcastAudioRenderer trackRenderer = null;
+    private MediaSource buildMediaSource() {
+        DataSource.Factory dataSourceFactory = null;
         Uri uri = null;
 
         // return the uri to play
         switch (mEpisode.getDownloadStatus()) {
             case DownloadStatus.DOWNLOADED:
                 uri = Uri.parse(mEpisode.getLocalMediaUrl());
+                dataSourceFactory = new FileDataSourceFactory();
                 mIsStreaming = false;
                 break;
             case DownloadStatus.DOWNLOADING:
             case DownloadStatus.NOT_DOWNLOADED:
                 uri = Uri.parse(mEpisode.getRemoteMediaUrl());
+                dataSourceFactory = new DefaultHttpDataSourceFactory(
+                        mContext.getString(R.string.user_agent), null,
+                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true);
                 mIsStreaming = true;
                 break;
         }
 
         if (uri != null) {
             Log.d(TAG, "Playing from URI " + uri);
-            Allocator allocator = new DefaultAllocator(ALLOCATION_SIZE);
-            DataSource dataSource = new DefaultUriDataSource(mContext, null,
-                    String.format(mContext.getString(R.string.user_agent),
-                            PremoApp.getVersionName()), true);
-            ExtractorSampleSource sampleSource = new ExtractorSampleSource(
-                    uri, dataSource, allocator, BUFFER_SIZE,
-                    new Mp3Extractor(),
-                    new Mp4Extractor());
-
-            if (Util.SDK_INT >= Build.VERSION_CODES.M) {
-                trackRenderer = new PodcastAudioRenderer(sampleSource);
-            } else {
-                trackRenderer = new PodcastAudioRendererV21(sampleSource);
-            }
-            trackRenderer.setProgressUpdateListener(this);
-        } else {
-            Log.w(TAG, "Uri is null");
+            return new ExtractorMediaSource(uri, dataSourceFactory, new AudioExtractorsFactory(),
+                    mHandler, null);
         }
-        return trackRenderer;
+        throw new IllegalStateException("Unable to build media source");
+    }
+
+    private void startProgressUpdater() {
+
+        if (!isUpdatingProgress) {
+            mProgressUpdater.run();
+            isUpdatingProgress = true;
+        }
+    }
+
+    private void stopProgressUpdater() {
+
+        if (isUpdatingProgress) {
+            mHandler.removeCallbacks(mProgressUpdater);
+            isUpdatingProgress = false;
+        }
+    }
+
+    /**
+     * Defines what audio file formats can be played
+     */
+    private static class AudioExtractorsFactory implements ExtractorsFactory {
+
+        @Override
+        public Extractor[] createExtractors() {
+            return new Extractor[]{
+                    new OggExtractor(),
+                    new WavExtractor(),
+                    new Mp3Extractor(),
+                    new Mp4Extractor()};
+        }
+    }
+
+    // spins the album art like a record
+    private class ProgressUpdater implements Runnable {
+
+        private static final int TIME_UPDATE_MS = 16;
+
+        @Override
+        public void run() {
+            long progress = mMediaPlayer.getCurrentPosition();
+            long duration = mMediaPlayer.getDuration();
+            mProgressUpdateListener.onProgressUpdate(progress, 0, duration);
+            mHandler.postDelayed(mProgressUpdater, TIME_UPDATE_MS);
+        }
     }
 }
