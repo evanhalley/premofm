@@ -28,9 +28,16 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.Cache;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.mainmethod.premofm.R;
 import com.mainmethod.premofm.object.DownloadStatus;
 import com.mainmethod.premofm.object.Episode;
+
+import java.io.File;
 
 /**
  * Plays media playback on the device audio output
@@ -40,10 +47,12 @@ public class LocalMediaPlayer extends MediaPlayer implements
         ProgressUpdateListener, ExoPlayer.EventListener {
 
     private static final String TAG = LocalMediaPlayer.class.getSimpleName();
+    private static final int MAX_CACHE_SIZE = 250_000_000;
+    private static final String PODCAST_CACHE_DIR = "podcast-cache";
 
     private final Context mContext;
     private final Handler mHandler;
-    private final SimpleExoPlayer mMediaPlayer;
+    private final SimpleExoPlayer mExoPlayer;
     private Episode mEpisode;
     private boolean mIsStreaming;
     private int mMediaPlayerState;
@@ -57,8 +66,8 @@ public class LocalMediaPlayer extends MediaPlayer implements
         mHandler = new Handler();
         TrackSelector trackSelector = new DefaultTrackSelector(mHandler);
         DefaultLoadControl loadControl = new DefaultLoadControl();
-        mMediaPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
-        mMediaPlayer.addListener(this);
+        mExoPlayer = ExoPlayerFactory.newSimpleInstance(mContext, trackSelector, loadControl);
+        mExoPlayer.addListener(this);
         mMediaPlayerState = MediaPlayerState.STATE_IDLE;
         mProgressUpdater = new ProgressUpdater();
     }
@@ -70,17 +79,17 @@ public class LocalMediaPlayer extends MediaPlayer implements
 
     @Override
     public long getCurrentPosition() {
-        return mMediaPlayer.getCurrentPosition();
+        return mExoPlayer.getCurrentPosition();
     }
 
     @Override
     public long getDuration() {
-        return mMediaPlayer.getDuration();
+        return mExoPlayer.getDuration();
     }
 
     @Override
     public long getBufferedPosition() {
-        return mMediaPlayer.getBufferedPosition();
+        return mExoPlayer.getBufferedPosition();
     }
 
     @Override
@@ -97,43 +106,43 @@ public class LocalMediaPlayer extends MediaPlayer implements
     public void startPlayback(boolean playImmediately) {
 
         if (mEpisode.getProgress() > -1) {
-            mMediaPlayer.seekTo(mEpisode.getProgress());
+            mExoPlayer.seekTo(mEpisode.getProgress());
         } else {
-            mMediaPlayer.seekTo(0);
+            mExoPlayer.seekTo(0);
         }
         MediaSource mMediaSource = buildMediaSource();
-        mMediaPlayer.prepare(mMediaSource, false, false);
-        mMediaPlayer.setPlayWhenReady(playImmediately);
+        mExoPlayer.prepare(mMediaSource, false, false);
+        mExoPlayer.setPlayWhenReady(playImmediately);
     }
 
     @Override
     public void resumePlayback() {
-        mMediaPlayer.setPlayWhenReady(true);
+        mExoPlayer.setPlayWhenReady(true);
     }
 
     @Override
     public void pausePlayback() {
-        mMediaPlayer.setPlayWhenReady(false);
+        mExoPlayer.setPlayWhenReady(false);
     }
 
     @Override
     public void stopPlayback() {
-        mMediaPlayer.stop();
+        mExoPlayer.stop();
         mIsStreaming = false;
         mEpisode = null;
     }
 
     @Override
     public void seekTo(long position) {
-        mMediaPlayer.seekTo(position);
+        mExoPlayer.seekTo(position);
     }
 
     @Override
     public void tearDown() {
         Log.d(TAG, "Tearing down");
         super.tearDown();
-        mMediaPlayer.release();
-        mMediaPlayer.removeListener(this);
+        mExoPlayer.release();
+        mExoPlayer.removeListener(this);
     }
 
     @Override
@@ -206,7 +215,7 @@ public class LocalMediaPlayer extends MediaPlayer implements
     public void setPlaybackSpeed(float speed) {
         PlaybackParams playbackParams = new PlaybackParams();
         playbackParams.setSpeed(speed);
-        mMediaPlayer.setPlaybackParams(playbackParams);
+        mExoPlayer.setPlaybackParams(playbackParams);
     }
 
     private MediaSource buildMediaSource() {
@@ -223,10 +232,9 @@ public class LocalMediaPlayer extends MediaPlayer implements
             case DownloadStatus.DOWNLOADING:
             case DownloadStatus.NOT_DOWNLOADED:
                 uri = Uri.parse(mEpisode.getRemoteMediaUrl());
-                dataSourceFactory = new DefaultHttpDataSourceFactory(
-                        mContext.getString(R.string.user_agent), null,
-                        DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-                        DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true);
+                dataSourceFactory = getCacheDataSource(
+                        new File(mContext.getCacheDir(), PODCAST_CACHE_DIR),
+                        mContext.getString(R.string.user_agent));
                 mIsStreaming = true;
                 break;
         }
@@ -255,6 +263,16 @@ public class LocalMediaPlayer extends MediaPlayer implements
         }
     }
 
+    private static CacheDataSourceFactory getCacheDataSource(File cacheDir, String userAgent) {
+        Cache cache = new SimpleCache(cacheDir, new LeastRecentlyUsedCacheEvictor(MAX_CACHE_SIZE));
+        DataSource.Factory upstream = new DefaultHttpDataSourceFactory(userAgent, null,
+                DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true);
+        return new CacheDataSourceFactory(cache, upstream,
+                CacheDataSource.FLAG_CACHE_UNBOUNDED_REQUESTS,
+                CacheDataSource.DEFAULT_MAX_CACHE_FILE_SIZE);
+    }
+
     /**
      * Defines what audio file formats can be played
      */
@@ -277,8 +295,8 @@ public class LocalMediaPlayer extends MediaPlayer implements
 
         @Override
         public void run() {
-            long progress = mMediaPlayer.getCurrentPosition();
-            long duration = mMediaPlayer.getDuration();
+            long progress = mExoPlayer.getCurrentPosition();
+            long duration = mExoPlayer.getDuration();
             mProgressUpdateListener.onProgressUpdate(progress, 0, duration);
             mHandler.postDelayed(mProgressUpdater, TIME_UPDATE_MS);
         }
